@@ -9,13 +9,14 @@ use bevy_core::CorePlugin;
 use animism::*;
 
 #[rstest]
-fn repeated_animation(mut app: App) {
+fn repeated(mut app: App) {
     let entity = app
         .world
         .spawn()
         .insert_bundle((
             TextureAtlasSprite::new(0),
             SpriteSheetAnimation::from_range(0..=2, Duration::from_nanos(0)),
+            Play,
         ))
         .id();
 
@@ -35,6 +36,40 @@ fn repeated_animation(mut app: App) {
     assert_eq!(
         app.world.get::<TextureAtlasSprite>(entity).unwrap().index,
         0
+    );
+}
+
+#[rstest]
+fn run_once(mut app: App) {
+    let entity = app
+        .world
+        .spawn()
+        .insert_bundle((
+            TextureAtlasSprite::new(0),
+            SpriteSheetAnimation::from_range(0..=2, Duration::from_nanos(0)).once(),
+            Play,
+        ))
+        .id();
+
+    app.update();
+    assert!(app.world.get::<Play>(entity).is_some());
+    assert_eq!(
+        app.world.get::<TextureAtlasSprite>(entity).unwrap().index,
+        1
+    );
+
+    app.update();
+    assert!(app.world.get::<Play>(entity).is_some());
+    assert_eq!(
+        app.world.get::<TextureAtlasSprite>(entity).unwrap().index,
+        2
+    );
+
+    app.update();
+    assert!(app.world.get::<Play>(entity).is_none());
+    assert_eq!(
+        app.world.get::<TextureAtlasSprite>(entity).unwrap().index,
+        2
     );
 }
 

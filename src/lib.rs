@@ -28,7 +28,7 @@
 //!
 //! 2. Insert the [`SpriteSheetAnimation`] component to the sprite sheets you want to animate
 //!
-//! ```rust
+//! ```
 //! # use std::time::Duration;
 //! # use bevy::prelude::*;
 //! # use animism::*;
@@ -43,9 +43,36 @@
 //!         .insert(SpriteSheetAnimation::from_range(
 //!             0..=2,                               // Indices of the sprite atlas
 //!             Duration::from_secs_f64(1.0 / 12.0), // Duration of each frame
-//!         ));
+//!         ))
+//!         // Start the animation immediately
+//!         .insert(Play);
 //! }
 //! ```
+//!
+//! ## Run the animation only once
+//!
+//! By default the animation loops forever. But it is possible to configure it differently:
+//!
+//! ```
+//! # use std::time::Duration;
+//! # use bevy::prelude::*;
+//! # use animism::*;
+//! # fn spawn(mut commands: Commands) {
+//! commands
+//!     .spawn_bundle(SpriteSheetBundle { ..Default::default() })
+//!     .insert(
+//!         SpriteSheetAnimation::from_range(0..=2, Duration::from_millis(100))
+//!             .once() // <-- Runs the animation only once
+//!     )
+//!     .insert(Play); // <-- This component will be automatically removed once the animation is finished
+//! # }
+//! ```
+//!
+//! ## Play/Pause
+//!
+//! Animations proceed only if the [`Play`] component is in the entity.
+//!
+//! To pause or resume an animation, simply remove/insert the [`Play`] component.
 //!
 //! ## Fine-grained frame-duration
 //!
@@ -95,10 +122,31 @@ pub enum AnimationUpdateSystem {
 pub struct SpriteSheetAnimation {
     /// Frames
     pub frames: Vec<Frame>,
+    /// Animation mode
+    pub mode: AnimationMode,
     #[reflect(ignore)]
     current_frame: usize,
     #[reflect(ignore)]
     elapsed_in_frame: Duration,
+}
+
+/// Components that indicates the animation is playing
+///
+/// Insert the components to play the animation, and remove it to pause it.
+///
+/// If the animation mode is [`AnimationMode::Once`] this component is automatically removed at the end of the animation.
+#[derive(Debug, Copy, Clone, Default, Reflect)]
+#[reflect(Component)]
+pub struct Play;
+
+/// Animation mode (run once or repeat)
+#[derive(Debug, Copy, Clone, Eq, PartialEq, Reflect)]
+pub enum AnimationMode {
+    /// Runs the animation once and then stop playing
+    Once,
+
+    /// Repeat the animation forever
+    Repeat,
 }
 
 /// A single animation frame
@@ -123,6 +171,7 @@ impl SpriteSheetAnimation {
     pub fn from_frames(frames: Vec<Frame>) -> Self {
         Self {
             frames,
+            mode: AnimationMode::default(),
             current_frame: 0,
             elapsed_in_frame: Duration::from_nanos(0),
         }
@@ -140,30 +189,62 @@ impl SpriteSheetAnimation {
         )
     }
 
+    /// Set the animation mode to [`AnimationMode::Once`]
+    #[must_use]
+    pub fn once(mut self) -> Self {
+        self.mode = AnimationMode::Once;
+        self
+    }
+
+    /// Set the animation mode to [`AnimationMode::Repeat`]
+    #[must_use]
+    pub fn repeat(mut self) -> Self {
+        self.mode = AnimationMode::Repeat;
+        self
+    }
+
     #[inline]
     fn can_update(&self) -> bool {
         !self.frames.is_empty()
     }
 
-    fn update(&mut self, mut sprite: impl DerefMut<Target = TextureAtlasSprite>, delta: Duration) {
+    /// Update the animation and the sprite (if necessary)
+    ///
+    /// Returns true if the animation has ended
+    fn update(
+        &mut self,
+        mut sprite: impl DerefMut<Target = TextureAtlasSprite>,
+        delta: Duration,
+    ) -> bool {
         debug_assert!(self.can_update());
 
         let mut frame = self.frames[self.current_frame % self.frames.len()];
 
         self.elapsed_in_frame += delta;
         if self.elapsed_in_frame >= frame.duration {
-            self.elapsed_in_frame -= frame.duration;
-
-            self.current_frame += 1;
-            if self.current_frame >= self.frames.len() {
+            if self.current_frame < self.frames.len() - 1 {
+                self.current_frame += 1;
+            } else if matches!(self.mode, AnimationMode::Repeat) {
                 self.current_frame = 0;
+            } else {
+                return true;
             }
 
+            self.elapsed_in_frame -= frame.duration;
             frame = self.frames[self.current_frame];
             sprite.index = frame.index;
         } else if sprite.index != frame.index {
             sprite.index = frame.index;
         }
+
+        false
+    }
+}
+
+impl Default for AnimationMode {
+    #[inline]
+    fn default() -> Self {
+        Self::Repeat
     }
 }
 
@@ -177,11 +258,21 @@ impl Frame {
 }
 
 fn animate(
+    mut commands: Commands<'_>,
     time: Res<'_, Time>,
-    mut animations: Query<'_, (&mut TextureAtlasSprite, &mut SpriteSheetAnimation)>,
+    mut animations: Query<
+        '_,
+        (Entity, &mut TextureAtlasSprite, &mut SpriteSheetAnimation),
+        With<Play>,
+    >,
 ) {
-    for (sprite, mut animation) in animations.iter_mut().filter(|(_, anim)| anim.can_update()) {
-        animation.update(sprite, time.delta());
+    for (entity, sprite, mut animation) in animations
+        .iter_mut()
+        .filter(|(_, _, anim)| anim.can_update())
+    {
+        if animation.update(sprite, time.delta()) {
+            commands.entity(entity).remove::<Play>();
+        }
     }
 }
 
@@ -272,51 +363,131 @@ mod tests {
                 (smaller_duration + smaller_duration) - frame_duration
             );
         }
-    }
-
-    mod on_last_frame {
-        use super::*;
-
-        #[fixture]
-        fn animation(frame_duration: Duration) -> SpriteSheetAnimation {
-            SpriteSheetAnimation {
-                frames: vec![Frame::new(0, frame_duration), Frame::new(1, frame_duration)],
-                current_frame: 1,
-                elapsed_in_frame: Duration::from_nanos(0),
-            }
-        }
 
         #[rstest]
-        fn returns_to_first_frame(
+        fn returns_false(
             mut animation: SpriteSheetAnimation,
             mut sprite_at_second_frame: TextureAtlasSprite,
             frame_duration: Duration,
         ) {
-            animation.update(&mut sprite_at_second_frame, frame_duration);
-            assert_eq!(sprite_at_second_frame.index, 0);
+            assert!(!animation.update(&mut sprite_at_second_frame, frame_duration))
         }
     }
 
-    mod after_last_frame {
+    mod repeat {
         use super::*;
 
         #[fixture]
-        fn animation(frame_duration: Duration) -> SpriteSheetAnimation {
-            SpriteSheetAnimation {
-                frames: vec![Frame::new(0, frame_duration), Frame::new(1, frame_duration)],
-                current_frame: 2,
-                elapsed_in_frame: Duration::from_nanos(0),
+        fn mode() -> AnimationMode {
+            AnimationMode::Repeat
+        }
+
+        mod on_last_frame {
+            use super::*;
+
+            #[fixture]
+            fn animation(frame_duration: Duration, mode: AnimationMode) -> SpriteSheetAnimation {
+                SpriteSheetAnimation {
+                    frames: vec![Frame::new(0, frame_duration), Frame::new(1, frame_duration)],
+                    mode,
+                    current_frame: 1,
+                    elapsed_in_frame: Duration::from_nanos(0),
+                }
+            }
+
+            #[rstest]
+            fn returns_to_first_frame(
+                mut animation: SpriteSheetAnimation,
+                mut sprite_at_second_frame: TextureAtlasSprite,
+                frame_duration: Duration,
+            ) {
+                animation.update(&mut sprite_at_second_frame, frame_duration);
+                assert_eq!(sprite_at_second_frame.index, 0);
+            }
+
+            #[rstest]
+            fn returns_false(
+                mut animation: SpriteSheetAnimation,
+                mut sprite_at_second_frame: TextureAtlasSprite,
+                frame_duration: Duration,
+            ) {
+                assert!(!animation.update(&mut sprite_at_second_frame, frame_duration))
             }
         }
 
-        #[rstest]
-        fn returns_to_first_frame(
-            mut animation: SpriteSheetAnimation,
-            mut sprite_at_second_frame: TextureAtlasSprite,
-            frame_duration: Duration,
-        ) {
-            animation.update(&mut sprite_at_second_frame, frame_duration);
-            assert_eq!(sprite_at_second_frame.index, 0);
+        mod after_last_frame {
+            use super::*;
+
+            #[fixture]
+            fn animation(frame_duration: Duration, mode: AnimationMode) -> SpriteSheetAnimation {
+                SpriteSheetAnimation {
+                    frames: vec![Frame::new(0, frame_duration), Frame::new(1, frame_duration)],
+                    mode,
+                    current_frame: 2,
+                    elapsed_in_frame: Duration::from_nanos(0),
+                }
+            }
+
+            #[rstest]
+            fn returns_to_first_frame(
+                mut animation: SpriteSheetAnimation,
+                mut sprite_at_second_frame: TextureAtlasSprite,
+                frame_duration: Duration,
+            ) {
+                animation.update(&mut sprite_at_second_frame, frame_duration);
+                assert_eq!(sprite_at_second_frame.index, 0);
+            }
+
+            #[rstest]
+            fn returns_false(
+                mut animation: SpriteSheetAnimation,
+                mut sprite_at_second_frame: TextureAtlasSprite,
+                frame_duration: Duration,
+            ) {
+                assert!(!animation.update(&mut sprite_at_second_frame, frame_duration))
+            }
+        }
+    }
+
+    mod run_once {
+        use super::*;
+
+        #[fixture]
+        fn mode() -> AnimationMode {
+            AnimationMode::Once
+        }
+
+        mod on_last_frame {
+            use super::*;
+
+            #[fixture]
+            fn animation(frame_duration: Duration, mode: AnimationMode) -> SpriteSheetAnimation {
+                SpriteSheetAnimation {
+                    frames: vec![Frame::new(0, frame_duration), Frame::new(1, frame_duration)],
+                    mode,
+                    current_frame: 1,
+                    elapsed_in_frame: Duration::from_nanos(500),
+                }
+            }
+
+            #[rstest]
+            fn does_nothing(
+                mut animation: SpriteSheetAnimation,
+                mut sprite_at_second_frame: TextureAtlasSprite,
+                frame_duration: Duration,
+            ) {
+                animation.update(&mut sprite_at_second_frame, frame_duration);
+                assert_eq!(sprite_at_second_frame.index, 1);
+            }
+
+            #[rstest]
+            fn returns_true(
+                mut animation: SpriteSheetAnimation,
+                mut sprite_at_second_frame: TextureAtlasSprite,
+                frame_duration: Duration,
+            ) {
+                assert!(animation.update(&mut sprite_at_second_frame, frame_duration))
+            }
         }
     }
 }

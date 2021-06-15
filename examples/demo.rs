@@ -36,7 +36,8 @@ fn spawn_coin(
         .insert(SpriteSheetAnimation::from_range(
             0..=4,
             Duration::from_millis(100),
-        ));
+        ))
+        .insert(Play);
 }
 
 fn spawn_camera(mut commands: Commands) {
