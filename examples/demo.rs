@@ -27,18 +27,15 @@ fn spawn_coin(
         1,
     ));
 
-    let frame_duration = Duration::from_millis(100);
-
     commands
         .spawn_bundle(SpriteSheetBundle {
             texture_atlas,
             transform: Transform::from_scale(Vec3::splat(10.0)),
             ..Default::default()
         })
-        .insert(SpriteSheetAnimation::from_frames(
-            (0..5)
-                .map(|index| Frame::new(index, frame_duration))
-                .collect(),
+        .insert(SpriteSheetAnimation::from_range(
+            0..=4,
+            Duration::from_millis(100),
         ));
 }
 

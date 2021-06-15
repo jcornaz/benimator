@@ -4,9 +4,9 @@ extern crate rstest;
 use std::time::Duration;
 
 use bevy::prelude::*;
+use bevy_core::CorePlugin;
 
 use animism::*;
-use bevy_core::CorePlugin;
 
 #[rstest]
 fn repeated_animation(mut app: App) {
@@ -15,11 +15,7 @@ fn repeated_animation(mut app: App) {
         .spawn()
         .insert_bundle((
             TextureAtlasSprite::new(0),
-            SpriteSheetAnimation::from_frames(vec![
-                Frame::new(0, Duration::from_nanos(0)),
-                Frame::new(1, Duration::from_nanos(0)),
-                Frame::new(2, Duration::from_nanos(0)),
-            ]),
+            SpriteSheetAnimation::from_range(0..=2, Duration::from_nanos(0)),
         ))
         .id();
 

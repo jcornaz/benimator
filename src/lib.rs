@@ -34,29 +34,38 @@
 //! # use animism::*;
 //!
 //! fn spawn(mut commands: Commands) {
-//!     // For this example, we'll use a frame-rate of 12 sprites per second (aka animating on twos)
-//!     let frame_duration = Duration::from_secs_f64(1.0 / 12.0);
-//!
 //!     commands
 //!         .spawn_bundle(SpriteSheetBundle {
 //!             // TODO: Configure your sprite sheet
 //!             ..Default::default()
 //!         })
 //!         // Insert the animation component
-//!         // Each frame take an index in the TextureAtlasSprite and a duration
-//!         .insert(SpriteSheetAnimation::from_frames(vec![
-//!             Frame::new(0, frame_duration),
-//!             Frame::new(1, frame_duration),
-//!             Frame::new(2, frame_duration),
-//!         ]));
+//!         .insert(SpriteSheetAnimation::from_range(
+//!             0..=2,                               // Indices of the sprite atlas
+//!             Duration::from_secs_f64(1.0 / 12.0), // Duration of each frame
+//!         ));
 //! }
+//! ```
+//!
+//! ## Fine-grained frame-duration
+//!
+//! For more precise configuration, it is possible to define the duration of each frame:
+//!
+//! ```rust
+//! # use animism::*;
+//! # use std::time::Duration;
+//! SpriteSheetAnimation::from_frames(vec![
+//!     Frame::new(0, Duration::from_millis(120)),
+//!     Frame::new(1, Duration::from_millis(100)),
+//!     Frame::new(2, Duration::from_millis(80)),
+//! ]);
 //! ```
 //!
 #[cfg(test)]
 #[macro_use]
 extern crate rstest;
 
-use std::ops::DerefMut;
+use std::ops::{DerefMut, RangeInclusive};
 use std::time::Duration;
 
 use bevy_app::prelude::*;
@@ -117,6 +126,18 @@ impl SpriteSheetAnimation {
             current_frame: 0,
             elapsed_in_frame: Duration::from_nanos(0),
         }
+    }
+
+    /// Create a new animation from index-range, using the same frame duration for each frame.
+    ///
+    /// For more granular configuration, see [`from_frames`](SpriteSheetAnimation::from_frames)
+    #[must_use]
+    pub fn from_range(index_range: RangeInclusive<u32>, frame_duration: Duration) -> Self {
+        Self::from_frames(
+            index_range
+                .map(|index| Frame::new(index, frame_duration))
+                .collect(),
+        )
     }
 
     #[inline]
@@ -193,10 +214,7 @@ mod tests {
 
         #[fixture]
         fn animation(frame_duration: Duration) -> SpriteSheetAnimation {
-            SpriteSheetAnimation::from_frames(vec![
-                Frame::new(0, frame_duration),
-                Frame::new(1, frame_duration),
-            ])
+            SpriteSheetAnimation::from_range(0..=1, frame_duration)
         }
 
         #[rstest]
