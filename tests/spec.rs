@@ -6,7 +6,7 @@ use std::time::Duration;
 use bevy::prelude::*;
 use bevy_core::CorePlugin;
 
-use animism::*;
+use benimator::*;
 
 #[rstest]
 fn repeated(mut app: App) {

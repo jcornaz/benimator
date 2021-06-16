@@ -12,7 +12,7 @@
 //! ```no_run
 //! use std::time::Duration;
 //! use bevy::prelude::*;
-//! use animism::*;
+//! use benimator::*;
 //!
 //! fn main() {
 //!     App::build()
@@ -31,7 +31,7 @@
 //! ```
 //! # use std::time::Duration;
 //! # use bevy::prelude::*;
-//! # use animism::*;
+//! # use benimator::*;
 //!
 //! fn spawn(mut commands: Commands) {
 //!     commands
@@ -56,7 +56,7 @@
 //! ```
 //! # use std::time::Duration;
 //! # use bevy::prelude::*;
-//! # use animism::*;
+//! # use benimator::*;
 //! # fn spawn(mut commands: Commands) {
 //! commands
 //!     .spawn_bundle(SpriteSheetBundle { ..Default::default() })
@@ -79,7 +79,7 @@
 //! For more precise configuration, it is possible to define the duration of each frame:
 //!
 //! ```rust
-//! # use animism::*;
+//! # use benimator::*;
 //! # use std::time::Duration;
 //! SpriteSheetAnimation::from_frames(vec![
 //!     Frame::new(0, Duration::from_millis(120)),

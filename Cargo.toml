@@ -1,5 +1,5 @@
 [package]
-name = "animism"
+name = "benimator"
 version = "0.0.0"
 authors = ["Jonathan Cornaz"]
 edition = "2018"

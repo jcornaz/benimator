@@ -2,7 +2,7 @@ use std::time::Duration;
 
 use bevy::prelude::*;
 
-use animism::*;
+use benimator::*;
 
 #[bevy_main]
 fn main() {
