@@ -36,7 +36,7 @@
 //! fn spawn(mut commands: Commands) {
 //!     commands
 //!         .spawn_bundle(SpriteSheetBundle {
-//!             // TODO: Configure your sprite sheet
+//!             // TODO: Configure the sprite sheet
 //!             ..Default::default()
 //!         })
 //!         // Insert the animation component

@@ -1,0 +1,81 @@
+# Heron
+
+[![License](https://img.shields.io/github/license/jcornaz/benimator)](https://github.com/jcornaz/benimator/blob/main/LICENSE)
+[![Crates.io](https://img.shields.io/crates/v/benimator)](https://crates.io/crates/benimator)
+[![Docs](https://docs.rs/benimator/badge.svg)](https://docs.rs/benimator)
+[![Bevy tracking](https://img.shields.io/badge/Bevy%20tracking-released%20version-lightblue)](https://github.com/bevyengine/bevy/blob/main/docs/plugins_guidelines.md#main-branch-tracking)
+[![dependency status](https://deps.rs/repo/github/jcornaz/benimator/status.svg)](https://deps.rs/repo/github/jcornaz/benimator)
+[![Build](https://img.shields.io/github/workflow/status/jcornaz/benimator/Build)](https://github.com/jcornaz/benimator/actions?query=workflow%3ABuild+branch%3Amain)
+
+A sprite sheet animation plugin for [bevy](https://bevyengine.org)
+
+
+## Features
+
+* A `SpriteSheetAnimation` component to automatically update the indices of the `TextureAtlasSprite` in the same entity
+* An animation is playing if, and only if a `Play` component is present in the entity
+  * Simply remove/insert the `Play` component to pause/resume an animation
+* The animation can be defined from an index-range, or an arbitrary list of indices
+* Each frame may have a different duration
+
+
+## Usage
+
+```rust
+fn main() {
+  App::build()
+          .add_plugins(DefaultPlugins)
+          .add_plugin(AnimationPlugin) // <-- Add the plugin
+          .add_startup_system(spawn.system())
+          .run();
+}
+
+fn spawn(
+  mut commands: Commands,
+  asset_server: Res<AssetServer>,
+  mut textures: ResMut<Assets<TextureAtlas>>,
+) {
+  // Don't forget the camera ;-)
+  commands.spawn_bundle(OrthographicCameraBundle::new_2d());
+
+  commands
+          // Spawn a bevy sprite-sheet
+          .spawn_bundle(SpriteSheetBundle {
+            texture_atlas: textures.add(TextureAtlas::from_grid(asset_server.load("coin.png"), Vec2::new(16.0, 16.0), 5, 1)),
+            transform: Transform::from_scale(Vec3::splat(10.0)),
+            ..Default::default()
+          })
+          // Insert the animation component
+          // Here we use an index-range (from 0 to 4) where each frame has the same duration
+          .insert(SpriteSheetAnimation::from_range(0..=4, Duration::from_millis(100)))
+          // Start the animation immediately. Remove this component in order to pause the animation.
+          .insert(Play);
+}
+```
+
+Here is the result:
+
+![Example result](docs/coin.gif)
+
+For more details see the [documentation](https://docs.rs/benimator)
+
+
+## Installation
+
+Add to `Cargo.toml`:
+
+```toml
+benimator = "0.1.0"
+```
+
+## Bevy Version Compatibility
+
+| bevy | benimator  |
+|------|------------|
+| 0.5  | >= 0.1     |
+
+
+## Contribute / Contact
+
+You can open issues/discussions here, or you can discuss with me (`Jomag#2675`) in
+the [bevy discord](https://discord.com/invite/gMUk5Ph)
