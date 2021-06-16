@@ -66,7 +66,7 @@ For more details see the [documentation](https://docs.rs/benimator)
 Add to `Cargo.toml`:
 
 ```toml
-benimator = "0.1.0"
+benimator = "0.1.1"
 ```
 
 ## Bevy Version Compatibility
