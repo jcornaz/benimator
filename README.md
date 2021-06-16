@@ -58,6 +58,8 @@ Here is the result:
 
 ![Example result](docs/coin.gif)
 
+*(Asset by [La Red Games](https://laredgames.itch.io/gems-coins-free) - CC0)*
+
 For more details see the [documentation](https://docs.rs/benimator)
 
 
