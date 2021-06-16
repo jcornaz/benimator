@@ -2,8 +2,6 @@
 
 ### Features
 
-* sprite-sheet animation
-* Create animaion from index range
+* `SpriteSheetAnimation` component
+* Create animation from index range
 * Run animation once or repeated
-
-

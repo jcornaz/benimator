@@ -1,6 +1,6 @@
-# Heron
+# Benimator
 
-[![License](https://img.shields.io/github/license/jcornaz/benimator)](https://github.com/jcornaz/benimator/blob/main/LICENSE)
+[![License](https://img.shields.io/crates/l/benimator)](https://github.com/jcornaz/benimator/blob/main/LICENSE)
 [![Crates.io](https://img.shields.io/crates/v/benimator)](https://crates.io/crates/benimator)
 [![Docs](https://docs.rs/benimator/badge.svg)](https://docs.rs/benimator)
 [![Bevy tracking](https://img.shields.io/badge/Bevy%20tracking-released%20version-lightblue)](https://github.com/bevyengine/bevy/blob/main/docs/plugins_guidelines.md#main-branch-tracking)
@@ -13,7 +13,8 @@ A sprite sheet animation plugin for [bevy](https://bevyengine.org)
 ## Features
 
 * A `SpriteSheetAnimation` component to automatically update the indices of the `TextureAtlasSprite` in the same entity
-* An animation is playing if, and only if a `Play` component is present in the entity
+* Animation modes: `Repeat` or `Once`
+* An animation is playing if, and only if, a `Play` component is present in the entity
   * Simply remove/insert the `Play` component to pause/resume an animation
 * The animation can be defined from an index-range, or an arbitrary list of indices
 * Each frame may have a different duration
