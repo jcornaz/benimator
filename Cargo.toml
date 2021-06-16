@@ -1,16 +1,13 @@
 [package]
 name = "benimator"
-version = "0.0.0"
+version = "0.0.0" # auto-version
 authors = ["Jonathan Cornaz"]
 edition = "2018"
-
-[profile.dev]
-opt-level = 1
-
-[profile.release]
-lto = true
-panic = 'abort'
-codegen-units = 1
+license = "MIT"
+description = "A sprite sheet animation plugin for Bevy"
+repository = "https://github.com/jcornaz/benimator"
+keywords = ["game", "gamedev", "anmiation", "bevy"]
+categories = ["game-development"]
 
 [dependencies]
 bevy_core = "^0.5.0"

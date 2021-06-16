@@ -1,0 +1,19 @@
+hooks:
+  verify:
+    - cargo test --workspace
+    - cargo doc
+
+  prepare:
+    - "sed -i 's/\".*\" # auto-version/\"{{version}}\" # auto-version/' Cargo.toml"
+    - "sed -i 's/benimator = \".*\"/benimator = \"{{version}}\"/' README.md"
+
+  publish:
+    - cargo publish
+
+commit:
+  files:
+    - Cargo.toml
+    - README.md
+
+github:
+  repo: jcornaz/benimator
