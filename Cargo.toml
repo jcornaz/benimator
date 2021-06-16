@@ -21,4 +21,4 @@ bevy_sprite = "^0.5.0"
 
 [dev-dependencies]
 bevy = { version = "^0.5.0", default-features = false, features = ["render", "bevy_wgpu", "x11", "png"] }
-rstest = "^0.7.0" # Newer versions are incompatible with bevy 0.5
+rstest = "^0.10.0" # Newer versions are incompatible with bevy 0.5
