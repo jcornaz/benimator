@@ -80,5 +80,6 @@ benimator = "0.1.1"
 
 ## Contribute / Contact
 
-You can open issues/discussions here, or you can discuss with me (`Jomag#2675`) in
-the [bevy discord](https://discord.com/invite/gMUk5Ph)
+Issues, pull requests are welcome.
+
+It is possible to directly discuss with me (`Jomag#2675`) via the [bevy discord](https://discord.com/invite/gMUk5Ph) 
