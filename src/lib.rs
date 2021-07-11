@@ -30,7 +30,7 @@
 //! fn spawn() { /* ... */ }
 //! ```
 //!
-//! 2. Create [`SpriteSheetAnimation`] and insert the asset handle to the sprite sheet entity you want to animate
+//! 2. Create a [`SpriteSheetAnimation`] and insert the asset handle to the sprite sheet entity you want to animate
 //!
 //! ```
 //! # use std::time::Duration;
@@ -63,28 +63,23 @@
 //!
 //! ```
 //! # use std::time::Duration;
-//! # use bevy::prelude::*;
 //! # use benimator::*;
-//! # fn spawn(mut commands: Commands, mut animations: ResMut<Assets<SpriteSheetAnimation>>) {
-//! commands
-//!     .spawn_bundle(SpriteSheetBundle { ..Default::default() })
-//!     .insert(animations.add(
-//!         SpriteSheetAnimation::from_range(0..=2, Duration::from_millis(100))
-//!             .once() // <-- Runs the animation only once
-//!     ))
-//!     .insert(Play); // <-- This component will be automatically removed once the animation is finished
-//! # }
+//! SpriteSheetAnimation::from_range(0..=2, Duration::from_millis(100))
+//!      .once(); // <-- Runs the animation only once
 //! ```
+//!
+//! Note that, for animations that run once, the `Play` component is automatically removed when the animation is done.
+//! So you can use the `RemovedComponents<Play>` system parameter to execute logic at the end of the animation.
 //!
 //! ## Play/Pause
 //!
-//! Animations proceed only if the [`Play`] component is in the entity.
+//! Animations proceed only if the [`Play`] component is present in the entity.
 //!
 //! To pause or resume an animation, simply remove/insert the [`Play`] component.
 //!
 //! ## Fine-grained frame-duration
 //!
-//! For more precise configuration, it is possible to define the duration of each frame:
+//! For a more precise configuration, it is possible to define the duration of each frame:
 //!
 //! ```rust
 //! # use benimator::*;
