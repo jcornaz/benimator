@@ -17,11 +17,8 @@ fn main() {
         .init_resource::<Animations>()
         .add_plugins(DefaultPlugins)
         .add_plugin(AnimationPlugin)
-        .add_startup_system(
-            create_animations
-                .system()
-                .chain(spawn_animated_coin.system()),
-        )
+        .add_startup_system_to_stage(StartupStage::PreStartup, create_animations.system())
+        .add_startup_system(spawn_animated_coin.system())
         .add_startup_system(spawn_camera.system())
         .add_system(change_animation.system())
         .run();
@@ -64,10 +61,6 @@ fn spawn_animated_coin(
         .insert(Timer::from_seconds(5.0, true));
 }
 
-fn spawn_camera(mut commands: Commands) {
-    commands.spawn_bundle(OrthographicCameraBundle::new_2d());
-}
-
 fn change_animation(
     time: Res<Time>,
     animations: Res<Animations>,
@@ -82,4 +75,8 @@ fn change_animation(
             }
         }
     }
+}
+
+fn spawn_camera(mut commands: Commands) {
+    commands.spawn_bundle(OrthographicCameraBundle::new_2d());
 }
