@@ -30,24 +30,28 @@
 //! fn spawn() { /* ... */ }
 //! ```
 //!
-//! 2. Insert the [`SpriteSheetAnimation`] component to the sprite sheets you want to animate
+//! 2. Create [`SpriteSheetAnimation`] and insert the asset handle to the sprite sheet entity you want to animate
 //!
 //! ```
 //! # use std::time::Duration;
 //! # use bevy::prelude::*;
 //! # use benimator::*;
 //!
-//! fn spawn(mut commands: Commands) {
+//! fn spawn(mut commands: Commands, mut animations: ResMut<Assets<SpriteSheetAnimation>>) {
+//!
+//!     // Create an animation
+//!     let animation_handle = animations.add(SpriteSheetAnimation::from_range(
+//!         0..=2,                               // Indices of the sprite atlas
+//!         Duration::from_secs_f64(1.0 / 12.0), // Duration of each frame
+//!     ));
+//!     
 //!     commands
 //!         .spawn_bundle(SpriteSheetBundle {
 //!             // TODO: Configure the sprite sheet
 //!             ..Default::default()
 //!         })
-//!         // Insert the animation component
-//!         .insert(SpriteSheetAnimation::from_range(
-//!             0..=2,                               // Indices of the sprite atlas
-//!             Duration::from_secs_f64(1.0 / 12.0), // Duration of each frame
-//!         ))
+//!         // Insert the asset handle of the animation
+//!         .insert(animation_handle)
 //!         // Start the animation immediately
 //!         .insert(Play);
 //! }
@@ -61,13 +65,13 @@
 //! # use std::time::Duration;
 //! # use bevy::prelude::*;
 //! # use benimator::*;
-//! # fn spawn(mut commands: Commands) {
+//! # fn spawn(mut commands: Commands, mut animations: ResMut<Assets<SpriteSheetAnimation>>) {
 //! commands
 //!     .spawn_bundle(SpriteSheetBundle { ..Default::default() })
-//!     .insert(
+//!     .insert(animations.add(
 //!         SpriteSheetAnimation::from_range(0..=2, Duration::from_millis(100))
 //!             .once() // <-- Runs the animation only once
-//!     )
+//!     ))
 //!     .insert(Play); // <-- This component will be automatically removed once the animation is finished
 //! # }
 //! ```

@@ -4,7 +4,7 @@ use std::time::Duration;
 use bevy_ecs::prelude::*;
 use bevy_reflect::{Reflect, TypeUuid};
 
-/// Component to animate the `TextureAtlasSprite` of the same entity
+/// Asset that define an animation of `TextureAtlasSprite`
 ///
 /// See crate level documentation for usage
 #[derive(Debug, Clone, Default, Reflect, TypeUuid)]
