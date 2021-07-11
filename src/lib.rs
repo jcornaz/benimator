@@ -97,6 +97,7 @@
 extern crate rstest;
 
 use bevy_app::prelude::*;
+use bevy_asset::AddAsset;
 use bevy_ecs::prelude::*;
 use bevy_reflect::Reflect;
 
@@ -129,7 +130,7 @@ pub struct Play;
 
 impl Plugin for AnimationPlugin {
     fn build(&self, app: &mut AppBuilder) {
-        app.register_type::<SpriteSheetAnimation>()
+        app.add_asset::<SpriteSheetAnimation>()
             .add_system_set(state::update_systems())
             .add_system_to_stage(CoreStage::PostUpdate, state::post_update_system());
     }

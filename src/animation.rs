@@ -2,13 +2,14 @@ use std::ops::RangeInclusive;
 use std::time::Duration;
 
 use bevy_ecs::prelude::*;
-use bevy_reflect::prelude::*;
+use bevy_reflect::{Reflect, TypeUuid};
 
 /// Component to animate the `TextureAtlasSprite` of the same entity
 ///
 /// See crate level documentation for usage
-#[derive(Debug, Clone, Default, Reflect)]
+#[derive(Debug, Clone, Default, Reflect, TypeUuid)]
 #[reflect(Component)]
+#[uuid = "6378e9c2-ecd1-4029-9cd5-801caf68517c"]
 pub struct SpriteSheetAnimation {
     /// Frames
     pub frames: Vec<Frame>,

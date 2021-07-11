@@ -7,6 +7,7 @@ use bevy::prelude::*;
 use bevy_core::CorePlugin;
 
 use benimator::*;
+use bevy::asset::AssetPlugin;
 
 #[rstest]
 fn repeated(mut app: App) {
@@ -77,7 +78,10 @@ fn run_once(mut app: App) {
 fn app() -> App {
     let mut builder = App::build();
 
-    builder.add_plugin(CorePlugin).add_plugin(AnimationPlugin);
+    builder
+        .add_plugin(CorePlugin)
+        .add_plugin(AssetPlugin)
+        .add_plugin(AnimationPlugin);
 
     builder.app
 }
