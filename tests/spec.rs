@@ -3,22 +3,27 @@ extern crate rstest;
 
 use std::time::Duration;
 
+use bevy::asset::AssetPlugin;
 use bevy::prelude::*;
 use bevy_core::CorePlugin;
 
 use benimator::*;
-use bevy::asset::AssetPlugin;
 
 #[rstest]
 fn repeated(mut app: App) {
+    let animation = app
+        .world
+        .get_resource_mut::<Assets<SpriteSheetAnimation>>()
+        .unwrap()
+        .add(SpriteSheetAnimation::from_range(
+            0..=2,
+            Duration::from_nanos(0),
+        ));
+
     let entity = app
         .world
         .spawn()
-        .insert_bundle((
-            TextureAtlasSprite::new(0),
-            SpriteSheetAnimation::from_range(0..=2, Duration::from_nanos(0)),
-            Play,
-        ))
+        .insert_bundle((TextureAtlasSprite::new(0), animation, Play))
         .id();
 
     app.update();
@@ -42,14 +47,16 @@ fn repeated(mut app: App) {
 
 #[rstest]
 fn run_once(mut app: App) {
+    let animation = app
+        .world
+        .get_resource_mut::<Assets<SpriteSheetAnimation>>()
+        .unwrap()
+        .add(SpriteSheetAnimation::from_range(0..=2, Duration::from_nanos(0)).once());
+
     let entity = app
         .world
         .spawn()
-        .insert_bundle((
-            TextureAtlasSprite::new(0),
-            SpriteSheetAnimation::from_range(0..=2, Duration::from_nanos(0)).once(),
-            Play,
-        ))
+        .insert_bundle((TextureAtlasSprite::new(0), animation, Play))
         .id();
 
     app.update();

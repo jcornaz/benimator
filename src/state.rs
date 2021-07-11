@@ -1,6 +1,7 @@
 use std::ops::DerefMut;
 use std::time::Duration;
 
+use bevy_asset::{Assets, Handle};
 use bevy_core::prelude::*;
 use bevy_ecs::prelude::*;
 use bevy_sprite::prelude::*;
@@ -64,7 +65,7 @@ fn insert(
         '_,
         Entity,
         (
-            With<SpriteSheetAnimation>,
+            With<Handle<SpriteSheetAnimation>>,
             Without<SpriteSheetAnimationState>,
         ),
     >,
@@ -76,8 +77,11 @@ fn insert(
     }
 }
 
-fn remove(mut commands: Commands<'_>, query: RemovedComponents<'_, SpriteSheetAnimation>) {
-    for entity in query.iter() {
+fn remove(
+    mut commands: Commands<'_>,
+    removed: RemovedComponents<'_, Handle<SpriteSheetAnimation>>,
+) {
+    for entity in removed.iter() {
         commands
             .entity(entity)
             .remove::<SpriteSheetAnimationState>();
@@ -87,20 +91,27 @@ fn remove(mut commands: Commands<'_>, query: RemovedComponents<'_, SpriteSheetAn
 fn animate(
     mut commands: Commands<'_>,
     time: Res<'_, Time>,
+    animation_defs: Res<'_, Assets<SpriteSheetAnimation>>,
     mut animations: Query<
         '_,
         (
             Entity,
             &mut TextureAtlasSprite,
-            &SpriteSheetAnimation,
+            &Handle<SpriteSheetAnimation>,
             &mut SpriteSheetAnimationState,
         ),
         With<Play>,
     >,
 ) {
-    for (entity, sprite, animation, mut state) in animations
-        .iter_mut()
-        .filter(|(_, _, anim, _)| anim.has_frames())
+    for (entity, sprite, animation, mut state) in
+        animations
+            .iter_mut()
+            .filter_map(|(entity, sprite, anim_handle, state)| {
+                animation_defs
+                    .get(anim_handle)
+                    .filter(|anim| anim.has_frames())
+                    .map(|anim| (entity, sprite, anim, state))
+            })
     {
         if state.update(sprite, animation, time.delta()) {
             commands.entity(entity).remove::<Play>();
