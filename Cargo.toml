@@ -9,12 +9,18 @@ repository = "https://github.com/jcornaz/benimator"
 keywords = ["game", "gamedev", "anmiation", "bevy"]
 categories = ["game-development"]
 
+[features]
+default = ["warnings"]
+warnings = ["bevy_log"]
+
 [dependencies]
-bevy_core = "^0.5.0"
-bevy_ecs = "^0.5.0"
-bevy_app = "^0.5.0"
-bevy_reflect = "^0.5.0"
-bevy_sprite = "^0.5.0"
+bevy_core = { version = "^0.5.0", default-features = false }
+bevy_ecs = { version = "^0.5.0", default-features = false }
+bevy_app = { version = "^0.5.0", default-features = false }
+bevy_reflect = { version = "^0.5.0", default-features = false }
+bevy_sprite = { version = "^0.5.0", default-features = false }
+bevy_asset = { version = "^0.5.0", default-features = false }
+bevy_log = { version = "^0.5.0", default-features = false, optional = true }
 
 [dev-dependencies]
 bevy = { version = "^0.5.0", default-features = false, features = ["render", "bevy_wgpu", "x11", "png"] }

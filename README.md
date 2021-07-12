@@ -35,9 +35,17 @@ fn spawn(
   mut commands: Commands,
   asset_server: Res<AssetServer>,
   mut textures: ResMut<Assets<TextureAtlas>>,
+  mut animations: ResMut<Assets<SpriteSheetAnimation>>,
 ) {
   // Don't forget the camera ;-)
   commands.spawn_bundle(OrthographicCameraBundle::new_2d());
+
+  // Create an animation
+  // Here we use an index-range (from 0 to 4) where each frame has the same duration
+  let animation_handle = animations.add(SpriteSheetAnimation::from_range(
+    0..=4,
+    Duration::from_millis(100),
+  ));
 
   commands
           // Spawn a bevy sprite-sheet
@@ -46,9 +54,8 @@ fn spawn(
             transform: Transform::from_scale(Vec3::splat(10.0)),
             ..Default::default()
           })
-          // Insert the animation component
-          // Here we use an index-range (from 0 to 4) where each frame has the same duration
-          .insert(SpriteSheetAnimation::from_range(0..=4, Duration::from_millis(100)))
+          // Insert the asset handle of the animation
+          .insert(animation_handle)
           // Start the animation immediately. Remove this component in order to pause the animation.
           .insert(Play);
 }
@@ -70,6 +77,10 @@ Add to `Cargo.toml`:
 ```toml
 benimator = "0.2.0"
 ```
+
+## Cargo features
+
+* `warnings` (enabled by default). Log warnings in case of incorrect usage detected.
 
 ## Bevy Version Compatibility
 

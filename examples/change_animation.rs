@@ -1,31 +1,50 @@
+use core::ops::Deref;
 use std::time::Duration;
 
 use bevy::prelude::*;
 
 use benimator::*;
 
-static FAST: Duration = Duration::from_millis(100);
-static SLOW: Duration = Duration::from_millis(250);
+// Create a resource to store handles of the animations
+#[derive(Default)]
+struct Animations {
+    slow: Handle<SpriteSheetAnimation>,
+    fast: Handle<SpriteSheetAnimation>,
+}
 
 fn main() {
     App::build()
+        .init_resource::<Animations>()
         .add_plugins(DefaultPlugins)
-        .add_plugin(AnimationPlugin) // <-- Add the plugin
-        .add_startup_system(spawn.system())
-        .add_system(animation.system())
+        .add_plugin(AnimationPlugin)
+        .add_startup_system_to_stage(StartupStage::PreStartup, create_animations.system())
+        .add_startup_system(spawn_animated_coin.system())
+        .add_startup_system(spawn_camera.system())
+        .add_system(change_animation.system())
         .run();
 }
 
-fn spawn(
+fn create_animations(
+    mut handles: ResMut<Animations>,
+    mut assets: ResMut<Assets<SpriteSheetAnimation>>,
+) {
+    handles.fast = assets.add(SpriteSheetAnimation::from_range(
+        0..=4,
+        Duration::from_millis(100),
+    ));
+    handles.slow = assets.add(SpriteSheetAnimation::from_range(
+        0..=4,
+        Duration::from_millis(250),
+    ));
+}
+
+fn spawn_animated_coin(
     mut commands: Commands,
     asset_server: Res<AssetServer>,
     mut textures: ResMut<Assets<TextureAtlas>>,
+    animations: Res<Animations>,
 ) {
-    // Don't forget the camera ;-)
-    commands.spawn_bundle(OrthographicCameraBundle::new_2d());
-
     commands
-        // Spawn a bevy sprite-sheet
         .spawn_bundle(SpriteSheetBundle {
             texture_atlas: textures.add(TextureAtlas::from_grid(
                 asset_server.load("coin.png"),
@@ -36,38 +55,28 @@ fn spawn(
             transform: Transform::from_scale(Vec3::splat(10.0)),
             ..Default::default()
         })
-        // Insert the animation component
-        // Here we use an index-range (from 0 to 4) where each frame has the same duration
-        .insert(SpriteSheetAnimation::from_range(0..=4, FAST))
-        // Start the animation immediately. Remove this component in order to pause the animation.
+        .insert(animations.fast.clone())
         .insert(Play)
-        // Add component and timer to query
-        .insert(Animation::Fast)
+        // Add timer, counting down the time before the animation is changed
         .insert(Timer::from_seconds(5.0, true));
 }
 
-enum Animation {
-    Fast,
-    Slow,
-}
-
-fn animation(
+fn change_animation(
     time: Res<Time>,
-    mut query: Query<(&mut Timer, &mut Animation, &mut SpriteSheetAnimation)>,
+    animations: Res<Animations>,
+    mut query: Query<(&mut Timer, &mut Handle<SpriteSheetAnimation>)>,
 ) {
-    if let Ok((mut timer, mut animation, mut sprite_sheet_animation)) = query.single_mut() {
-        timer.tick(time.delta());
-        if timer.finished() {
-            match *animation {
-                Animation::Fast => {
-                    *animation = Animation::Slow;
-                    *sprite_sheet_animation = SpriteSheetAnimation::from_range(0..=4, SLOW);
-                }
-                Animation::Slow => {
-                    *animation = Animation::Fast;
-                    *sprite_sheet_animation = SpriteSheetAnimation::from_range(0..=4, FAST);
-                }
+    if let Ok((mut timer, mut animation)) = query.single_mut() {
+        if timer.tick(time.delta()).finished() {
+            if animation.deref() == &animations.fast {
+                *animation = animations.slow.clone();
+            } else {
+                *animation = animations.fast.clone();
             }
         }
     }
+}
+
+fn spawn_camera(mut commands: Commands) {
+    commands.spawn_bundle(OrthographicCameraBundle::new_2d());
 }
