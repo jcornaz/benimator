@@ -105,6 +105,9 @@ pub use animation::{AnimationMode, Frame, SpriteSheetAnimation};
 mod animation;
 mod state;
 
+#[cfg(feature = "warnings")]
+mod warnings;
+
 /// Plugin to enable sprite-sheet animation
 ///
 /// See crate level documentation for usage
@@ -132,5 +135,8 @@ impl Plugin for AnimationPlugin {
         app.add_asset::<SpriteSheetAnimation>()
             .add_system_set(state::update_systems())
             .add_system_to_stage(CoreStage::PostUpdate, state::post_update_system());
+
+        #[cfg(feature = "warnings")]
+        app.add_system_set(warnings::systems());
     }
 }

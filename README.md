@@ -78,6 +78,10 @@ Add to `Cargo.toml`:
 benimator = "0.1.1"
 ```
 
+## Cargo features
+
+* `warnings` (enabled by default). Log warnings in case of incorrect usage detected.
+
 ## Bevy Version Compatibility
 
 | bevy | benimator  |
