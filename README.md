@@ -1,6 +1,6 @@
 # Benimator
 
-[![License](https://img.shields.io/crates/l/benimator)](https://github.com/jcornaz/benimator/blob/main/LICENSE)
+[![License](https://img.shields.io/badge/license-Unlicense%20OR%20MIT-green)](#License)
 [![Crates.io](https://img.shields.io/crates/v/benimator)](https://crates.io/crates/benimator)
 [![Docs](https://docs.rs/benimator/badge.svg)](https://docs.rs/benimator)
 [![Bevy tracking](https://img.shields.io/badge/Bevy%20tracking-released%20version-lightblue)](https://github.com/bevyengine/bevy/blob/main/docs/plugins_guidelines.md#main-branch-tracking)
@@ -94,3 +94,12 @@ benimator = "0.2.0"
 Issues, pull requests are welcome.
 
 It is possible to directly discuss with me (`Jomag#2675`) via the [bevy discord](https://discord.com/invite/gMUk5Ph) 
+
+## License
+
+Licensed under either of
+
+* The Unlicense ([UNLICENSE](UNLICENSE) or https://opensource.org/licenses/Unlicense)
+* MIT License ([LICENSE-MIT](LICENSE-MIT) or http://opensource.org/licenses/MIT)
+
+at your option.
