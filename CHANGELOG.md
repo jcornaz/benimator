@@ -1,3 +1,16 @@
+## 0.3.0 - 2021-07-19
+
+### Breaking changes
+
+* The SpriteSheetAnimation is now an asset (#4)
+
+
+### Features
+
+* The SpriteSheetAnimation is now an asset (#4)
+
+
+
 ## 0.2.0 - 2021-07-12
 
 ### Breaking changes
