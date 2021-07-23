@@ -45,6 +45,7 @@ impl SpriteSheetAnimationState {
             } else if matches!(animation.mode, AnimationMode::Repeat) {
                 self.current_frame = 0;
             } else {
+                self.current_frame = 0;
                 return true;
             }
 
