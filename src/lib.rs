@@ -81,7 +81,7 @@
 //!
 //! For a more precise configuration, it is possible to define the duration of each frame:
 //!
-//! ```rust
+//! ```
 //! # use benimator::*;
 //! # use std::time::Duration;
 //! SpriteSheetAnimation::from_frames(vec![
@@ -91,6 +91,22 @@
 //! ]);
 //! ```
 //!
+//! ## Reset animation
+//!
+//! For each entity with a [`SpriteSheetAnimation`], a [`SpriteSheetAnimationState`] component is automatically inserted.
+//! It can be used to reset the animation state by calling [`SpriteSheetAnimationState::reset`]
+//!
+//! ```
+//! # use bevy::prelude::*;
+//! # use benimator::SpriteSheetAnimationState;
+//!
+//! fn restart_anim_from_start(mut query: Query<&mut SpriteSheetAnimationState>) {
+//!   for mut state in query.iter_mut() {
+//!     state.reset();
+//!   }
+//! }
+//! ```
+
 #[cfg(test)]
 #[macro_use]
 extern crate rstest;
@@ -101,6 +117,7 @@ use bevy_ecs::prelude::*;
 use bevy_reflect::Reflect;
 
 pub use animation::{AnimationMode, Frame, SpriteSheetAnimation};
+pub use state::SpriteSheetAnimationState;
 
 mod animation;
 mod state;

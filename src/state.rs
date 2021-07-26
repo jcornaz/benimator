@@ -18,13 +18,36 @@ pub(crate) fn post_update_system() -> impl System<In = (), Out = ()> {
     animate.system()
 }
 
+/// Animation state component which is automatically inserted/removed
+///
+/// It can be used to reset the animation state.
+///
+/// # Example
+///
+/// ```
+/// # use bevy::prelude::*;
+/// # use benimator::SpriteSheetAnimationState;
+///
+/// fn restart_anim_from_start(mut query: Query<&mut SpriteSheetAnimationState>) {
+///   for mut state in query.iter_mut() {
+///     state.reset();
+///   }
+/// }
+/// ```
 #[derive(Default)]
-struct SpriteSheetAnimationState {
+pub struct SpriteSheetAnimationState {
     current_frame: usize,
     elapsed_in_frame: Duration,
 }
 
 impl SpriteSheetAnimationState {
+    /// Reset animation state
+    ///
+    /// The animation will restart from the first frame, like if the animation was freshly spawned.
+    pub fn reset(&mut self) {
+        *self = Self::default();
+    }
+
     /// Update the animation and the sprite (if necessary)
     ///
     /// Returns true if the animation has ended
@@ -45,8 +68,7 @@ impl SpriteSheetAnimationState {
             } else if matches!(animation.mode, AnimationMode::Repeat) {
                 self.current_frame = 0;
             } else {
-                self.current_frame = 0;
-                self.elapsed_in_frame = Duration::ZERO;
+                self.reset();
                 return true;
             }
 
@@ -143,6 +165,30 @@ mod tests {
     #[fixture]
     fn smaller_duration(frame_duration: Duration) -> Duration {
         frame_duration - Duration::from_millis(1)
+    }
+
+    mod reset {
+        use super::*;
+
+        #[fixture]
+        fn state() -> SpriteSheetAnimationState {
+            SpriteSheetAnimationState {
+                current_frame: 1,
+                elapsed_in_frame: Duration::from_secs(1),
+            }
+        }
+
+        #[rstest]
+        fn resets_current_frame(mut state: SpriteSheetAnimationState) {
+            state.reset();
+            assert_eq!(state.current_frame, 0);
+        }
+
+        #[rstest]
+        fn resets_elapsed_time(mut state: SpriteSheetAnimationState) {
+            state.reset();
+            assert_eq!(state.elapsed_in_frame, Duration::ZERO);
+        }
     }
 
     mod on_first_frame {
