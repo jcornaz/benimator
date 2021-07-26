@@ -45,6 +45,8 @@ impl SpriteSheetAnimationState {
             } else if matches!(animation.mode, AnimationMode::Repeat) {
                 self.current_frame = 0;
             } else {
+                self.current_frame = 0;
+                self.elapsed_in_frame = Duration::ZERO;
                 return true;
             }
 
@@ -369,6 +371,19 @@ mod tests {
                 frame_duration: Duration,
             ) {
                 assert!(state.update(&mut sprite_at_second_frame, &animation, frame_duration))
+            }
+
+            #[rstest]
+            fn returns_to_initial_state(
+                mut state: SpriteSheetAnimationState,
+                mut sprite_at_second_frame: TextureAtlasSprite,
+                animation: SpriteSheetAnimation,
+                frame_duration: Duration,
+            ) {
+                state.update(&mut sprite_at_second_frame, &animation, frame_duration);
+                let expected_state = SpriteSheetAnimationState::default();
+                assert_eq!(state.current_frame, expected_state.current_frame);
+                assert_eq!(state.elapsed_in_frame, expected_state.elapsed_in_frame);
             }
         }
     }
