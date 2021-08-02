@@ -1,3 +1,16 @@
+## 0.3.1 - 2021-08-02
+
+### Features
+
+* Allow to reset animation (#8)
+
+
+### Bug fixes
+
+* impossiblity to restart an animation ran with 'Once' mode (#7)
+
+
+
 ## 0.3.0 - 2021-07-19
 
 ### Breaking changes

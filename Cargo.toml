@@ -1,6 +1,6 @@
 [package]
 name = "benimator"
-version = "0.3.0" # auto-version
+version = "0.3.1" # auto-version
 authors = ["Jonathan Cornaz"]
 edition = "2018"
 license = "Unlicense OR MIT"

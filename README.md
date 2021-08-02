@@ -75,7 +75,7 @@ For more details see the [documentation](https://docs.rs/benimator)
 Add to `Cargo.toml`:
 
 ```toml
-benimator = "0.3.0"
+benimator = "0.3.1"
 ```
 
 ## Cargo features
