@@ -1,4 +1,17 @@
-## 0.3.1 - 2021-08-02
+# Changelog
+
+All notable changes to this project are documented in this file.
+
+The format is inspired from [Keep a Changelog], and this project adheres to [Semantic Versioning].
+
+[Keep a Changelog]: https://keepachangelog.com/en/1.1.0
+
+[Semantic Versioning]: https://semver.org/spec/v2.0.0.html
+
+## [Unreleased]
+
+
+## [0.3.1] - 2021-08-02
 
 ### Features
 
@@ -11,7 +24,7 @@
 
 
 
-## 0.3.0 - 2021-07-19
+## [0.3.0] - 2021-07-19
 
 ### Breaking changes
 
@@ -24,7 +37,7 @@
 
 
 
-## 0.2.0 - 2021-07-12
+## [0.2.0] - 2021-07-12
 
 ### Breaking changes
 
@@ -34,8 +47,7 @@ post-update phase
 
 
 
-
-## 0.1.1 - 2021-06-16
+## [0.1.1] - 2021-06-16
 
 ### Bug fixes
 
@@ -43,10 +55,18 @@ post-update phase
 
 
 
-## 0.1.0 - 2021-06-16
+## [0.1.0] - 2021-06-16
 
 ### Features
 
 * `SpriteSheetAnimation` component
 * Create animation from index range
 * Run animation once or repeated
+
+
+[Unreleased]: ../../compare/v0.3.1...HEAD
+[0.3.1]: ../../compare/v0.3.0...v0.3.1
+[0.3.0]: ../../compare/v0.2.0...v0.3.0
+[0.2.0]: ../../compare/v0.1.1...v0.2.0
+[0.1.1]: ../../compare/v0.1.0...v0.1.1
+[0.1.0]: ../../compare/...v0.1.0
