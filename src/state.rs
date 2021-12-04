@@ -8,7 +8,7 @@ use bevy_sprite::prelude::*;
 
 use crate::{AnimationMode, Play, SpriteSheetAnimation};
 
-pub(crate) fn update_systems() -> SystemSet {
+pub(crate) fn maintenance_systems() -> SystemSet {
     SystemSet::new()
         .with_system(insert.system())
         .with_system(remove.system())
