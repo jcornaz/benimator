@@ -83,12 +83,11 @@ fn run_once(mut app: App) {
 
 #[fixture]
 fn app() -> App {
-    let mut builder = App::build();
+    let mut app = App::new();
 
-    builder
-        .add_plugin(CorePlugin)
+    app.add_plugin(CorePlugin)
         .add_plugin(AssetPlugin)
         .add_plugin(AnimationPlugin);
 
-    builder.app
+    app
 }

@@ -34,7 +34,7 @@ pub(crate) fn post_update_system() -> impl System<In = (), Out = ()> {
 ///   }
 /// }
 /// ```
-#[derive(Default)]
+#[derive(Default, Component)]
 pub struct SpriteSheetAnimationState {
     current_frame: usize,
     elapsed_in_frame: Duration,
@@ -84,8 +84,9 @@ impl SpriteSheetAnimationState {
 }
 
 fn insert(
-    mut commands: Commands<'_>,
+    mut commands: Commands<'_, '_>,
     query: Query<
+        '_,
         '_,
         Entity,
         (
@@ -102,7 +103,7 @@ fn insert(
 }
 
 fn remove(
-    mut commands: Commands<'_>,
+    mut commands: Commands<'_, '_>,
     removed: RemovedComponents<'_, Handle<SpriteSheetAnimation>>,
 ) {
     for entity in removed.iter() {
@@ -113,10 +114,11 @@ fn remove(
 }
 
 fn animate(
-    mut commands: Commands<'_>,
+    mut commands: Commands<'_, '_>,
     time: Res<'_, Time>,
     animation_defs: Res<'_, Assets<SpriteSheetAnimation>>,
     mut animations: Query<
+        '_,
         '_,
         (
             Entity,

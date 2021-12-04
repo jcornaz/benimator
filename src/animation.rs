@@ -1,14 +1,12 @@
 use std::ops::RangeInclusive;
 use std::time::Duration;
 
-use bevy_ecs::prelude::*;
 use bevy_reflect::{Reflect, TypeUuid};
 
 /// Asset that define an animation of `TextureAtlasSprite`
 ///
 /// See crate level documentation for usage
 #[derive(Debug, Clone, Default, Reflect, TypeUuid)]
-#[reflect(Component)]
 #[uuid = "6378e9c2-ecd1-4029-9cd5-801caf68517c"]
 pub struct SpriteSheetAnimation {
     /// Frames
@@ -31,7 +29,7 @@ pub enum AnimationMode {
 #[derive(Debug, Copy, Clone, Default, Reflect)]
 pub struct Frame {
     /// Index in the sprite atlas
-    pub index: u32,
+    pub index: usize,
     /// How long should the frame be displayed
     pub duration: Duration,
 }
@@ -50,7 +48,7 @@ impl SpriteSheetAnimation {
     ///
     /// For more granular configuration, see [`from_frames`](SpriteSheetAnimation::from_frames)
     #[must_use]
-    pub fn from_range(index_range: RangeInclusive<u32>, frame_duration: Duration) -> Self {
+    pub fn from_range(index_range: RangeInclusive<usize>, frame_duration: Duration) -> Self {
         Self::from_frames(
             index_range
                 .map(|index| Frame::new(index, frame_duration))
@@ -88,7 +86,7 @@ impl Frame {
     /// Create a new animation frame
     #[inline]
     #[must_use]
-    pub fn new(index: u32, duration: Duration) -> Self {
+    pub fn new(index: usize, duration: Duration) -> Self {
         Self { index, duration }
     }
 }

@@ -10,19 +10,14 @@ repository = "https://github.com/jcornaz/benimator"
 keywords = ["game", "gamedev", "anmiation", "bevy"]
 categories = ["game-development"]
 
-[features]
-default = ["warnings"]
-warnings = ["bevy_log"]
-
 [dependencies]
-bevy_core = { version = "^0.5.0", default-features = false }
-bevy_ecs = { version = "^0.5.0", default-features = false }
-bevy_app = { version = "^0.5.0", default-features = false }
-bevy_reflect = { version = "^0.5.0", default-features = false }
-bevy_sprite = { version = "^0.5.0", default-features = false }
-bevy_asset = { version = "^0.5.0", default-features = false }
-bevy_log = { version = "^0.5.0", default-features = false, optional = true }
+bevy_core = { git = "https://github.com/bevyengine/bevy.git", branch = "main", default-features = false }
+bevy_ecs = { git = "https://github.com/bevyengine/bevy.git", branch = "main", default-features = false }
+bevy_app = { git = "https://github.com/bevyengine/bevy.git", branch = "main", default-features = false }
+bevy_reflect = { git = "https://github.com/bevyengine/bevy.git", branch = "main", default-features = false }
+bevy_sprite = { git = "https://github.com/bevyengine/bevy.git", branch = "main", default-features = false }
+bevy_asset = { git = "https://github.com/bevyengine/bevy.git", branch = "main", default-features = false }
 
 [dev-dependencies]
-bevy = { version = "^0.5.0", default-features = false, features = ["render", "bevy_wgpu", "x11", "png"] }
-rstest = "^0.7.0" # Newer versions are incompatible with bevy 0.5
+bevy = { git = "https://github.com/bevyengine/bevy.git", branch = "main", default-features = false, features = ["render", "x11", "png"] }
+rstest = "0.11.0"

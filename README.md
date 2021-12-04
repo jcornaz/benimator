@@ -25,7 +25,7 @@ A sprite sheet animation plugin for [bevy](https://bevyengine.org)
 
 ```rust
 fn main() {
-  App::build()
+  App::new()
           .add_plugins(DefaultPlugins)
           .add_plugin(AnimationPlugin) // <-- Add the plugin
           .add_startup_system(spawn.system())
