@@ -12,7 +12,7 @@ The format is inspired from [Keep a Changelog], and this project adheres to [Sem
 
 ### Breaking changes
 
-* The minimum supported rust version is now `1.56`
+* The minimum supported rust version is now `1.57`
 
 
 ## [0.3.1] - 2021-08-02
