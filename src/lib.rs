@@ -150,8 +150,8 @@ pub struct Play;
 impl Plugin for AnimationPlugin {
     fn build(&self, app: &mut AppBuilder) {
         app.add_asset::<SpriteSheetAnimation>()
-            .add_system_set(state::update_systems())
-            .add_system_to_stage(CoreStage::PostUpdate, state::post_update_system());
+            .add_system_set_to_stage(CoreStage::PreUpdate, state::maintenance_systems())
+            .add_system_to_stage(CoreStage::Update, state::post_update_system());
 
         #[cfg(feature = "warnings")]
         app.add_system_set(warnings::systems());

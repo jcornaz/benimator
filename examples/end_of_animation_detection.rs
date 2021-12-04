@@ -10,7 +10,7 @@ fn main() {
         .add_plugin(AnimationPlugin)
         .add_startup_system(spawn_animated_coin.system())
         .add_startup_system(spawn_camera.system())
-        .add_system_to_stage(CoreStage::Last, removal_detection.system())
+        .add_system_to_stage(CoreStage::PostUpdate, removal_detection.system())
         .run();
 }
 
