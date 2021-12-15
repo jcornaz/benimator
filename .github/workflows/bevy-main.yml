@@ -1,12 +1,12 @@
-name: Look ahead
+name: bevy-main
 
 on:
   schedule:
-    - cron: '0 0 */2 * *'
+    - cron: '0 0 * * *'
 
   pull_request:
     paths:
-      - '.github/workflows/look-ahead.yml'
+      - '.github/workflows/bevy-main.yml'
 
 jobs:
   bevy-main:
@@ -23,23 +23,6 @@ jobs:
         uses: actions-rs/toolchain@v1
         with:
           toolchain: stable
-          override: true
-          profile: minimal
-
-      - run: cargo test --all-features
-
-  rust-nightly:
-    runs-on: ubuntu-latest
-    timeout-minutes: 20
-
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v2
-
-      - name: Install rust toolchain
-        uses: actions-rs/toolchain@v1
-        with:
-          toolchain: nightly
           override: true
           profile: minimal
 

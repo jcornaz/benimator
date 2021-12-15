@@ -1,4 +1,4 @@
-name: Post release
+name: post-release
 
 on:
   push:
