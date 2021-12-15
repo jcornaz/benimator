@@ -17,94 +17,67 @@ jobs:
   test:
     runs-on: ubuntu-latest
     timeout-minutes: 20
-
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v2
-
-      - name: Install rust toolchain
-        uses: actions-rs/toolchain@v1
+      - uses: actions/checkout@v2
+      - uses: actions-rs/toolchain@v1
         with:
           toolchain: ${{ env.RUST_VERSION }}
           override: true
           profile: minimal
-
       - run: cargo update
-
-      - name: Cache
-        uses: actions/cache@v2
+      - uses: actions/cache@v2
         with:
           path: |
             ~/.cargo
             ./target
           key: test-${{ env.RUST_VERSION }}-${{ hashFiles('Cargo.lock') }}-${{ hashFiles('**/*.rs') }}
           restore-keys: test-${{ env.RUST_VERSION }}-${{ hashFiles('Cargo.lock') }}
-
       - run: cargo test --no-default-features
       - run: cargo test --no-default-features -- --ignored
-
       - run: cargo test --no-default-features --features warnings
       - run: cargo test --no-default-features --features warnings -- --ignored
-
       - run: cargo test
       - run: cargo test -- --ignored
-
       - run: cargo test --all-features
       - run: cargo test --all-features -- --ignored
 
   code-style:
     runs-on: ubuntu-latest
     timeout-minutes: 20
-
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v2
-
-      - name: Install rust toolchain
-        uses: actions-rs/toolchain@v1
+      - uses: actions/checkout@v2
+      - uses: actions-rs/toolchain@v1
         with:
           toolchain: ${{ env.RUST_VERSION }}
           override: true
           components: clippy, rustfmt
-
       - run: cargo update
-
-      - name: Cache
-        uses: actions/cache@v2
+      - uses: actions/cache@v2
         with:
           path: |
             ~/.cargo
             ./target
           key: style-${{ env.RUST_VERSION }}-${{ hashFiles('Cargo.lock') }}-${{ hashFiles('**/*.rs') }}
           restore-keys: style-${{ env.RUST_VERSION }}-${{ hashFiles('Cargo.lock') }}
-
       - run: cargo fmt -- --check
       - run: cargo clippy --all-features
 
   documentation:
     runs-on: ubuntu-latest
     timeout-minutes: 20
-
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v2
-
-      - name: Install rust toolchain
-        uses: actions-rs/toolchain@v1
+      - uses: actions/checkout@v2
+      - uses: actions-rs/toolchain@v1
         with:
           toolchain: ${{ env.RUST_VERSION }}
           override: true
           profile: minimal
-
       - run: cargo update
-
-      - name: Cache
-        uses: actions/cache@v2
+      - uses: actions/cache@v2
         with:
           path: |
             ~/.cargo
             ./target
           key: doc-${{ env.RUST_VERSION }}-${{ hashFiles('Cargo.lock') }}-${{ hashFiles('**/*.rs') }}
           restore-keys: doc-${{ env.RUST_VERSION }}-${{ hashFiles('Cargo.lock') }}
-
       - run: cargo doc --all-features

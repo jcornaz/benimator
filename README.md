@@ -8,6 +8,7 @@
 [![Build](https://img.shields.io/github/workflow/status/jcornaz/benimator/build)](https://github.com/jcornaz/benimator/actions/workflows/build.yml)
 [![Rust nightly](https://img.shields.io/github/workflow/status/jcornaz/benimator/rust-nightly?label=rust-nightly)](https://github.com/jcornaz/benimator/actions/workflows/rust-nightly.yml)
 [![Bevy main](https://img.shields.io/github/workflow/status/jcornaz/benimator/bevy-main?label=bevy-main)](https://github.com/jcornaz/benimator/actions/workflows/bevy-main.yml)
+[![Audit](https://img.shields.io/github/workflow/status/jcornaz/benimator/audit?label=audit)](https://github.com/jcornaz/benimator/actions/workflows/audit.yml)
 
 A sprite sheet animation plugin for [bevy](https://bevyengine.org)
 
