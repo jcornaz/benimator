@@ -1,4 +1,4 @@
-name: Build
+name: build
 
 on:
   push:
@@ -9,40 +9,36 @@ on:
     branches:
       - '*'
 
+env:
+  RUST_VERSION: 1.57.0
+  RUSTFLAGS: "-D warnings"
+
 jobs:
   test:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
-    env:
-      RUSTFLAGS: "-D warnings"
-
-    strategy:
-      matrix:
-        rust:
-          - '1.57.0'
+    timeout-minutes: 20
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v2.4.0
+        uses: actions/checkout@v2
+
+      - name: Install rust toolchain
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: ${{ env.RUST_VERSION }}
+          override: true
+          profile: minimal
+
+      - run: cargo update
 
       - name: Cache
         uses: actions/cache@v2
         with:
           path: |
-            ~/.rustup
             ~/.cargo
             ./target
-          key: build-${{ matrix.rust }}-${{ hashFiles('**/Cargo.toml') }}-${{ hashFiles('**/*.rs') }}
-          restore-keys: |
-            build-${{ matrix.rust }}-${{ hashFiles('**/Cargo.toml') }}-
-            build-${{ matrix.rust }}-
-
-      - name: Install rust toolchain
-        uses: actions-rs/toolchain@v1.0.7
-        with:
-          toolchain: ${{ matrix.rust }}
-          override: true
-          profile: minimal
+          key: test-${{ env.RUST_VERSION }}-${{ hashFiles('Cargo.lock') }}-${{ hashFiles('**/*.rs') }}
+          restore-keys: test-${{ env.RUST_VERSION }}-${{ hashFiles('Cargo.lock') }}
 
       - run: cargo test --no-default-features
       - run: cargo test --no-default-features -- --ignored
@@ -58,59 +54,57 @@ jobs:
 
   code-style:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
-    env:
-      RUSTFLAGS: "-D warnings"
+    timeout-minutes: 20
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v2.4.0
+        uses: actions/checkout@v2
+
+      - name: Install rust toolchain
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: ${{ env.RUST_VERSION }}
+          override: true
+          components: clippy, rustfmt
+
+      - run: cargo update
 
       - name: Cache
         uses: actions/cache@v2
         with:
           path: |
-            ~/.rustup
             ~/.cargo
             ./target
-          key: code-style-${{ hashFiles('**/Cargo.toml') }}-${{ hashFiles('**/*.rs') }}
-          restore-keys: code-style-${{ hashFiles('**/Cargo.toml') }}-
-
-      - name: Install rust toolchain
-        uses: actions-rs/toolchain@v1.0.7
-        with:
-          toolchain: '1.57.0'
-          override: true
-          components: clippy, rustfmt
+          key: style-${{ env.RUST_VERSION }}-${{ hashFiles('Cargo.lock') }}-${{ hashFiles('**/*.rs') }}
+          restore-keys: style-${{ env.RUST_VERSION }}-${{ hashFiles('Cargo.lock') }}
 
       - run: cargo fmt -- --check
       - run: cargo clippy --all-features
 
   documentation:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
-    env:
-      RUSTFLAGS: "-D warnings"
+    timeout-minutes: 20
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v2.4.0
+        uses: actions/checkout@v2
+
+      - name: Install rust toolchain
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: ${{ env.RUST_VERSION }}
+          override: true
+          profile: minimal
+
+      - run: cargo update
 
       - name: Cache
         uses: actions/cache@v2
         with:
           path: |
-            ~/.rustup
             ~/.cargo
             ./target
-          key: docs-${{ hashFiles('**/Cargo.toml') }}-${{ hashFiles('**/*.rs') }}
-          restore-keys: docs-${{ hashFiles('**/Cargo.toml') }}-
-
-      - name: Install rust toolchain
-        uses: actions-rs/toolchain@v1.0.7
-        with:
-          toolchain: '1.57.0'
-          override: true
-          profile: minimal
+          key: doc-${{ env.RUST_VERSION }}-${{ hashFiles('Cargo.lock') }}-${{ hashFiles('**/*.rs') }}
+          restore-keys: doc-${{ env.RUST_VERSION }}-${{ hashFiles('Cargo.lock') }}
 
       - run: cargo doc --all-features
