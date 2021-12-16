@@ -36,5 +36,5 @@ jobs:
           toolchain: nightly
           override: true
           profile: minimal
-      - run: cargo install udeps --locked
+      - run: cargo install cargo-udeps --locked
       - run: cargo udeps
