@@ -2,7 +2,7 @@ name: rust-nightly
 
 on:
   schedule:
-    - cron: '0 0 */5 * *'
+    - cron: '0 0 */7 * *'
 
   pull_request:
     paths:
