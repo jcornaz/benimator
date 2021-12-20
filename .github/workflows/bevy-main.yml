@@ -2,7 +2,7 @@ name: bevy-main
 
 on:
   schedule:
-    - cron: '0 0 * * *'
+    - cron: '0 0 */3 * *'
 
   pull_request:
     paths:
