@@ -1,19 +1,14 @@
 # Changelog
 
-All notable changes to this project are documented in this file.
+All notable changes are documented in this file.
 
-The format is inspired from [Keep a Changelog], and this project adheres to [Semantic Versioning].
+This project adheres to [Semantic Versioning].
 
-[Keep a Changelog]: https://keepachangelog.com/en/1.1.0
+Unreleased changes (if any) can be found in the latest [release pull-request]. 
 
 [Semantic Versioning]: https://semver.org/spec/v2.0.0.html
+[release pull-request]: https://github.com/jcornaz/benimator/pulls?q=is%3Apr+is%3Aopen+label%3A%22autorelease%3A+pending%22
 
-## [Unreleased]
-
-### Breaking changes
-
-* The minimum supported rust version is now `1.57`
-* The animation is now updated during the `CoreStage::Update`
 
 
 ## [0.3.1] - 2021-08-02
