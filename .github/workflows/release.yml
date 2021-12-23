@@ -1,51 +1,34 @@
-name: Release
+name: release
 
 on:
-  workflow_dispatch:
-    inputs:
-      level:
-        description: Release level
-        required: true
-
+  push:
+    branches:
+      - main
+  
 jobs:
-  release:
-    timeout-minutes: 60
+  release-please:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v2.4.0
+      - uses: GoogleCloudPlatform/release-please-action@v2
+        id: release
         with:
-          fetch-depth: 0
-          token: ${{ secrets.RELEASE_TOKEN }}
+          release-type: rust
+          bump-minor-pre-major: Yes
+          bump-patch-for-minor-pre-major: Yes
+          
+      - name: Checkout repository
+        if: ${{ steps.release.outputs.release_created }}
+        uses: actions/checkout@v2
 
       - name: Install rust toolchain
+        if: ${{ steps.release.outputs.release_created }}
         uses: actions-rs/toolchain@v1.0.7
         with:
-          toolchain: '1.57.0'
+          toolchain: stable
           override: true
-
-      - name: Install dependencies
-        run: sudo apt-get update; sudo apt-get install --no-install-recommends libudev-dev libasound2-dev
-
-      - run: cargo test --no-default-features
-      - run: cargo test --no-default-features --features warnings
-      - run: cargo test
-      - run: cargo test --all-features
-
-      - name: Install cargo-release
-        run: cargo install cargo-release --version 0.18.2
-
-      - name: Configure git user
+          
+      - name: Publish
+        if: ${{ steps.release.outputs.release_created }}
         run: |
-          git config --global user.name "Jonathan Cornaz"
-          git config --global user.email "jcornaz@users.noreply.github.com"
-
-      - name: Login to crates.io
-        run: cargo login ${{ secrets.CRATES_TOKEN }}
-
-      - name: Release
-        run: cargo release ${{ github.event.inputs.level }} --no-confirm --execute
-
-      - run: git push
-      - run: git push --tags
+          cargo login ${{ secrets.CRATES_TOKEN }}
+          cargo publish

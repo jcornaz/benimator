@@ -5,7 +5,9 @@
 [![Docs](https://docs.rs/benimator/badge.svg)](https://docs.rs/benimator)
 [![Bevy tracking](https://img.shields.io/badge/Bevy%20tracking-released%20version-lightblue)](https://github.com/bevyengine/bevy/blob/main/docs/plugins_guidelines.md#main-branch-tracking)
 [![dependency status](https://deps.rs/repo/github/jcornaz/benimator/status.svg)](https://deps.rs/repo/github/jcornaz/benimator)
-[![Build](https://img.shields.io/github/workflow/status/jcornaz/benimator/Build)](https://github.com/jcornaz/benimator/actions?query=workflow%3ABuild+branch%3Amain)
+[![Build](https://img.shields.io/github/workflow/status/jcornaz/benimator/build)](https://github.com/jcornaz/benimator/actions/workflows/build.yml)
+[![Rust nightly](https://img.shields.io/github/workflow/status/jcornaz/benimator/rust-nightly?label=rust-nightly)](https://github.com/jcornaz/benimator/actions/workflows/rust-nightly.yml)
+[![Bevy main](https://img.shields.io/github/workflow/status/jcornaz/benimator/bevy-main?label=bevy-main)](https://github.com/jcornaz/benimator/actions/workflows/bevy-main.yml)
 
 A sprite sheet animation plugin for [bevy](https://bevyengine.org)
 
