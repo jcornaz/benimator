@@ -1,14 +1,12 @@
 use std::ops::RangeInclusive;
 use std::time::Duration;
 
-use bevy_ecs::prelude::*;
-use bevy_reflect::{Reflect, TypeUuid};
+use bevy_reflect::TypeUuid;
 
 /// Asset that define an animation of `TextureAtlasSprite`
 ///
 /// See crate level documentation for usage
-#[derive(Debug, Clone, Default, Reflect, TypeUuid)]
-#[reflect(Component)]
+#[derive(Debug, Clone, Default, TypeUuid)]
 #[uuid = "6378e9c2-ecd1-4029-9cd5-801caf68517c"]
 pub struct SpriteSheetAnimation {
     /// Frames
@@ -18,7 +16,7 @@ pub struct SpriteSheetAnimation {
 }
 
 /// Animation mode (run once or repeat)
-#[derive(Debug, Copy, Clone, Eq, PartialEq, Reflect)]
+#[derive(Debug, Copy, Clone, Eq, PartialEq)]
 pub enum AnimationMode {
     /// Runs the animation once and then stop playing
     Once,
@@ -28,7 +26,7 @@ pub enum AnimationMode {
 }
 
 /// A single animation frame
-#[derive(Debug, Copy, Clone, Default, Reflect)]
+#[derive(Debug, Copy, Clone, Default)]
 pub struct Frame {
     /// Index in the sprite atlas
     pub index: u32,
