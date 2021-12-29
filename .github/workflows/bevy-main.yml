@@ -4,9 +4,9 @@ on:
   schedule:
     - cron: '0 0 */3 * *'
 
-  pull_request:
-    paths:
-      - '.github/workflows/bevy-main.yml'
+  push:
+    branches:
+      - bevy-main
 
 jobs:
   bevy-main:
