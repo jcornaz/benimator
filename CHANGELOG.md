@@ -11,6 +11,23 @@ Unreleased changes (if any) can be found in the latest [release pull-request].
 
 
 
+## [0.4.0](https://www.github.com/jcornaz/benimator/compare/v0.3.1...v0.4.0) (2021-12-29)
+
+
+### ⚠ BREAKING CHANGES
+
+* Remove `Reflect` implementation from `SpriteSheetAnimation`, `AnimationMode` and `Frame`
+* Update animation during the `CoreStage::Update` stage (#14)
+
+### Features
+
+* Update animation during the `CoreStage::Update` stage ([#14](https://www.github.com/jcornaz/benimator/issues/14)) ([2bcee87](https://www.github.com/jcornaz/benimator/commit/2bcee87fee72460755af1ff562838e431d8d0cb9))
+
+
+### Miscellaneous Chores
+
+* Remove `Reflect` implementation from `SpriteSheetAnimation`, `AnimationMode` and `Frame` ([04af5e1](https://www.github.com/jcornaz/benimator/commit/04af5e1e8b45ad5717f2798880dfb6de85d8af0d))
+
 ## [0.3.1] - 2021-08-02
 
 ### Features
