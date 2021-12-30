@@ -9,12 +9,12 @@ jobs:
   release-please:
     runs-on: ubuntu-latest
     steps:
-      - uses: GoogleCloudPlatform/release-please-action@v2
+      - uses: GoogleCloudPlatform/release-please-action@v3
         id: release
         with:
           release-type: rust
-          bump-minor-pre-major: Yes
-          bump-patch-for-minor-pre-major: Yes
+          bump-minor-pre-major: true
+          bump-patch-for-minor-pre-major: true
           
       - name: Checkout repository
         if: ${{ steps.release.outputs.release_created }}
