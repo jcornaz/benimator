@@ -78,8 +78,11 @@ For more details see the [documentation](https://docs.rs/benimator)
 Add to `Cargo.toml`:
 
 ```toml
-benimator = "0.3.1"
+benimator = "*"
 ```
+
+*Note: I recomend to explicitly define the version number instead of using the wildcard (`*`)*
+
 
 ## Cargo features
 
