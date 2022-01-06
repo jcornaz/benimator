@@ -97,7 +97,7 @@ benimator = "*"
 
 ## Contribute / Contact
 
-Issues, pull requests are welcome.
+Discussions, issues and pull requests are welcome.
 
 It is possible to directly discuss with me (`Jomag#2675`) via the [bevy discord](https://discord.com/invite/gMUk5Ph) 
 
