@@ -13,8 +13,6 @@ jobs:
         id: release
         with:
           release-type: rust
-          bump-minor-pre-major: true
-          bump-patch-for-minor-pre-major: true
           
       - name: Checkout repository
         if: ${{ steps.release.outputs.release_created }}
