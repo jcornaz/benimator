@@ -84,10 +84,6 @@ benimator = "*"
 *Note: I recomend to explicitly define the version number instead of using the wildcard (`*`)*
 
 
-## Cargo features
-
-* `warnings` (enabled by default). Log warnings in case of incorrect usage detected.
-
 ## Bevy Version Compatibility
 
 | bevy | benimator |
