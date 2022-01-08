@@ -90,10 +90,12 @@ benimator = "*"
 
 ## Bevy Version Compatibility
 
-| bevy | benimator  |
-|------|------------|
-| 0.5  | >= 0.1     |
+| bevy | benimator |
+|------|-----------|
+| 0.6  | 1.0.0     |
+| 0.5  | 0.1 - 0.4 |
 
+*Note: Only the latest published version of benimator is supported* 
 
 ## Contribute / Contact
 
