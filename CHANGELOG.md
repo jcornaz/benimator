@@ -16,7 +16,9 @@ Unreleased changes (if any) can be found in the latest [release pull-request].
 
 ### ⚠ BREAKING CHANGES
 
-* **deps:** the cargo feature `warnings` is removed, as it is no longer possible to add the animation as component by mistake
+* **Dependencies**: Require bevy version 0.6 ([#15](https://github.com/jcornaz/benimator/issues/15)) ([99da92b](https://github.com/jcornaz/benimator/commit/99da92b094f6ba855e6ce1de592ed483aa2c7064))
+* **Dependencies**: Require rust 1.57
+* The cargo feature `warnings` is removed, as it is no longer possible to add the animation as component by mistake
 * Remove `Reflect` implementation from `SpriteSheetAnimation`, `AnimationMode` and `Frame`
 * Update animation during the `CoreStage::Update` stage (#14)
 
@@ -24,11 +26,6 @@ Unreleased changes (if any) can be found in the latest [release pull-request].
 
 * Update animation during the `CoreStage::Update` stage ([#14](https://github.com/jcornaz/benimator/issues/14)) ([2bcee87](https://github.com/jcornaz/benimator/commit/2bcee87fee72460755af1ff562838e431d8d0cb9))
 
-
-### Miscellaneous Chores
-
-* **deps:** require bevy version 0.6 ([#15](https://github.com/jcornaz/benimator/issues/15)) ([99da92b](https://github.com/jcornaz/benimator/commit/99da92b094f6ba855e6ce1de592ed483aa2c7064))
-* Remove `Reflect` implementation from `SpriteSheetAnimation`, `AnimationMode` and `Frame` ([04af5e1](https://github.com/jcornaz/benimator/commit/04af5e1e8b45ad5717f2798880dfb6de85d8af0d))
 
 ## [0.3.1] - 2021-08-02
 
