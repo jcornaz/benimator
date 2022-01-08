@@ -9,10 +9,11 @@ jobs:
   release-please:
     runs-on: ubuntu-latest
     steps:
-      - uses: GoogleCloudPlatform/release-please-action@v3
+      - uses: jcornaz/release-please-action@feat/extra-files
         id: release
         with:
           release-type: rust
+          extra-files: README.md
           
       - name: Checkout repository
         if: ${{ steps.release.outputs.release_created }}

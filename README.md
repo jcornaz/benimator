@@ -76,9 +76,11 @@ For more details see the [documentation](https://docs.rs/benimator)
 
 Add to `Cargo.toml`:
 
+<!--- x-release-please-start-version --->
 ```toml
-benimator = "*"
+benimator = "0.3.1"
 ```
+<!--- x-release-please-end-version --->
 
 *Note: I recomend to explicitly define the version number instead of using the wildcard (`*`)*
 
