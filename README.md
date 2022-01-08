@@ -82,8 +82,6 @@ benimator = "1.0.0"
 ```
 <!--- x-release-please-end-version --->
 
-*Note: I recomend to explicitly define the version number instead of using the wildcard (`*`)*
-
 
 ## Bevy Version Compatibility
 
