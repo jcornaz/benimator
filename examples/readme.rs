@@ -5,7 +5,7 @@ use bevy::prelude::*;
 use benimator::*;
 
 fn main() {
-    App::build()
+    App::new()
         .add_plugins(DefaultPlugins)
         .add_plugin(AnimationPlugin) // <-- Add the plugin
         .add_startup_system(spawn.system())

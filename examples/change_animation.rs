@@ -13,7 +13,7 @@ struct Animations {
 }
 
 fn main() {
-    App::build()
+    App::new()
         .init_resource::<Animations>()
         .add_plugins(DefaultPlugins)
         .add_plugin(AnimationPlugin)
@@ -66,13 +66,12 @@ fn change_animation(
     animations: Res<Animations>,
     mut query: Query<(&mut Timer, &mut Handle<SpriteSheetAnimation>)>,
 ) {
-    if let Ok((mut timer, mut animation)) = query.single_mut() {
-        if timer.tick(time.delta()).finished() {
-            if animation.deref() == &animations.fast {
-                *animation = animations.slow.clone();
-            } else {
-                *animation = animations.fast.clone();
-            }
+    let (mut timer, mut animation) = query.single_mut();
+    if timer.tick(time.delta()).finished() {
+        if animation.deref() == &animations.fast {
+            *animation = animations.slow.clone();
+        } else {
+            *animation = animations.fast.clone();
         }
     }
 }

@@ -27,7 +27,7 @@ A sprite sheet animation plugin for [bevy](https://bevyengine.org)
 
 ```rust
 fn main() {
-  App::build()
+  App::new()
           .add_plugins(DefaultPlugins)
           .add_plugin(AnimationPlugin) // <-- Add the plugin
           .add_startup_system(spawn.system())
@@ -84,16 +84,14 @@ benimator = "*"
 *Note: I recomend to explicitly define the version number instead of using the wildcard (`*`)*
 
 
-## Cargo features
-
-* `warnings` (enabled by default). Log warnings in case of incorrect usage detected.
-
 ## Bevy Version Compatibility
 
-| bevy | benimator  |
-|------|------------|
-| 0.5  | >= 0.1     |
+| bevy | benimator |
+|------|-----------|
+| 0.6  | 1.0.0     |
+| 0.5  | 0.1 - 0.4 |
 
+*Note: Only the latest published version of benimator is supported* 
 
 ## Contribute / Contact
 

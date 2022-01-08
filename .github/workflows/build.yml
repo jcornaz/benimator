@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+      - bevy-main
 
   pull_request:
     branches:
@@ -35,8 +36,6 @@ jobs:
           restore-keys: test-${{ env.RUST_VERSION }}-${{ hashFiles('Cargo.lock') }}
       - run: cargo test --no-default-features
       - run: cargo test --no-default-features -- --ignored
-      - run: cargo test --no-default-features --features warnings
-      - run: cargo test --no-default-features --features warnings -- --ignored
       - run: cargo test
       - run: cargo test -- --ignored
       - run: cargo test --all-features

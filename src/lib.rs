@@ -19,7 +19,7 @@
 //! use benimator::*;
 //!
 //! fn main() {
-//!     App::build()
+//!     App::new()
 //!         .add_plugins(DefaultPlugins)
 //!         .add_plugin(AnimationPlugin) // <-- Enable sprite-sheet animations
 //!         .add_startup_system(spawn.system())
@@ -122,9 +122,6 @@ pub use state::SpriteSheetAnimationState;
 mod animation;
 mod state;
 
-#[cfg(feature = "warnings")]
-mod warnings;
-
 /// Plugin to enable sprite-sheet animation
 ///
 /// See crate level documentation for usage
@@ -143,17 +140,14 @@ pub enum AnimationPostUpdateSystem {
 /// Insert the components to play the animation, and remove it to pause it.
 ///
 /// If the animation mode is [`AnimationMode::Once`] this component is automatically removed at the end of the animation.
-#[derive(Debug, Copy, Clone, Default, Reflect)]
+#[derive(Debug, Copy, Clone, Default, Reflect, Component)]
 #[reflect(Component)]
 pub struct Play;
 
 impl Plugin for AnimationPlugin {
-    fn build(&self, app: &mut AppBuilder) {
+    fn build(&self, app: &mut App) {
         app.add_asset::<SpriteSheetAnimation>()
             .add_system_set_to_stage(CoreStage::PreUpdate, state::maintenance_systems())
             .add_system_to_stage(CoreStage::Update, state::post_update_system());
-
-        #[cfg(feature = "warnings")]
-        app.add_system_set(warnings::systems());
     }
 }
