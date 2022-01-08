@@ -78,8 +78,11 @@ For more details see the [documentation](https://docs.rs/benimator)
 Add to `Cargo.toml`:
 
 ```toml
-benimator = "0.3.1"
+benimator = "*"
 ```
+
+*Note: I recomend to explicitly define the version number instead of using the wildcard (`*`)*
+
 
 ## Cargo features
 
@@ -94,7 +97,7 @@ benimator = "0.3.1"
 
 ## Contribute / Contact
 
-Issues, pull requests are welcome.
+Discussions, issues and pull requests are welcome.
 
 It is possible to directly discuss with me (`Jomag#2675`) via the [bevy discord](https://discord.com/invite/gMUk5Ph) 
 
