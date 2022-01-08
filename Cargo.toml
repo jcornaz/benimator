@@ -11,13 +11,13 @@ keywords = ["game", "gamedev", "anmiation", "bevy"]
 categories = ["game-development"]
 
 [dependencies]
-bevy_core = { git = "https://github.com/bevyengine/bevy.git", branch = "main", default-features = false }
-bevy_ecs = { git = "https://github.com/bevyengine/bevy.git", branch = "main", default-features = false }
-bevy_app = { git = "https://github.com/bevyengine/bevy.git", branch = "main", default-features = false }
-bevy_reflect = { git = "https://github.com/bevyengine/bevy.git", branch = "main", default-features = false }
-bevy_sprite = { git = "https://github.com/bevyengine/bevy.git", branch = "main", default-features = false }
-bevy_asset = { git = "https://github.com/bevyengine/bevy.git", branch = "main", default-features = false }
+bevy_core = { version = "0.6.0", default-features = false }
+bevy_ecs = { version = "0.6.0", default-features = false }
+bevy_app = { version = "0.6.0", default-features = false }
+bevy_reflect = { version = "0.6.0", default-features = false }
+bevy_sprite = { version = "0.6.0", default-features = false }
+bevy_asset = { version = "0.6.0", default-features = false }
 
 [dev-dependencies]
-bevy = { git = "https://github.com/bevyengine/bevy.git", branch = "main", default-features = false, features = ["render", "x11", "png"] }
+bevy = { version = "0.6.0", default-features = false, features = ["render", "x11", "png"] }
 rstest = "0.11.0"
