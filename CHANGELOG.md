@@ -11,6 +11,13 @@ Unreleased changes (if any) can be found in the latest [release pull-request].
 
 
 
+## [1.1.0](https://github.com/jcornaz/benimator/compare/v1.0.0...v1.1.0) (2022-01-17)
+
+
+### Features
+
+* create animation from iterator ([#23](https://github.com/jcornaz/benimator/issues/23)) ([6e670db](https://github.com/jcornaz/benimator/commit/6e670db5f162a963318fab2759cdb4a5f3fd18b0))
+
 ## [1.0.0](https://github.com/jcornaz/benimator/compare/v0.3.1...v1.0.0) (2022-01-08)
 
 
