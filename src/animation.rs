@@ -49,11 +49,30 @@ impl SpriteSheetAnimation {
     /// For more granular configuration, see [`from_frames`](SpriteSheetAnimation::from_frames)
     #[must_use]
     pub fn from_range(index_range: RangeInclusive<usize>, frame_duration: Duration) -> Self {
-        Self::from_frames(
-            index_range
-                .map(|index| Frame::new(index, frame_duration))
-                .collect(),
-        )
+        Self::from_iter(index_range, frame_duration)
+    }
+
+    /// Create a new animation from an index iterator, using the same frame duration for each frame.
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// # use benimator::{AnimationMode, SpriteSheetAnimation};
+    /// # use std::time::Duration;
+    /// // Easily create a reversed animation
+    /// let animation = SpriteSheetAnimation::from_iter((0..5).rev(), Duration::from_millis(100));
+    ///
+    /// assert_eq!(animation.frames.iter().map(|frame| frame.index).collect::<Vec<_>>(), vec![4, 3, 2, 1, 0]);
+    /// assert!(animation.frames.iter().all(|frame| frame.duration.as_millis() == 100));
+    /// assert_eq!(animation.mode, AnimationMode::Repeat);
+    /// ```
+    ///
+    /// For more granular configuration, see [`from_frames`](SpriteSheetAnimation::from_frames)
+    pub fn from_iter(indices: impl IntoIterator<Item = usize>, frame_duration: Duration) -> Self {
+        indices
+            .into_iter()
+            .map(|index| Frame::new(index, frame_duration))
+            .collect()
     }
 
     /// Set the animation mode to [`AnimationMode::Once`]
@@ -72,6 +91,12 @@ impl SpriteSheetAnimation {
 
     pub(crate) fn has_frames(&self) -> bool {
         !self.frames.is_empty()
+    }
+}
+
+impl FromIterator<Frame> for SpriteSheetAnimation {
+    fn from_iter<T: IntoIterator<Item = Frame>>(iter: T) -> Self {
+        Self::from_frames(iter.into_iter().collect())
     }
 }
 
