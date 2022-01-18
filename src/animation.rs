@@ -12,7 +12,7 @@ pub struct SpriteSheetAnimation {
     /// Frames
     pub frames: Vec<Frame>,
     /// Animation mode
-    pub mode: AnimationMode,
+    pub(crate) mode: AnimationMode,
 }
 
 /// Animation mode (run once, repeat or ping-pong)
@@ -61,14 +61,13 @@ impl SpriteSheetAnimation {
     /// # Example
     ///
     /// ```
-    /// # use benimator::{AnimationMode, SpriteSheetAnimation};
+    /// # use benimator::SpriteSheetAnimation;
     /// # use std::time::Duration;
     /// // Easily create a reversed animation
     /// let animation = SpriteSheetAnimation::from_iter((0..5).rev(), Duration::from_millis(100));
     ///
     /// assert_eq!(animation.frames.iter().map(|frame| frame.index).collect::<Vec<_>>(), vec![4, 3, 2, 1, 0]);
     /// assert!(animation.frames.iter().all(|frame| frame.duration.as_millis() == 100));
-    /// assert_eq!(animation.mode, AnimationMode::Repeat);
     /// ```
     ///
     /// For more granular configuration, see [`from_frames`](SpriteSheetAnimation::from_frames)
