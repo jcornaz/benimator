@@ -15,7 +15,7 @@ pub struct SpriteSheetAnimation {
     pub mode: AnimationMode,
 }
 
-/// Animation mode (run once or repeat)
+/// Animation mode (run once, repeat or ping-pong)
 #[derive(Debug, Copy, Clone, Eq, PartialEq)]
 pub enum AnimationMode {
     /// Runs the animation once and then stop playing
