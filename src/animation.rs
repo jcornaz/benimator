@@ -23,6 +23,10 @@ pub enum AnimationMode {
 
     /// Repeat the animation forever
     Repeat,
+
+    /// Repeat the animation forever, going back and forth between
+    /// the first and last frame.
+    PingPong,
 }
 
 /// A single animation frame
@@ -86,6 +90,13 @@ impl SpriteSheetAnimation {
     #[must_use]
     pub fn repeat(mut self) -> Self {
         self.mode = AnimationMode::Repeat;
+        self
+    }
+
+    /// Set the animation mode to [`AnimationMode::PingPong`]
+    #[must_use]
+    pub fn ping_pong(mut self) -> Self {
+        self.mode = AnimationMode::PingPong;
         self
     }
 

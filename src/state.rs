@@ -38,6 +38,8 @@ pub(crate) fn post_update_system() -> impl System<In = (), Out = ()> {
 pub struct SpriteSheetAnimationState {
     current_frame: usize,
     elapsed_in_frame: Duration,
+    // Control ping_pong backward frame navigation.
+    going_backward: bool,
 }
 
 impl SpriteSheetAnimationState {
@@ -63,13 +65,39 @@ impl SpriteSheetAnimationState {
 
         self.elapsed_in_frame += delta;
         if self.elapsed_in_frame >= frame.duration {
-            if self.current_frame < animation.frames.len() - 1 {
-                self.current_frame += 1;
-            } else if matches!(animation.mode, AnimationMode::Repeat) {
-                self.current_frame = 0;
-            } else {
-                self.reset();
-                return true;
+            match animation.mode {
+                AnimationMode::Repeat => {
+                    if self.current_frame < animation.frames.len() - 1 {
+                        self.current_frame += 1;
+                    } else {
+                        self.current_frame = 0;
+                    }
+                }
+                AnimationMode::PingPong => {
+                    if self.going_backward {
+                        if self.current_frame != 0 {
+                            self.current_frame -= 1;
+                        } else {
+                            self.going_backward = false;
+                            self.current_frame += 1;
+                        }
+                    } else {
+                        if self.current_frame < animation.frames.len() - 1 {
+                            self.current_frame += 1;
+                        } else {
+                            self.going_backward = true;
+                            self.current_frame -= 1;
+                        }
+                    }
+                }
+                AnimationMode::Once => {
+                    if self.current_frame < animation.frames.len() - 1 {
+                        self.current_frame += 1;
+                    } else {
+                        self.reset();
+                        return true;
+                    }
+                }
             }
 
             self.elapsed_in_frame -= frame.duration;
@@ -177,6 +205,7 @@ mod tests {
             SpriteSheetAnimationState {
                 current_frame: 1,
                 elapsed_in_frame: Duration::from_secs(1),
+                going_backward: false,
             }
         }
 
@@ -304,6 +333,7 @@ mod tests {
                 SpriteSheetAnimationState {
                     current_frame: 1,
                     elapsed_in_frame: Duration::from_nanos(0),
+                    going_backward: false,
                 }
             }
 
@@ -345,6 +375,7 @@ mod tests {
                 SpriteSheetAnimationState {
                     current_frame: 2,
                     elapsed_in_frame: Duration::from_nanos(0),
+                    going_backward: false,
                 }
             }
 
@@ -397,6 +428,7 @@ mod tests {
                 SpriteSheetAnimationState {
                     current_frame: 1,
                     elapsed_in_frame: Duration::from_nanos(500),
+                    going_backward: false,
                 }
             }
 
