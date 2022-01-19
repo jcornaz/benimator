@@ -16,7 +16,7 @@ fn main() {
     App::new()
         .init_resource::<Animations>()
         .add_plugins(DefaultPlugins)
-        .add_plugin(AnimationPlugin)
+        .add_plugin(AnimationPlugin::default())
         .add_startup_system_to_stage(StartupStage::PreStartup, create_animations.system())
         .add_startup_system(spawn_animated_coin.system())
         .add_startup_system(spawn_camera.system())
