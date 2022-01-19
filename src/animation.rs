@@ -10,12 +10,13 @@ use bevy_reflect::TypeUuid;
 #[uuid = "6378e9c2-ecd1-4029-9cd5-801caf68517c"]
 pub struct SpriteSheetAnimation {
     /// Frames
-    pub frames: Vec<Frame>,
+    pub(crate) frames: Vec<Frame>,
     /// Animation mode
     pub(crate) mode: AnimationMode,
 }
 
 /// Animation mode (run once, repeat or ping-pong)
+#[non_exhaustive]
 #[derive(Debug, Copy, Clone, Eq, PartialEq)]
 pub enum AnimationMode {
     /// Runs the animation once and then stop playing
@@ -33,9 +34,9 @@ pub enum AnimationMode {
 #[derive(Debug, Copy, Clone, Default)]
 pub struct Frame {
     /// Index in the sprite atlas
-    pub index: usize,
+    pub(crate) index: usize,
     /// How long should the frame be displayed
-    pub duration: Duration,
+    pub(crate) duration: Duration,
 }
 
 impl SpriteSheetAnimation {
@@ -60,14 +61,11 @@ impl SpriteSheetAnimation {
     ///
     /// # Example
     ///
+    /// You may use this to create a reversed animation:
     /// ```
     /// # use benimator::SpriteSheetAnimation;
     /// # use std::time::Duration;
-    /// // Easily create a reversed animation
     /// let animation = SpriteSheetAnimation::from_iter((0..5).rev(), Duration::from_millis(100));
-    ///
-    /// assert_eq!(animation.frames.iter().map(|frame| frame.index).collect::<Vec<_>>(), vec![4, 3, 2, 1, 0]);
-    /// assert!(animation.frames.iter().all(|frame| frame.duration.as_millis() == 100));
     /// ```
     ///
     /// For more granular configuration, see [`from_frames`](SpriteSheetAnimation::from_frames)
