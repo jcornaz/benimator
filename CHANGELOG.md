@@ -11,6 +11,25 @@ Unreleased changes (if any) can be found in the latest [release pull-request].
 
 
 
+## [2.0.0](https://github.com/jcornaz/benimator/compare/v1.1.0...v2.0.0) (2022-01-19)
+
+
+### ⚠ BREAKING CHANGES
+
+* The struct constructor of `AnimationPlugin` is now private. Use `AnimationPlugin::default()` to install it.
+* require rust 1.58
+* the `mode` field of `SpriteSheetAnimation` is no longer public
+
+### Features
+
+* add ping pong animation mode ([#25](https://github.com/jcornaz/benimator/issues/25)) ([76a6306](https://github.com/jcornaz/benimator/commit/76a6306c6becb3f1ea6c1bbfabf36cb8bd9e2de8))
+
+
+### Miscellaneous Chores
+
+* reduce API surface ([#27](https://github.com/jcornaz/benimator/issues/27)) ([540341a](https://github.com/jcornaz/benimator/commit/540341a047ee7d53d40e86945c5f2e1105b2cb4a))
+* require rust 1.58 ([8acb6d2](https://github.com/jcornaz/benimator/commit/8acb6d24927f7fea7a79009001be07148149e0e9))
+
 ## [1.1.0](https://github.com/jcornaz/benimator/compare/v1.0.0...v1.1.0) (2022-01-17)
 
 
