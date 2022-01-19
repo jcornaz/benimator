@@ -12,10 +12,10 @@ pub struct SpriteSheetAnimation {
     /// Frames
     pub frames: Vec<Frame>,
     /// Animation mode
-    pub mode: AnimationMode,
+    pub(crate) mode: AnimationMode,
 }
 
-/// Animation mode (run once or repeat)
+/// Animation mode (run once, repeat or ping-pong)
 #[derive(Debug, Copy, Clone, Eq, PartialEq)]
 pub enum AnimationMode {
     /// Runs the animation once and then stop playing
@@ -23,6 +23,10 @@ pub enum AnimationMode {
 
     /// Repeat the animation forever
     Repeat,
+
+    /// Repeat the animation forever, going back and forth between
+    /// the first and last frame.
+    PingPong,
 }
 
 /// A single animation frame
@@ -57,14 +61,13 @@ impl SpriteSheetAnimation {
     /// # Example
     ///
     /// ```
-    /// # use benimator::{AnimationMode, SpriteSheetAnimation};
+    /// # use benimator::SpriteSheetAnimation;
     /// # use std::time::Duration;
     /// // Easily create a reversed animation
     /// let animation = SpriteSheetAnimation::from_iter((0..5).rev(), Duration::from_millis(100));
     ///
     /// assert_eq!(animation.frames.iter().map(|frame| frame.index).collect::<Vec<_>>(), vec![4, 3, 2, 1, 0]);
     /// assert!(animation.frames.iter().all(|frame| frame.duration.as_millis() == 100));
-    /// assert_eq!(animation.mode, AnimationMode::Repeat);
     /// ```
     ///
     /// For more granular configuration, see [`from_frames`](SpriteSheetAnimation::from_frames)
@@ -86,6 +89,13 @@ impl SpriteSheetAnimation {
     #[must_use]
     pub fn repeat(mut self) -> Self {
         self.mode = AnimationMode::Repeat;
+        self
+    }
+
+    /// Set the animation mode to [`AnimationMode::PingPong`]
+    #[must_use]
+    pub fn ping_pong(mut self) -> Self {
+        self.mode = AnimationMode::PingPong;
         self
     }
 
