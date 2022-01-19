@@ -11,6 +11,31 @@ Unreleased changes (if any) can be found in the latest [release pull-request].
 
 
 
+## [2.0.0-rc.1](https://github.com/jcornaz/benimator/compare/v1.1.0...v2.0.0-rc.1) (2022-01-19)
+
+
+### ⚠ BREAKING CHANGES
+
+* All struct fields are now private
+* All enums are marked with `#[non_exhaustive]`
+* The constructor of `AnimationPlugin` is now private. Use `AnimationPlugin::default()` instead.
+* 2.0.0-rc.1
+* require rust 1.58
+* the `mode` field of `SpriteSheetAnimation` is no longer public
+
+### Features
+
+* add ping pong animation mode ([#25](https://github.com/jcornaz/benimator/issues/25)) ([76a6306](https://github.com/jcornaz/benimator/commit/76a6306c6becb3f1ea6c1bbfabf36cb8bd9e2de8))
+
+
+### Miscellaneous Chores
+
+* All enums are marked with `#[non_exhaustive]` ([249fc68](https://github.com/jcornaz/benimator/commit/249fc6816f1984b85d7410a32d5f0b493a0216c6))
+* All struct fields are now private ([249fc68](https://github.com/jcornaz/benimator/commit/249fc6816f1984b85d7410a32d5f0b493a0216c6))
+* reduce API surface ([#27](https://github.com/jcornaz/benimator/issues/27)) ([249fc68](https://github.com/jcornaz/benimator/commit/249fc6816f1984b85d7410a32d5f0b493a0216c6))
+* require rust 1.58 ([8acb6d2](https://github.com/jcornaz/benimator/commit/8acb6d24927f7fea7a79009001be07148149e0e9))
+* The constructor of `AnimationPlugin` is now private. Use `AnimationPlugin::default()` instead. ([249fc68](https://github.com/jcornaz/benimator/commit/249fc6816f1984b85d7410a32d5f0b493a0216c6))
+
 ## [1.1.0](https://github.com/jcornaz/benimator/compare/v1.0.0...v1.1.0) (2022-01-17)
 
 
