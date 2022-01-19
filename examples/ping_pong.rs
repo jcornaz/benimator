@@ -7,7 +7,7 @@ use benimator::*;
 fn main() {
     App::new()
         .add_plugins(DefaultPlugins)
-        .add_plugin(AnimationPlugin)
+        .add_plugin(AnimationPlugin::default())
         .add_startup_system(spawn.system())
         .run();
 }

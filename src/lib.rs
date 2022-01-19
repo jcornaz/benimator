@@ -21,7 +21,7 @@
 //! fn main() {
 //!     App::new()
 //!         .add_plugins(DefaultPlugins)
-//!         .add_plugin(AnimationPlugin) // <-- Enable sprite-sheet animations
+//!         .add_plugin(AnimationPlugin::default()) // <-- Enable sprite-sheet animations
 //!         .add_startup_system(spawn.system())
 //!         // ...
 //!         .run()
@@ -125,10 +125,12 @@ mod state;
 /// Plugin to enable sprite-sheet animation
 ///
 /// See crate level documentation for usage
+#[non_exhaustive]
 #[derive(Default)]
 pub struct AnimationPlugin;
 
 /// Labels of systems that run during the post-update stage
+#[non_exhaustive]
 #[derive(Debug, Copy, Clone, Eq, PartialEq, Hash, SystemLabel)]
 pub enum AnimationPostUpdateSystem {
     /// System that update the sprite atlas textures

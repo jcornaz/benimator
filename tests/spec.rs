@@ -132,7 +132,7 @@ fn app() -> App {
 
     app.add_plugin(CorePlugin)
         .add_plugin(AssetPlugin)
-        .add_plugin(AnimationPlugin);
+        .add_plugin(AnimationPlugin::default());
 
     app
 }
