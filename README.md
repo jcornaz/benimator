@@ -87,7 +87,7 @@ benimator = "2.0.0-rc.1"
 
 | bevy | benimator |
 |------|-----------|
-| 0.6  |     1     |
+| 0.6  | 1, 2      |
 | 0.5  | 0.1 - 0.3 |
 
 *Note: Only the latest published version of benimator is supported* 
