@@ -75,19 +75,17 @@ impl SpriteSheetAnimationState {
                 }
                 AnimationMode::PingPong => {
                     if self.going_backward {
-                        if self.current_frame != 0 {
-                            self.current_frame -= 1;
-                        } else {
+                        if self.current_frame == 0 {
                             self.going_backward = false;
                             self.current_frame += 1;
-                        }
-                    } else {
-                        if self.current_frame < animation.frames.len() - 1 {
-                            self.current_frame += 1;
                         } else {
-                            self.going_backward = true;
                             self.current_frame -= 1;
                         }
+                    } else if self.current_frame < animation.frames.len() - 1 {
+                        self.current_frame += 1;
+                    } else {
+                        self.going_backward = true;
+                        self.current_frame -= 1;
                     }
                 }
                 AnimationMode::Once => {
