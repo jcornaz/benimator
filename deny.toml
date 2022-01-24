@@ -3,13 +3,7 @@ vulnerability = "deny"
 unmaintained = "deny"
 yanked = "deny"
 notice = "deny"
-ignore = [
-    "RUSTSEC-2021-0091", # From bevy: https://rustsec.org/advisories/RUSTSEC-2021-0091
-    "RUSTSEC-2021-0090", # From bevy: https://rustsec.org/advisories/RUSTSEC-2021-0090
-    "RUSTSEC-2021-0096", # From bevy: https://rustsec.org/advisories/RUSTSEC-2021-0096
-    "RUSTSEC-2020-0016", # From bevy: https://rustsec.org/advisories/RUSTSEC-2020-0016
-    "RUSTSEC-2020-0159", # From bevy: https://rustsec.org/advisories/RUSTSEC-2020-0159
-]
+ignore = []
 
 [licenses]
 default = "deny"
@@ -19,11 +13,9 @@ allow = [
     "MIT",
     "Apache-2.0",
     "BSD-3-Clause",
-    "BSD-2-Clause",
     "ISC",
     "Zlib",
     "CC0-1.0",
-    "MPL-2.0",
 ]
 
 [[licenses.clarify]]
@@ -34,3 +26,6 @@ license-files = []
 [sources]
 unknown-registry = "deny"
 unknown-git = "deny"
+
+[bans]
+multiple-versions = "allow"

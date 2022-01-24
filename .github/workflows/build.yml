@@ -4,11 +4,9 @@ on:
   push:
     branches:
       - main
-      - bevy-main
 
   pull_request:
-    branches:
-      - '*'
+  workflow_dispatch:
 
 env:
   RUST_VERSION: 1.58.0
@@ -18,22 +16,24 @@ env:
 jobs:
   test:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 30
+
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions-rs/toolchain@v1
+      - uses: actions/checkout@v2.4.0
+
+      - name: Install rust toolchain
+        uses: actions-rs/toolchain@v1.0.7
         with:
           toolchain: ${{ env.RUST_VERSION }}
           override: true
           profile: minimal
-      - run: cargo update
-      - uses: actions/cache@v2
-        with:
-          path: |
-            ~/.cargo
-            ./target
-          key: test-${{ env.RUST_VERSION }}-${{ hashFiles('Cargo.lock') }}-${{ hashFiles('**/*.rs') }}
-          restore-keys: test-${{ env.RUST_VERSION }}-${{ hashFiles('Cargo.lock') }}
+          target: thumbv6m-none-eabi
+
+      - run: cargo check --all-targets
+
+      - name: Check no_std
+        run: cargo check --target thumbv6m-none-eabi
+
       - run: cargo test --no-default-features
       - run: cargo test --no-default-features -- --ignored
       - run: cargo test
@@ -43,41 +43,80 @@ jobs:
 
   code-style:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions-rs/toolchain@v1
+      - uses: actions/checkout@v2.4.0
+      - name: Install rust toolchain
+        uses: actions-rs/toolchain@v1.0.7
         with:
           toolchain: ${{ env.RUST_VERSION }}
           override: true
           components: clippy, rustfmt
-      - run: cargo update
-      - uses: actions/cache@v2
-        with:
-          path: |
-            ~/.cargo
-            ./target
-          key: style-${{ env.RUST_VERSION }}-${{ hashFiles('Cargo.lock') }}-${{ hashFiles('**/*.rs') }}
-          restore-keys: style-${{ env.RUST_VERSION }}-${{ hashFiles('Cargo.lock') }}
-      - run: cargo fmt -- --check
+      - run: cargo fmt --all -- --check
       - run: cargo clippy --all-features
 
   documentation:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions-rs/toolchain@v1
+      - uses: actions/checkout@v2.4.0
+      - name: Install rust toolchain
+        uses: actions-rs/toolchain@v1.0.7
         with:
-          toolchain: ${{ env.RUST_VERSION }}
+          toolchain: nightly
           override: true
           profile: minimal
-      - run: cargo update
-      - uses: actions/cache@v2
-        with:
-          path: |
-            ~/.cargo
-            ./target
-          key: doc-${{ env.RUST_VERSION }}-${{ hashFiles('Cargo.lock') }}-${{ hashFiles('**/*.rs') }}
-          restore-keys: doc-${{ env.RUST_VERSION }}-${{ hashFiles('Cargo.lock') }}
       - run: cargo doc --all-features --no-deps
+
+  unwanted-dependencies:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2.4.0
+      - uses: actions-rs/toolchain@v1.0.7
+        with:
+          toolchain: stable
+          override: true
+          profile: minimal
+      - run: cargo install cargo-deny --locked
+      - run: cargo deny check
+
+  unused-dependencies:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2.4.0
+      - uses: actions-rs/toolchain@v1.0.7
+        with:
+          toolchain: nightly
+          override: true
+          profile: minimal
+      - run: cargo install cargo-udeps --locked
+      - run: cargo udeps
+
+  release:
+    needs: [test, documentation]
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+
+    outputs:
+      release_created: ${{ steps.release.outputs.release_created }}
+
+    steps:
+      - uses: google-github-actions/release-please-action@v3.1
+        id: release
+        with:
+          release-type: rust
+          changelog-types: '[{"type":"feat","section":"Features","hidden":false},{"type":"fix","section":"Bug Fixes","hidden":false},{"type":"perf","section":"Performance","hidden":false},{"type":"docs","section":"Documentation","hidden":false}]'
+          extra-files: README.md
+
+  publish:
+    needs: release
+    runs-on: ubuntu-latest
+    if: ${{ needs.release.outputs.release_created }}
+    steps:
+      - uses: actions/checkout@v2.4
+      - uses: actions-rs/toolchain@v1.0
+        with:
+          toolchain: stable
+          override: true
+          profile: minimal
+      - run: cargo publish
+        env:
+          CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}
