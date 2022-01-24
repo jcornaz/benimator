@@ -11,6 +11,11 @@ Unreleased changes (if any) can be found in the latest [release pull-request].
 
 
 
+## [2.0.0](https://github.com/jcornaz/benimator/compare/v2.0.0-rc.1...v2.0.0) (2022-01-24)
+
+This is a stabilization release of `2.0.0-rc.1`. There is no new change since `2.0.0-rc.1`.
+
+
 ## [2.0.0-rc.1](https://github.com/jcornaz/benimator/compare/v1.1.0...v2.0.0-rc.1) (2022-01-19)
 
 
