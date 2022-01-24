@@ -27,13 +27,8 @@ jobs:
           toolchain: ${{ env.RUST_VERSION }}
           override: true
           profile: minimal
-          target: thumbv6m-none-eabi
 
       - run: cargo check --all-targets
-
-      - name: Check no_std
-        run: cargo check --target thumbv6m-none-eabi
-
       - run: cargo test --no-default-features
       - run: cargo test --no-default-features -- --ignored
       - run: cargo test
