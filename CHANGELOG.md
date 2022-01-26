@@ -11,6 +11,18 @@ Unreleased changes (if any) can be found in the latest [release pull-request].
 
 
 
+## [2.0.0](https://github.com/jcornaz/benimator/compare/v2.0.0-rc.1...v2.0.0) (2022-01-26)
+
+
+### Documentation
+
+* **readme:** update bevy compatibility matrix ([5de0b4b](https://github.com/jcornaz/benimator/commit/5de0b4bba4447ef983f1b2ae0435d2349955b989))
+
+
+### chore
+
+* prepare release ([0ac9a15](https://github.com/jcornaz/benimator/commit/0ac9a1576b5e35736198a0ce0f5ae9e61c57b74c))
+
 ## [2.0.0](https://github.com/jcornaz/benimator/compare/v2.0.0-rc.1...v2.0.0) (2022-01-24)
 
 This is a stabilization release of `2.0.0-rc.1`. There is no new change since `2.0.0-rc.1`.
