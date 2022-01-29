@@ -113,6 +113,7 @@ extern crate rstest;
 
 use bevy_app::prelude::*;
 use bevy_asset::AddAsset;
+use bevy_ecs::component::SparseStorage;
 use bevy_ecs::prelude::*;
 use bevy_reflect::Reflect;
 
@@ -142,9 +143,13 @@ pub enum AnimationPostUpdateSystem {
 /// Insert the components to play the animation, and remove it to pause it.
 ///
 /// If the animation mode is [`AnimationMode::Once`] this component is automatically removed at the end of the animation.
-#[derive(Debug, Copy, Clone, Default, Reflect, Component)]
+#[derive(Debug, Copy, Clone, Default, Reflect)]
 #[reflect(Component)]
 pub struct Play;
+
+impl Component for Play {
+    type Storage = SparseStorage;
+}
 
 impl Plugin for AnimationPlugin {
     fn build(&self, app: &mut App) {
