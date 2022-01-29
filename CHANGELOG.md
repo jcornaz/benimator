@@ -8,6 +8,25 @@ Unreleased changes (if any) can be found in the latest [release pull-request].
 
 
 
+### [2.0.1](https://github.com/jcornaz/benimator/compare/v2.0.0-rc.1...v2.0.1) (2022-01-29)
+
+
+### Documentation
+
+* **changelog:** remove reference to semver ([bbc666d](https://github.com/jcornaz/benimator/commit/bbc666d43d592d1a00acc037ff21f7ade102852a))
+* **readme:** update bevy compatibility matrix ([5de0b4b](https://github.com/jcornaz/benimator/commit/5de0b4bba4447ef983f1b2ae0435d2349955b989))
+
+
+### Performance
+
+* faster insertion/removal of the `Play` component by using `SparseStorage` ([#34](https://github.com/jcornaz/benimator/issues/34)) ([7f37562](https://github.com/jcornaz/benimator/commit/7f37562e19b3ff48388f2f359ce562ae153fb0d5))
+
+
+### chore
+
+* prepare release ([517cc9b](https://github.com/jcornaz/benimator/commit/517cc9ba42f5bf1b170f27e68dc3812fc0aac01b))
+* prepare release ([0ac9a15](https://github.com/jcornaz/benimator/commit/0ac9a1576b5e35736198a0ce0f5ae9e61c57b74c))
+
 ## [2.0.0](https://github.com/jcornaz/benimator/compare/v2.0.0-rc.1...v2.0.0) (2022-01-24)
 
 This is a stabilization release of `2.0.0-rc.1`. There is no new change since `2.0.0-rc.1`.
