@@ -8,6 +8,15 @@ Unreleased changes (if any) can be found in the latest [release pull-request].
 
 
 
+## [2.0.1](https://github.com/jcornaz/benimator/compare/v2.0.0-rc.1...v2.0.1) (2022-01-29)
+
+
+### Performance
+
+* faster insertion/removal of the `Play` component by using `SparseStorage` ([#34](https://github.com/jcornaz/benimator/issues/34)) ([7f37562](https://github.com/jcornaz/benimator/commit/7f37562e19b3ff48388f2f359ce562ae153fb0d5))
+
+
+
 ## [2.0.0](https://github.com/jcornaz/benimator/compare/v2.0.0-rc.1...v2.0.0) (2022-01-24)
 
 This is a stabilization release of `2.0.0-rc.1`. There is no new change since `2.0.0-rc.1`.
