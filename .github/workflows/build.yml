@@ -10,19 +10,18 @@ on:
 
 env:
   RUST_VERSION: 1.58.0
-  RUSTFLAGS: "-D warnings"
-  RUSTDOCFLAGS: "-D warnings"
 
 jobs:
   test:
     runs-on: ubuntu-latest
     timeout-minutes: 30
-
+    env:
+      RUSTFLAGS: "-D warnings"
     steps:
-      - uses: actions/checkout@v2.4.0
+      - uses: actions/checkout@v2
 
       - name: Install rust toolchain
-        uses: actions-rs/toolchain@v1.0.7
+        uses: actions-rs/toolchain@v1
         with:
           toolchain: ${{ env.RUST_VERSION }}
           override: true
@@ -30,18 +29,18 @@ jobs:
 
       - run: cargo check --all-targets
       - run: cargo test --no-default-features
-      - run: cargo test --no-default-features -- --ignored
       - run: cargo test
-      - run: cargo test -- --ignored
       - run: cargo test --all-features
       - run: cargo test --all-features -- --ignored
 
   code-style:
     runs-on: ubuntu-latest
+    env:
+      RUSTFLAGS: "-D warnings"
     steps:
-      - uses: actions/checkout@v2.4.0
+      - uses: actions/checkout@v2
       - name: Install rust toolchain
-        uses: actions-rs/toolchain@v1.0.7
+        uses: actions-rs/toolchain@v1
         with:
           toolchain: ${{ env.RUST_VERSION }}
           override: true
@@ -51,10 +50,12 @@ jobs:
 
   documentation:
     runs-on: ubuntu-latest
+    env:
+      RUSTDOCFLAGS: "-D warnings"
     steps:
-      - uses: actions/checkout@v2.4.0
+      - uses: actions/checkout@v2
       - name: Install rust toolchain
-        uses: actions-rs/toolchain@v1.0.7
+        uses: actions-rs/toolchain@v1
         with:
           toolchain: nightly
           override: true
@@ -64,8 +65,8 @@ jobs:
   unwanted-dependencies:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2.4.0
-      - uses: actions-rs/toolchain@v1.0.7
+      - uses: actions/checkout@v2
+      - uses: actions-rs/toolchain@v1
         with:
           toolchain: stable
           override: true
@@ -76,8 +77,8 @@ jobs:
   unused-dependencies:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2.4.0
-      - uses: actions-rs/toolchain@v1.0.7
+      - uses: actions/checkout@v2
+      - uses: actions-rs/toolchain@v1
         with:
           toolchain: nightly
           override: true
@@ -85,33 +86,40 @@ jobs:
       - run: cargo install cargo-udeps --locked
       - run: cargo udeps
 
-  release:
-    needs: [test, documentation]
-    runs-on: ubuntu-latest
+  release-pr:
     if: github.ref == 'refs/heads/main'
-
+    runs-on: ubuntu-latest
     outputs:
-      release_created: ${{ steps.release.outputs.release_created }}
-
+      pr: ${{ steps.release_please.outputs.pr }}
     steps:
-      - uses: google-github-actions/release-please-action@v3.1
-        id: release
+      - uses: google-github-actions/release-please-action@v3
+        id: release_please
         with:
           release-type: rust
+          command: release-pr
           changelog-types: '[{"type":"feat","section":"Features","hidden":false},{"type":"fix","section":"Bug Fixes","hidden":false},{"type":"perf","section":"Performance","hidden":false},{"type":"docs","section":"Documentation","hidden":false}]'
-          extra-files: README.md
 
-  publish:
-    needs: release
+  release:
+    needs: [test, documentation, release-pr]
+    if: ${{ !needs.release-pr.outputs.pr }}
     runs-on: ubuntu-latest
-    if: ${{ needs.release.outputs.release_created }}
     steps:
-      - uses: actions/checkout@v2.4.0
-      - uses: actions-rs/toolchain@v1.0.7
+      - uses: actions/checkout@v2
+      - uses: actions-rs/toolchain@v1
         with:
           toolchain: stable
           override: true
           profile: minimal
+
+      - run: cargo publish --dry-run
+
+      - uses: google-github-actions/release-please-action@v3.1
+        id: release
+        with:
+          release-type: rust
+          command: github-release
+
       - run: cargo publish
+        if: steps.release.outputs.release_created
         env:
           CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}
