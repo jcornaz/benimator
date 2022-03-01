@@ -44,7 +44,7 @@
 //!         0..=2,                               // Indices of the sprite atlas
 //!         Duration::from_secs_f64(1.0 / 12.0), // Duration of each frame
 //!     ));
-//!     
+//!
 //!     commands
 //!         .spawn_bundle(SpriteSheetBundle {
 //!             // TODO: Configure the sprite sheet
@@ -117,8 +117,11 @@ use bevy_ecs::component::SparseStorage;
 use bevy_ecs::prelude::*;
 use bevy_reflect::Reflect;
 
-pub use animation::{AnimationMode, Frame, SpriteSheetAnimation};
+pub use animation::{Frame, SpriteSheetAnimation};
 pub use state::SpriteSheetAnimationState;
+
+#[allow(deprecated)]
+pub use animation::AnimationMode;
 
 mod animation;
 mod state;

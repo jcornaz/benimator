@@ -12,10 +12,16 @@ pub struct SpriteSheetAnimation {
     /// Frames
     pub(crate) frames: Vec<Frame>,
     /// Animation mode
-    pub(crate) mode: AnimationMode,
+    pub(crate) mode: Mode,
 }
 
 /// Animation mode (run once, repeat or ping-pong)
+///
+/// Deprecated
+/// ---
+/// This is not exposed in any of the public APIs of the crate so there is no reason to depend on
+/// it. Use 'builder-style' methods like [`SpriteSheetAnimation::repeat`] instead.
+#[deprecated]
 #[non_exhaustive]
 #[derive(Debug, Copy, Clone, Eq, PartialEq)]
 pub enum AnimationMode {
@@ -45,7 +51,7 @@ impl SpriteSheetAnimation {
     pub fn from_frames(frames: Vec<Frame>) -> Self {
         Self {
             frames,
-            mode: AnimationMode::default(),
+            mode: Mode::default(),
         }
     }
 
@@ -76,24 +82,32 @@ impl SpriteSheetAnimation {
             .collect()
     }
 
-    /// Set the animation mode to [`AnimationMode::Once`]
+    /// Runs the animation once and then stop playing
     #[must_use]
     pub fn once(mut self) -> Self {
-        self.mode = AnimationMode::Once;
+        self.mode = Mode::Once;
         self
     }
 
-    /// Set the animation mode to [`AnimationMode::Repeat`]
+    /// Repeat the animation forever
     #[must_use]
     pub fn repeat(mut self) -> Self {
-        self.mode = AnimationMode::Repeat;
+        self.mode = Mode::RepeatFrom(0);
         self
     }
 
-    /// Set the animation mode to [`AnimationMode::PingPong`]
+    /// Repeat the animation forever, from a given frame index (loop back to it at the end of the
+    /// animation)
+    #[must_use]
+    pub fn repeat_from(mut self, frame_index: usize) -> Self {
+        self.mode = Mode::RepeatFrom(frame_index);
+        self
+    }
+
+    /// Repeat the animation forever, going back and forth between the first and last frame.
     #[must_use]
     pub fn ping_pong(mut self) -> Self {
-        self.mode = AnimationMode::PingPong;
+        self.mode = Mode::PingPong;
         self
     }
 
@@ -102,12 +116,27 @@ impl SpriteSheetAnimation {
     }
 }
 
+#[derive(Debug, Copy, Clone, Eq, PartialEq)]
+pub(crate) enum Mode {
+    Once,
+    RepeatFrom(usize),
+    PingPong,
+}
+
 impl FromIterator<Frame> for SpriteSheetAnimation {
     fn from_iter<T: IntoIterator<Item = Frame>>(iter: T) -> Self {
         Self::from_frames(iter.into_iter().collect())
     }
 }
 
+impl Default for Mode {
+    #[inline]
+    fn default() -> Self {
+        Self::RepeatFrom(0)
+    }
+}
+
+#[allow(deprecated)]
 impl Default for AnimationMode {
     #[inline]
     fn default() -> Self {
