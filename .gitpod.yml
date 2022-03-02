@@ -1,3 +1,5 @@
+image: gitpod/workspace-full-vnc
+
 tasks:
   - before: rustup component add clippy
     init: |
