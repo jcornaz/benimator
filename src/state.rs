@@ -301,7 +301,7 @@ mod tests {
             animation: SpriteSheetAnimation,
             frame_duration: Duration,
         ) {
-            assert!(!state.update(&mut sprite_at_second_frame, &animation, frame_duration))
+            assert!(!state.update(&mut sprite_at_second_frame, &animation, frame_duration));
         }
     }
 
@@ -359,7 +359,7 @@ mod tests {
                 animation: SpriteSheetAnimation,
                 frame_duration: Duration,
             ) {
-                assert!(!state.update(&mut sprite_at_second_frame, &animation, frame_duration))
+                assert!(!state.update(&mut sprite_at_second_frame, &animation, frame_duration));
             }
         }
 
@@ -406,7 +406,7 @@ mod tests {
                 animation: SpriteSheetAnimation,
                 frame_duration: Duration,
             ) {
-                assert!(!state.update(&mut sprite_at_second_frame, &animation, frame_duration))
+                assert!(!state.update(&mut sprite_at_second_frame, &animation, frame_duration));
             }
         }
     }
@@ -459,7 +459,7 @@ mod tests {
                 animation: SpriteSheetAnimation,
                 frame_duration: Duration,
             ) {
-                assert!(state.update(&mut sprite_at_second_frame, &animation, frame_duration))
+                assert!(state.update(&mut sprite_at_second_frame, &animation, frame_duration));
             }
 
             #[rstest]
