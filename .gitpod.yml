@@ -1,15 +1,19 @@
 image: gitpod/workspace-full-vnc
 
 tasks:
-  - before: |
-      rustup component add clippy
-      rustup target install wasm32-unknown-unknown
+  - name: test
     init: |
       cargo update
-      cargo clippy --all-features --all-targets
       cargo test --all-features
+      gp sync-done test
+      cargo clippy --all-features --all-targets
       cargo doc --all-features --no-deps
     command: cargo watch -x 'test --all-features' -x 'clippy --all-features --all-targets' -x 'doc --all-features --no-deps'
+
+  - name: example
+    command: |
+      gp sync-await test
+      cargo run --target wasm32-unknown-unknown --example readme
 
 vscode:
   extensions:
@@ -17,6 +21,11 @@ vscode:
     - matklad.rust-analyzer
     - serayuzgur.crates
     - bungcip.better-toml
+
+ports:
+  - port: 1334
+    visibility: private
+    onOpen: notify
 
 github:
   prebuilds:
