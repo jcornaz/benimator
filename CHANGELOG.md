@@ -8,6 +8,13 @@ Unreleased changes (if any) can be found in the latest [release pull-request].
 
 
 
+## [2.1.0](https://github.com/jcornaz/benimator/compare/v2.0.1...v2.1.0) (2022-03-02)
+
+
+### Features
+
+* add repeat-from animation mode ([#40](https://github.com/jcornaz/benimator/issues/40)) ([586859c](https://github.com/jcornaz/benimator/commit/586859c06cc3a63081d0f13156927c3a1db2bc0e))
+
 ## [2.0.1](https://github.com/jcornaz/benimator/compare/v2.0.0-rc.1...v2.0.1) (2022-01-29)
 
 
