@@ -1,6 +1,7 @@
 tasks:
   - before: rustup component add clippy
     init: |
+      cargo update
       cargo clippy --all-features --all-targets
       cargo test --all-features
       cargo doc --all-features --no-deps
