@@ -6,15 +6,12 @@ tasks:
     init: |
       cargo update
       cargo test --all-features
-      gp sync-done test
       cargo clippy --all-features --all-targets
       cargo doc --all-features --no-deps
     command: cargo watch -x 'test --all-features' -x 'clippy --all-features --all-targets' -x 'doc --all-features --no-deps'
 
   - name: example
-    command: |
-      gp sync-await test
-      cargo run --target wasm32-unknown-unknown --example readme
+    command: cargo run --target wasm32-unknown-unknown --example readme
 
 vscode:
   extensions:
@@ -24,7 +21,8 @@ vscode:
     - bungcip.better-toml
 
 ports:
-  - port: 1334
+  - name: example (wasm)
+    port: 1334
     visibility: private
     onOpen: notify
 
