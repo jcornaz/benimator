@@ -1,0 +1,20 @@
+tasks:
+  - init: cargo test --all-features
+    command: cargo watch -x 'test --all-features'
+
+vscode:
+  extensions:
+    - belfz.search-crates-io
+    - matklad.rust-analyzer
+    - serayuzgur.crates
+    - bungcip.better-toml
+
+github:
+  prebuilds:
+    master: true
+    branches: true
+    pullRequests: true
+    pullRequestsFromForks: true
+    addCheck: true
+    addComment: false
+    addBadge: false
