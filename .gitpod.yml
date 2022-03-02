@@ -1,7 +1,9 @@
 image: gitpod/workspace-full-vnc
 
 tasks:
-  - before: rustup component add clippy
+  - before: |
+      rustup component add clippy
+      rustup target install wasm32-unknown-unknown
     init: |
       cargo update
       cargo clippy --all-features --all-targets
