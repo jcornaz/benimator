@@ -6,11 +6,15 @@ tasks:
     init: |
       cargo update
       cargo test --all-features
+      gp sync-done test
       cargo clippy --all-features --all-targets
       cargo doc --all-features --no-deps
     command: cargo watch -x 'test --all-features' -x 'clippy --all-features --all-targets' -x 'doc --all-features --no-deps'
 
   - name: example
+    init: |
+      gp sync-await test
+      cargo build --target wasm32-unknown-unknown --example readme
     command: cargo run --target wasm32-unknown-unknown --example readme
 
 vscode:
