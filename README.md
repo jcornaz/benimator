@@ -78,7 +78,7 @@ Add to `Cargo.toml`:
 
 <!--- x-release-please-start-version --->
 ```toml
-benimator = "2.0.1"
+benimator = "2.1.0"
 ```
 <!--- x-release-please-end-version --->
 
