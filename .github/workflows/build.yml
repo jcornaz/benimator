@@ -97,6 +97,7 @@ jobs:
         with:
           release-type: rust
           command: release-pr
+          extra-files: README.md
           changelog-types: '[{"type":"feat","section":"Features","hidden":false},{"type":"fix","section":"Bug Fixes","hidden":false},{"type":"perf","section":"Performance","hidden":false},{"type":"docs","section":"Documentation","hidden":false}]'
 
   release:
