@@ -50,6 +50,14 @@ impl SpriteSheetAnimationState {
         *self = Self::default();
     }
 
+    /// Returns the index of the current frame
+    /// 
+    /// The index is relative to the animation sequence. **not** to the sprite-sheet.
+    #[must_use]
+    pub fn current_frame_index(&self) -> usize {
+        self.current_frame
+    }
+
     /// Update the animation and the sprite (if necessary)
     ///
     /// Returns true if the animation has ended
