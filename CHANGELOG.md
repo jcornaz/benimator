@@ -8,6 +8,18 @@ Unreleased changes (if any) can be found in the latest [release pull-request].
 
 
 
+## [2.2.0](https://github.com/jcornaz/benimator/compare/v2.1.0...v2.2.0) (2022-03-06)
+
+
+### Features
+
+* add `current_frame_index` getter from animation state ([#49](https://github.com/jcornaz/benimator/issues/49)) ([1e30613](https://github.com/jcornaz/benimator/commit/1e306136a78baddbb2ae6fec660a4684acd851c5))
+
+
+### Documentation
+
+* **readme:** update version ([91f9aba](https://github.com/jcornaz/benimator/commit/91f9aba814fb8af0ce1210e6a25c2b3eb597615e))
+
 ## [2.1.0](https://github.com/jcornaz/benimator/compare/v2.0.1...v2.1.0) (2022-03-02)
 
 
