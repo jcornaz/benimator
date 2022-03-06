@@ -51,7 +51,7 @@ impl SpriteSheetAnimationState {
     }
 
     /// Returns the index of the current frame
-    /// 
+    ///
     /// The index is relative to the animation sequence. **not** to the sprite-sheet.
     #[must_use]
     pub fn current_frame_index(&self) -> usize {
