@@ -83,6 +83,15 @@ benimator = "3.0.0"
 <!--- x-release-please-end-version --->
 
 
+## MSRV
+
+The minimum supported rust version is currently: `1.58`
+
+**It *may* be increased to a newer stable version in a minor release.** (but only if needed)
+
+It *will* be increased to the latest stable version in a major release. (even if not needed)
+
+
 ## Bevy Version Compatibility
 
 | bevy | benimator |
@@ -92,6 +101,7 @@ benimator = "3.0.0"
 | 0.5  | 0.1 - 0.3 |
 
 *Note: Only the latest published version of benimator is supported* 
+
 
 ## Contribute / Contact
 
