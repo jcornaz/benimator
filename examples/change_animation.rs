@@ -12,15 +12,18 @@ struct Animations {
     fast: Handle<SpriteSheetAnimation>,
 }
 
+#[derive(Component, Deref, DerefMut)]
+struct Timer(bevy::core::Timer);
+
 fn main() {
     App::new()
         .init_resource::<Animations>()
         .add_plugins(DefaultPlugins)
         .add_plugin(AnimationPlugin::default())
-        .add_startup_system_to_stage(StartupStage::PreStartup, create_animations.system())
-        .add_startup_system(spawn_animated_coin.system())
-        .add_startup_system(spawn_camera.system())
-        .add_system(change_animation.system())
+        .add_startup_system_to_stage(StartupStage::PreStartup, create_animations)
+        .add_startup_system(spawn_animated_coin)
+        .add_startup_system(spawn_camera)
+        .add_system(change_animation)
         .run();
 }
 
@@ -58,7 +61,7 @@ fn spawn_animated_coin(
         .insert(animations.fast.clone())
         .insert(Play)
         // Add timer, counting down the time before the animation is changed
-        .insert(Timer::from_seconds(5.0, true));
+        .insert(Timer(bevy::core::Timer::from_seconds(5.0, true)));
 }
 
 fn change_animation(

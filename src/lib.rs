@@ -158,6 +158,6 @@ impl Plugin for AnimationPlugin {
     fn build(&self, app: &mut App) {
         app.add_asset::<SpriteSheetAnimation>()
             .add_system_set_to_stage(CoreStage::PreUpdate, state::maintenance_systems())
-            .add_system_to_stage(CoreStage::Update, state::post_update_system());
+            .add_system_set_to_stage(CoreStage::Update, state::post_update_systems());
     }
 }

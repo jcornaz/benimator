@@ -8,9 +8,9 @@ fn main() {
     App::new()
         .add_plugins(DefaultPlugins)
         .add_plugin(AnimationPlugin::default())
-        .add_startup_system(spawn_animated_coin.system())
-        .add_startup_system(spawn_camera.system())
-        .add_system_to_stage(CoreStage::PostUpdate, removal_detection.system())
+        .add_startup_system(spawn_animated_coin)
+        .add_startup_system(spawn_camera)
+        .add_system_to_stage(CoreStage::PostUpdate, removal_detection)
         .run();
 }
 
