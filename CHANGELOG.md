@@ -8,6 +8,14 @@ Unreleased changes (if any) can be found in the latest [release pull-request].
 
 
 
+## [3.0.0](https://github.com/jcornaz/benimator/compare/v2.2.0...v3.0.0) (2022-04-15)
+
+
+### ⚠ BREAKING CHANGES
+
+* **dependencies:** require bevy 0.7 (#51)
+
+
 ## [2.2.0](https://github.com/jcornaz/benimator/compare/v2.1.0...v2.2.0) (2022-03-06)
 
 
