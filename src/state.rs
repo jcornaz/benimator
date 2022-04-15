@@ -9,13 +9,11 @@ use bevy_sprite::prelude::*;
 use crate::{animation::Mode, Play, SpriteSheetAnimation};
 
 pub(crate) fn maintenance_systems() -> SystemSet {
-    SystemSet::new()
-        .with_system(insert.system())
-        .with_system(remove.system())
+    SystemSet::new().with_system(insert).with_system(remove)
 }
 
-pub(crate) fn post_update_system() -> impl System<In = (), Out = ()> {
-    animate.system()
+pub(crate) fn post_update_systems() -> SystemSet {
+    SystemSet::new().with_system(animate)
 }
 
 /// Animation state component which is automatically inserted/removed

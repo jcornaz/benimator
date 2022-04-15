@@ -11,15 +11,15 @@ keywords = ["game", "gamedev", "anmiation", "bevy"]
 categories = ["game-development"]
 
 [dependencies]
-bevy_core = { version = "0.6.0", default-features = false }
-bevy_ecs = { version = "0.6.1", default-features = false }
-bevy_app = { version = "0.6.0", default-features = false }
-bevy_reflect = { version = "0.6.0", default-features = false }
-bevy_sprite = { version = "0.6.0", default-features = false }
-bevy_asset = { version = "0.6.0", default-features = false }
+bevy_core = { version = "0.7.0", default-features = false }
+bevy_ecs = { version = "0.7.0", default-features = false }
+bevy_app = { version = "0.7.0", default-features = false }
+bevy_reflect = { version = "0.7.0", default-features = false }
+bevy_sprite = { version = "0.7.0", default-features = false }
+bevy_asset = { version = "0.7.0", default-features = false }
 
 [dev-dependencies]
-bevy = { version = "0.6.0", default-features = false, features = ["render", "x11", "png"] }
+bevy = { version = "0.7.0", default-features = false, features = ["render", "x11", "png"] }
 rstest = "0.12.0"
 criterion = "0.3.5"
 
