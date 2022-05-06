@@ -8,6 +8,7 @@ on:
 
 env:
   RUSTFLAGS: "-D warnings"
+  CARGO_INCREMENTAL: 0
 
 jobs:
   next-rust:
