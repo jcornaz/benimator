@@ -8,6 +8,16 @@ Unreleased changes (if any) can be found in the latest [release pull-request].
 
 
 
+### [3.0.1](https://github.com/jcornaz/benimator/compare/v3.0.0...v3.0.1) (2022-05-16)
+
+
+### Documentation
+
+* hide deprecated members ([89e02e8](https://github.com/jcornaz/benimator/commit/89e02e8c283d0c047b7f397d9e6d8bd2ef974391))
+* **readme:** add MSRV ([0164227](https://github.com/jcornaz/benimator/commit/0164227f9449b82d7088d155cb5a225d943c1291))
+* **readme:** add ping-pong to the list of animation modes ([dfa1946](https://github.com/jcornaz/benimator/commit/dfa194683686ce5156e4c882e4dfd386197be68d))
+* **readme:** remove some unnecessary badges ([1b00af4](https://github.com/jcornaz/benimator/commit/1b00af46717612099bb64540f2aa00e0d89adb4a))
+
 ## [3.0.0](https://github.com/jcornaz/benimator/compare/v2.2.0...v3.0.0) (2022-04-15)
 
 
