@@ -22,6 +22,7 @@ pub struct SpriteSheetAnimation {
 /// This is not exposed in any of the public APIs of the crate so there is no reason to depend on
 /// it. Use 'builder-style' methods like [`SpriteSheetAnimation::repeat`] instead.
 #[deprecated]
+#[doc(hidden)]
 #[non_exhaustive]
 #[derive(Debug, Copy, Clone, Eq, PartialEq)]
 pub enum AnimationMode {
