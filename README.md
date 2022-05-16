@@ -13,7 +13,7 @@ A sprite sheet animation plugin for [bevy](https://bevyengine.org)
 
 * A `SpriteSheetAnimation` asset
 * Automatic update indices of a `TextureAtlasSprite`
-* Animation modes: `Repeat` or `Once`
+* Animation modes: `once`, `repeat` and `ping_pong`
 * An animation is playing if, and only if, a `Play` component is present in the entity
   * Simply remove/insert the `Play` component to pause/resume an animation
 * The animation can be defined from an index-range, or an arbitrary list of indices
