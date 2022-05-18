@@ -82,41 +82,21 @@ jobs:
       - run: cargo install cargo-udeps --locked
       - run: cargo udeps
 
-  release-pr:
-    if: github.ref == 'refs/heads/main'
-    runs-on: ubuntu-latest
-    outputs:
-      pr: ${{ steps.release_please.outputs.pr }}
-    steps:
-      - uses: google-github-actions/release-please-action@v3
-        id: release_please
-        with:
-          release-type: rust
-          command: release-pr
-          extra-files: README.md
-          changelog-types: '[{"type":"feat","section":"Features","hidden":false},{"type":"fix","section":"Bug Fixes","hidden":false},{"type":"perf","section":"Performance","hidden":false},{"type":"docs","section":"Documentation","hidden":false}]'
-
   release:
-    needs: [test, documentation, release-pr]
-    if: ${{ !needs.release-pr.outputs.pr }}
+    needs: [test, documentation]
+    environment: release
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
       - uses: actions-rs/toolchain@v1
         with:
           toolchain: stable
           override: true
           profile: minimal
-
-      - run: cargo publish --dry-run
-
-      - uses: google-github-actions/release-please-action@v3.2
-        id: release
-        with:
-          release-type: rust
-          command: github-release
-
-      - run: cargo publish
-        if: steps.release.outputs.release_created
+      - run: npm install --no-save conventional-changelog-conventionalcommits @semantic-release/exec
+      - run: npx semantic-release
         env:
+          GITHUB_TOKEN: ${{ github.token }}
           CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}
