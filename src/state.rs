@@ -70,7 +70,7 @@ impl SpriteSheetAnimationState {
         let mut frame = animation.frames[self.current_frame % animation.frames.len()];
 
         self.elapsed_in_frame += delta;
-        if self.elapsed_in_frame >= frame.duration {
+        while self.elapsed_in_frame >= frame.duration {
             match animation.mode {
                 Mode::RepeatFrom(loop_from) => {
                     if self.current_frame < animation.frames.len() - 1 {
@@ -107,7 +107,8 @@ impl SpriteSheetAnimationState {
             self.elapsed_in_frame -= frame.duration;
             frame = animation.frames[self.current_frame];
             sprite.index = frame.index;
-        } else if sprite.index != frame.index {
+        }
+        if sprite.index > frame.index {
             sprite.index = frame.index;
         }
 
