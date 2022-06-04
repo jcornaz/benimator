@@ -1,5 +1,9 @@
 FROM gitpod/workspace-rust
 
+RUN sudo apt-get update
+RUN sudo apt-get upgrade -y
+RUN sudo apt-get install -y clang lld
+RUN rustup toolchain install --profile default beta nightly
+RUN rustup default beta
 RUN rustup target install wasm32-unknown-unknown
-RUN env -u CARGO_HOME cargo install wasm-server-runner
-RUN rustup component add clippy
+RUN cargo install cargo-deny cargo-udeps wasm-server-runner
