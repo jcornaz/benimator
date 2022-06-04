@@ -1,5 +1,3 @@
-#![allow(clippy::forget_non_drop)]
-
 use bevy::prelude::*;
 use criterion::{criterion_group, criterion_main, BatchSize, BenchmarkId, Criterion};
 use std::time::Duration;
