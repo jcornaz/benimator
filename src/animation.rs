@@ -1,17 +1,27 @@
-use std::ops::RangeInclusive;
-use std::time::Duration;
+#[cfg(feature = "unstable-load-from-file")]
+mod parse;
+
+use std::{ops::RangeInclusive, time::Duration};
 
 use bevy_reflect::TypeUuid;
+
+#[cfg(feature = "unstable-load-from-file")]
+pub use parse::AnimationParseError;
+
+#[cfg(feature = "unstable-load-from-file")]
+use serde::Deserialize;
 
 /// Asset that define an animation of `TextureAtlasSprite`
 ///
 /// See crate level documentation for usage
 #[derive(Debug, Clone, Default, TypeUuid)]
+#[cfg_attr(feature = "unstable-load-from-file", derive(Deserialize))]
 #[uuid = "6378e9c2-ecd1-4029-9cd5-801caf68517c"]
 pub struct SpriteSheetAnimation {
     /// Frames
     pub(crate) frames: Vec<Frame>,
     /// Animation mode
+    #[cfg_attr(feature = "unstable-load-from-file", serde(default))]
     pub(crate) mode: Mode,
 }
 
@@ -38,11 +48,16 @@ pub enum AnimationMode {
 }
 
 /// A single animation frame
-#[derive(Debug, Copy, Clone, Default)]
+#[derive(Debug, Copy, Clone, Default, PartialEq, Eq)]
+#[cfg_attr(feature = "unstable-load-from-file", derive(Deserialize))]
 pub struct Frame {
     /// Index in the sprite atlas
     pub(crate) index: usize,
     /// How long should the frame be displayed
+    #[cfg_attr(
+        feature = "unstable-load-from-file",
+        serde(deserialize_with = "parse::deserialize_duration")
+    )]
     pub(crate) duration: Duration,
 }
 
@@ -122,6 +137,32 @@ impl SpriteSheetAnimation {
 
     pub(crate) fn has_frames(&self) -> bool {
         !self.frames.is_empty()
+    }
+
+    /// Parse content of a yaml file representing the animation
+    ///
+    /// # Yaml schema
+    ///
+    /// ```yaml
+    /// # The mode can be one of: 'once', 'repeat', 'ping-pong'
+    /// # or 'repeatFrom(n)' (where 'n' is the frame-index to repeat from)
+    /// # The default is 'repeat'
+    /// mode: ping-pong
+    /// frames:
+    ///   - index: 0 # index in the sprite sheet for that frame
+    ///     duration: 100 # duration of the frame in milliseconds
+    ///   - index: 1
+    ///     duration: 100
+    ///   - index: 2
+    ///     duration: 120
+    /// ```
+    ///
+    /// # Errors
+    ///
+    /// Returns an error if the content is not a valid yaml representation of an animation
+    #[cfg(feature = "unstable-load-from-file")]
+    pub fn from_yaml(yaml: &str) -> Result<Self, AnimationParseError> {
+        serde_yaml::from_str(yaml).map_err(AnimationParseError)
     }
 }
 
