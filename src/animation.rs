@@ -1,14 +1,15 @@
+#[cfg(feature = "unstable-load-from-file")]
+mod parse;
+
 use std::{ops::RangeInclusive, time::Duration};
 
-#[cfg(feature = "unstable-load-from-file")]
-use std::{
-    error::Error,
-    fmt::{Display, Formatter},
-};
-
 use bevy_reflect::TypeUuid;
+
 #[cfg(feature = "unstable-load-from-file")]
-use serde::{de, Deserialize, Deserializer};
+pub use parse::AnimationParseError;
+
+#[cfg(feature = "unstable-load-from-file")]
+use serde::Deserialize;
 
 /// Asset that define an animation of `TextureAtlasSprite`
 ///
@@ -55,36 +56,9 @@ pub struct Frame {
     /// How long should the frame be displayed
     #[cfg_attr(
         feature = "unstable-load-from-file",
-        serde(deserialize_with = "deserialize_duration")
+        serde(deserialize_with = "parse::deserialize_duration")
     )]
     pub(crate) duration: Duration,
-}
-
-#[cfg(feature = "unstable-load-from-file")]
-fn deserialize_duration<'de, D>(deserializer: D) -> Result<Duration, D::Error>
-where
-    D: Deserializer<'de>,
-{
-    deserializer.deserialize_u64(DurationVisitor)
-}
-
-#[cfg(feature = "unstable-load-from-file")]
-struct DurationVisitor;
-
-#[cfg(feature = "unstable-load-from-file")]
-impl<'de> de::Visitor<'de> for DurationVisitor {
-    type Value = Duration;
-
-    fn visit_u64<E>(self, v: u64) -> Result<Self::Value, E>
-    where
-        E: de::Error,
-    {
-        Ok(Duration::from_millis(v))
-    }
-
-    fn expecting(&self, formatter: &mut Formatter<'_>) -> std::fmt::Result {
-        write!(formatter, "a positive integer")
-    }
 }
 
 impl SpriteSheetAnimation {
@@ -192,72 +166,11 @@ impl SpriteSheetAnimation {
     }
 }
 
-#[cfg(feature = "unstable-load-from-file")]
-#[derive(Debug)]
-#[non_exhaustive]
-pub struct AnimationParseError(serde_yaml::Error);
-
-#[cfg(feature = "unstable-load-from-file")]
-impl Display for AnimationParseError {
-    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
-        write!(f, "Animation format is invalid: {}", self.0)
-    }
-}
-
-#[cfg(feature = "unstable-load-from-file")]
-impl Error for AnimationParseError {}
-
 #[derive(Debug, Copy, Clone, Eq, PartialEq)]
 pub(crate) enum Mode {
     Once,
     RepeatFrom(usize),
     PingPong,
-}
-
-#[cfg(feature = "unstable-load-from-file")]
-impl<'de> Deserialize<'de> for Mode {
-    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
-    where
-        D: Deserializer<'de>,
-    {
-        deserializer.deserialize_str(ModeVisitor)
-    }
-}
-
-#[cfg(feature = "unstable-load-from-file")]
-struct ModeVisitor;
-
-#[cfg(feature = "unstable-load-from-file")]
-impl<'de> de::Visitor<'de> for ModeVisitor {
-    type Value = Mode;
-
-    fn visit_str<E>(self, s: &str) -> Result<Self::Value, E>
-    where
-        E: de::Error,
-    {
-        match s {
-            "ping-pong" => Ok(Mode::PingPong),
-            "repeat" => Ok(Mode::RepeatFrom(0)),
-            "once" => Ok(Mode::Once),
-            _ => {
-                match s
-                    .strip_prefix("repeat-from(")
-                    .and_then(|s| s.strip_suffix(')'))
-                    .and_then(|s| s.parse::<usize>().ok())
-                {
-                    Some(index) => Ok(Mode::RepeatFrom(index)),
-                    None => Err(de::Error::invalid_value(de::Unexpected::Str(s), &self)),
-                }
-            }
-        }
-    }
-
-    fn expecting(&self, formatter: &mut Formatter<'_>) -> std::fmt::Result {
-        write!(
-            formatter,
-            "one of: 'repeat', 'once', 'ping-pong', 'repeat-from(n)'"
-        )
-    }
 }
 
 impl FromIterator<Frame> for SpriteSheetAnimation {
@@ -308,103 +221,5 @@ mod tests {
     #[should_panic]
     fn panics_for_zero_duration() {
         let _ = Frame::new(0, Duration::ZERO);
-    }
-
-    #[cfg(feature = "unstable-load-from-file")]
-    mod yaml_parsing {
-        use super::*;
-
-        #[test]
-        fn load_from_yaml() {
-            // given
-            let content = "
-            mode: ping-pong
-            frames:
-              - index: 0 # index in the sprite sheet for that frame
-                duration: 100 # duration of the frame in milliseconds
-              - index: 1
-                duration: 100
-              - index: 2
-                duration: 120";
-
-            // when
-            let animation = SpriteSheetAnimation::from_yaml(content).unwrap();
-
-            // then
-            assert_eq!(animation.mode, Mode::PingPong);
-            assert_eq!(
-                animation.frames,
-                vec![
-                    Frame::new(0, Duration::from_millis(100)),
-                    Frame::new(1, Duration::from_millis(100)),
-                    Frame::new(2, Duration::from_millis(120)),
-                ]
-            );
-        }
-
-        #[test]
-        fn load_from_yaml_default_mode() {
-            // given
-            let content = "
-            frames:
-              - index: 0
-                duration: 100";
-
-            // when
-            let animation = SpriteSheetAnimation::from_yaml(content).unwrap();
-
-            // then
-            assert_eq!(animation.mode, Mode::RepeatFrom(0));
-        }
-
-        #[test]
-        fn load_from_yaml_repeat() {
-            // given
-            let content = "
-            mode: repeat
-            frames:
-              - index: 0
-                duration: 100";
-
-            // when
-            let animation = SpriteSheetAnimation::from_yaml(content).unwrap();
-
-            // then
-            assert_eq!(animation.mode, Mode::RepeatFrom(0));
-        }
-
-        #[test]
-        fn load_from_yaml_once() {
-            // given
-            let content = "
-            mode: once
-            frames:
-              - index: 0
-                duration: 100";
-
-            // when
-            let animation = SpriteSheetAnimation::from_yaml(content).unwrap();
-
-            // then
-            assert_eq!(animation.mode, Mode::Once);
-        }
-
-        #[test]
-        fn load_from_yaml_repeat_from() {
-            // given
-            let content = "
-            mode: repeat-from(1)
-            frames:
-              - index: 0
-                duration: 100
-              - index: 1
-                duration: 100";
-
-            // when
-            let animation = SpriteSheetAnimation::from_yaml(content).unwrap();
-
-            // then
-            assert_eq!(animation.mode, Mode::RepeatFrom(1));
-        }
     }
 }
