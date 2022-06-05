@@ -417,6 +417,94 @@ mod tests {
         }
     }
 
+    mod ping_pong {
+        use super::*;
+
+        #[fixture]
+        fn mode() -> Mode {
+            Mode::PingPong
+        }
+
+        mod on_last_frame {
+            use crate::Frame;
+
+            use super::*;
+
+            #[fixture]
+            fn animation(frame_duration: Duration, mode: Mode) -> SpriteSheetAnimation {
+                SpriteSheetAnimation {
+                    frames: vec![Frame::new(0, frame_duration), Frame::new(1, frame_duration)],
+                    mode,
+                }
+            }
+
+            #[fixture]
+            fn state() -> SpriteSheetAnimationState {
+                SpriteSheetAnimationState {
+                    current_frame: 1,
+                    elapsed_in_frame: Duration::from_nanos(500),
+                    going_backward: false,
+                }
+            }
+
+            #[rstest]
+            fn returns_to_previous_frame(
+                mut state: SpriteSheetAnimationState,
+                mut sprite_at_second_frame: TextureAtlasSprite,
+                animation: SpriteSheetAnimation,
+                frame_duration: Duration,
+            ) {
+                state.update(&mut sprite_at_second_frame, &animation, frame_duration);
+                assert_eq!(sprite_at_second_frame.index, 0);
+            }
+
+            #[rstest]
+            fn changes_state_to_backward(
+                mut state: SpriteSheetAnimationState,
+                mut sprite_at_second_frame: TextureAtlasSprite,
+                animation: SpriteSheetAnimation,
+                frame_duration: Duration,
+            ) {
+                state.update(&mut sprite_at_second_frame, &animation, frame_duration);
+                assert!(state.going_backward);
+            }
+        }
+
+        mod going_backward {
+            use crate::Frame;
+
+            use super::*;
+
+            #[fixture]
+            fn animation(frame_duration: Duration, mode: Mode) -> SpriteSheetAnimation {
+                SpriteSheetAnimation {
+                    frames: vec![Frame::new(0, frame_duration), Frame::new(2, frame_duration)],
+                    mode,
+                }
+            }
+
+            #[fixture]
+            fn state() -> SpriteSheetAnimationState {
+                SpriteSheetAnimationState {
+                    current_frame: 1,
+                    elapsed_in_frame: Duration::from_nanos(500),
+                    going_backward: true,
+                }
+            }
+
+            #[rstest]
+            fn continues_to_previous_frame(
+                mut state: SpriteSheetAnimationState,
+                mut sprite_at_second_frame: TextureAtlasSprite,
+                animation: SpriteSheetAnimation,
+                frame_duration: Duration,
+            ) {
+                state.update(&mut sprite_at_second_frame, &animation, frame_duration);
+                assert_eq!(sprite_at_second_frame.index, 0);
+            }
+        }
+    }
+
     mod run_once {
         use super::*;
 
