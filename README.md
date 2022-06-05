@@ -84,7 +84,7 @@ benimator = "3"
 
 **Any API behind one of theses feature flags is unstable, should not be considered complete nor part of the public API. Breaking changes to that API may happen in minor releases**
 
-* `unstable-load-from-file` API to create from animation from yaml files.
+* `unstable-load-from-file` API to create animation from yaml files.
 
 ## MSRV
 
