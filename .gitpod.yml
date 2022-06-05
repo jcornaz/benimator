@@ -7,10 +7,17 @@ tasks:
       cp .cargo/fast_compiles_config .cargo/config.toml
       cargo update
       cargo test --all-features
+      cargo test
       gp sync-done test
       cargo clippy --all-features --all-targets
       cargo doc --all-features --no-deps
-    command: cargo watch -x 'test --all-features' -x 'clippy --all-features --all-targets' -x 'doc --all-features --no-deps'
+    command: |
+      cargo watch \
+        -x 'test --tests' \
+        -x 'test --all-features --tests' \
+        -x 'test --all-features' \
+        -x 'clippy --all-features --all-targets' \
+        -x 'doc --all-features --no-deps'
 
   - name: example
     init: |
