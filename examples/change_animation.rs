@@ -67,15 +67,20 @@ fn spawn_animated_coin(
 fn change_animation(
     time: Res<Time>,
     animations: Res<Animations>,
-    mut query: Query<(&mut Timer, &mut Handle<SpriteSheetAnimation>)>,
+    mut query: Query<(
+        &mut Timer,
+        &mut Handle<SpriteSheetAnimation>,
+        &mut SpriteSheetAnimationState,
+    )>,
 ) {
-    let (mut timer, mut animation) = query.single_mut();
+    let (mut timer, mut animation, mut state) = query.single_mut();
     if timer.tick(time.delta()).finished() {
         if animation.deref() == &animations.fast {
             *animation = animations.slow.clone();
         } else {
             *animation = animations.fast.clone();
         }
+        state.reset();
     }
 }
 
