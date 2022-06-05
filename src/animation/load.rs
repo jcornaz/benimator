@@ -1,5 +1,6 @@
 use bevy_asset::{AssetLoader, LoadContext, LoadedAsset};
 use bevy_utils::BoxedFuture;
+use super::SpriteSheetAnimation;
 
 #[derive(Debug, Default)]
 pub(crate) struct SpriteSheetAnimationLoader;

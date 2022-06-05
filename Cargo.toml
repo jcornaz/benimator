@@ -35,5 +35,9 @@ criterion = { version = "0.3.5", default-features = false }
 name = "play_component"
 harness = false
 
+[[example]]
+name = "using_animation_file"
+required-features = ["unstable-load-from-file"]
+
 [profile.dev]
 debug = 0
