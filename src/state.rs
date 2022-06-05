@@ -70,7 +70,7 @@ impl SpriteSheetAnimationState {
         let mut frame = animation.frames[self.current_frame % animation.frames.len()];
 
         self.elapsed_in_frame += delta;
-        if self.elapsed_in_frame >= frame.duration {
+        while self.elapsed_in_frame >= frame.duration {
             match animation.mode {
                 Mode::RepeatFrom(loop_from) => {
                     if self.current_frame < animation.frames.len() - 1 {
@@ -107,7 +107,8 @@ impl SpriteSheetAnimationState {
             self.elapsed_in_frame -= frame.duration;
             frame = animation.frames[self.current_frame];
             sprite.index = frame.index;
-        } else if sprite.index != frame.index {
+        }
+        if sprite.index > frame.index {
             sprite.index = frame.index;
         }
 
@@ -231,7 +232,7 @@ mod tests {
 
         #[fixture]
         fn animation(frame_duration: Duration) -> SpriteSheetAnimation {
-            SpriteSheetAnimation::from_range(0..=1, frame_duration)
+            SpriteSheetAnimation::from_range(0..=2, frame_duration)
         }
 
         #[fixture]
@@ -308,6 +309,17 @@ mod tests {
             frame_duration: Duration,
         ) {
             assert!(!state.update(&mut sprite_at_second_frame, &animation, frame_duration));
+        }
+
+        #[rstest]
+        fn skips_frame_if_too_much_time_elapsed(
+            mut state: SpriteSheetAnimationState,
+            mut sprite: TextureAtlasSprite,
+            animation: SpriteSheetAnimation,
+            frame_duration: Duration,
+        ) {
+            state.update(&mut sprite, &animation, frame_duration * 2);
+            assert_eq!(sprite.index, 2);
         }
     }
 
