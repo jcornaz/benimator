@@ -10,6 +10,10 @@ repository = "https://github.com/jcornaz/benimator"
 keywords = ["game", "gamedev", "anmiation", "bevy"]
 categories = ["game-development"]
 
+[features]
+default = []
+unstable-load-from-file = ["serde", "serde_yaml"]
+
 [dependencies]
 bevy_core = { version = "0.7.0", default-features = false }
 bevy_ecs = { version = "0.7.0", default-features = false }
@@ -17,6 +21,8 @@ bevy_app = { version = "0.7.0", default-features = false }
 bevy_reflect = { version = "0.7.0", default-features = false }
 bevy_sprite = { version = "0.7.0", default-features = false }
 bevy_asset = { version = "0.7.0", default-features = false }
+serde = { version = "1.0", default-features = false, features = ["derive"], optional = true }
+serde_yaml = { version = "0.8.24", default-features = false, optional = true }
 
 [dev-dependencies]
 bevy = { version = "0.7.0", default-features = false, features = ["render", "x11", "png"] }
