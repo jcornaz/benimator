@@ -4,6 +4,7 @@ image:
 tasks:
   - name: test
     init: |
+      cp .cargo/fast_compiles_config .cargo/config.toml
       cargo update
       cargo test --all-features
       gp sync-done test
