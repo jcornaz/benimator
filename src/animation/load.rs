@@ -1,9 +1,10 @@
 use bevy_asset::{AssetLoader, LoadContext, LoadedAsset};
 use bevy_utils::BoxedFuture;
 
-use super::SpriteSheetAnimation;
+#[derive(Debug, Default)]
+pub(crate) struct SpriteSheetAnimationLoader;
 
-impl AssetLoader for SpriteSheetAnimation {
+impl AssetLoader for SpriteSheetAnimationLoader {
     fn load<'a>(
         &'a self,
         bytes: &'a [u8],
@@ -17,6 +18,6 @@ impl AssetLoader for SpriteSheetAnimation {
     }
 
     fn extensions(&self) -> &[&str] {
-        &[".animation.yml", ".animation.yaml"]
+        &["animation.yml", "animation.yaml"]
     }
 }

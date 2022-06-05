@@ -2,7 +2,7 @@
 mod parse;
 
 #[cfg(feature = "unstable-load-from-file")]
-mod load;
+pub(crate) mod load;
 
 use std::{ops::RangeInclusive, time::Duration};
 

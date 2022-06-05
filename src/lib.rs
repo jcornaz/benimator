@@ -159,5 +159,8 @@ impl Plugin for AnimationPlugin {
         app.add_asset::<SpriteSheetAnimation>()
             .add_system_set_to_stage(CoreStage::PreUpdate, state::maintenance_systems())
             .add_system_set_to_stage(CoreStage::Update, state::post_update_systems());
+
+        #[cfg(feature = "unstable-load-from-file")]
+        app.init_asset_loader::<animation::load::SpriteSheetAnimationLoader>();
     }
 }
