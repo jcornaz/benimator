@@ -59,6 +59,10 @@ impl SpriteSheetAnimation {
     /// Create a new animation from index-range, using the same frame duration for each frame.
     ///
     /// For more granular configuration, see [`from_frames`](SpriteSheetAnimation::from_frames)
+    ///
+    /// # Panics
+    ///
+    /// Panics if the duration is zero
     #[must_use]
     pub fn from_range(index_range: RangeInclusive<usize>, frame_duration: Duration) -> Self {
         Self::from_iter(index_range, frame_duration)
@@ -76,6 +80,10 @@ impl SpriteSheetAnimation {
     /// ```
     ///
     /// For more granular configuration, see [`from_frames`](SpriteSheetAnimation::from_frames)
+    ///
+    /// # Panics
+    ///
+    /// Panics if the duration is zero
     pub fn from_iter(indices: impl IntoIterator<Item = usize>, frame_duration: Duration) -> Self {
         indices
             .into_iter()
@@ -147,9 +155,30 @@ impl Default for AnimationMode {
 
 impl Frame {
     /// Create a new animation frame
+    ///
+    /// The duration must be > 0
+    ///
+    /// # Panics
+    ///
+    /// Panics if the duration is zero
     #[inline]
     #[must_use]
     pub fn new(index: usize, duration: Duration) -> Self {
+        assert!(
+            !duration.is_zero(),
+            "zero-duration is invalid for animation frame"
+        );
         Self { index, duration }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    #[should_panic]
+    fn panics_for_zero_duration() {
+        let _ = Frame::new(0, Duration::ZERO);
     }
 }
