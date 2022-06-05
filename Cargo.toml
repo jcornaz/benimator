@@ -12,7 +12,7 @@ categories = ["game-development"]
 
 [features]
 default = []
-unstable-load-from-file = ["serde", "serde_yaml"]
+unstable-load-from-file = ["serde", "serde_yaml", "anyhow", "bevy_utils"]
 
 [dependencies]
 bevy_core = { version = "0.7.0", default-features = false }
@@ -21,8 +21,10 @@ bevy_app = { version = "0.7.0", default-features = false }
 bevy_reflect = { version = "0.7.0", default-features = false }
 bevy_sprite = { version = "0.7.0", default-features = false }
 bevy_asset = { version = "0.7.0", default-features = false }
+bevy_utils = { version = "0.7.0", default-features = false, optional = true }
 serde = { version = "1.0", default-features = false, features = ["derive"], optional = true }
 serde_yaml = { version = "0.8.24", default-features = false, optional = true }
+anyhow = { version = "1.0", default-features = false, optional = true }
 
 [dev-dependencies]
 bevy = { version = "0.7.0", default-features = false, features = ["render", "x11", "png"] }
