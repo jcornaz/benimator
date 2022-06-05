@@ -232,7 +232,7 @@ mod tests {
 
         #[fixture]
         fn animation(frame_duration: Duration) -> SpriteSheetAnimation {
-            SpriteSheetAnimation::from_range(0..=1, frame_duration)
+            SpriteSheetAnimation::from_range(0..=2, frame_duration)
         }
 
         #[fixture]
@@ -309,6 +309,17 @@ mod tests {
             frame_duration: Duration,
         ) {
             assert!(!state.update(&mut sprite_at_second_frame, &animation, frame_duration));
+        }
+
+        #[rstest]
+        fn skips_frame_if_too_much_time_elapsed(
+            mut state: SpriteSheetAnimationState,
+            mut sprite: TextureAtlasSprite,
+            animation: SpriteSheetAnimation,
+            frame_duration: Duration,
+        ) {
+            state.update(&mut sprite, &animation, frame_duration * 2);
+            assert_eq!(sprite.index, 2);
         }
     }
 
