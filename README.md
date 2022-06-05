@@ -80,7 +80,7 @@ benimator = "3"
 
 ## MSRV
 
-The minimum supported rust version is currently: `1.58`
+The minimum supported rust version is currently: `1.59`
 
 **It *may* be increased to a newer stable version in a minor release.** (but only if needed)
 
