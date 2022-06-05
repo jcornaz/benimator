@@ -20,7 +20,7 @@ fn plugin_does_not_crash() {
         .unwrap()
         .add(SpriteSheetAnimation::from_range(
             0..=2,
-            Duration::from_nanos(0),
+            Duration::from_nanos(1),
         ));
 
     app.world
