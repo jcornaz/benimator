@@ -316,26 +316,19 @@ mod tests {
 
         use super::*;
 
-        #[fixture]
-        fn mode() -> Mode {
-            Mode::RepeatFrom(2)
-        }
-
         mod on_last_frame {
             use super::*;
 
             #[fixture]
-            fn animation(frame_duration: Duration, mode: Mode) -> SpriteSheetAnimation {
-                SpriteSheetAnimation {
-                    frames: vec![
-                        Frame::new(0, frame_duration),
-                        Frame::new(1, frame_duration),
-                        Frame::new(2, frame_duration),
-                        Frame::new(3, frame_duration),
-                        Frame::new(4, frame_duration),
-                    ],
-                    mode,
-                }
+            fn animation(frame_duration: Duration) -> SpriteSheetAnimation {
+                SpriteSheetAnimation::from_frames(vec![
+                    Frame::new(0, frame_duration),
+                    Frame::new(1, frame_duration),
+                    Frame::new(2, frame_duration),
+                    Frame::new(3, frame_duration),
+                    Frame::new(4, frame_duration),
+                ])
+                .repeat_from(2)
             }
 
             #[fixture]
@@ -373,16 +366,14 @@ mod tests {
             use super::*;
 
             #[fixture]
-            fn animation(frame_duration: Duration, mode: Mode) -> SpriteSheetAnimation {
-                SpriteSheetAnimation {
-                    frames: vec![
-                        Frame::new(0, frame_duration),
-                        Frame::new(1, frame_duration),
-                        Frame::new(2, frame_duration),
-                        Frame::new(3, frame_duration),
-                    ],
-                    mode,
-                }
+            fn animation(frame_duration: Duration) -> SpriteSheetAnimation {
+                SpriteSheetAnimation::from_frames(vec![
+                    Frame::new(0, frame_duration),
+                    Frame::new(1, frame_duration),
+                    Frame::new(2, frame_duration),
+                    Frame::new(3, frame_duration),
+                ])
+                .repeat_from(2)
             }
 
             #[fixture]
@@ -420,22 +411,12 @@ mod tests {
     mod ping_pong {
         use super::*;
 
-        #[fixture]
-        fn mode() -> Mode {
-            Mode::PingPong
-        }
-
         mod on_last_frame {
-            use crate::Frame;
-
             use super::*;
 
             #[fixture]
-            fn animation(frame_duration: Duration, mode: Mode) -> SpriteSheetAnimation {
-                SpriteSheetAnimation {
-                    frames: vec![Frame::new(0, frame_duration), Frame::new(1, frame_duration)],
-                    mode,
-                }
+            fn animation(frame_duration: Duration) -> SpriteSheetAnimation {
+                SpriteSheetAnimation::from_range(0..=1, frame_duration).ping_pong()
             }
 
             #[fixture]
@@ -471,16 +452,11 @@ mod tests {
         }
 
         mod going_backward {
-            use crate::Frame;
-
             use super::*;
 
             #[fixture]
-            fn animation(frame_duration: Duration, mode: Mode) -> SpriteSheetAnimation {
-                SpriteSheetAnimation {
-                    frames: vec![Frame::new(0, frame_duration), Frame::new(2, frame_duration)],
-                    mode,
-                }
+            fn animation(frame_duration: Duration) -> SpriteSheetAnimation {
+                SpriteSheetAnimation::from_range(0..=2, frame_duration).ping_pong()
             }
 
             #[fixture]
@@ -508,22 +484,13 @@ mod tests {
     mod run_once {
         use super::*;
 
-        #[fixture]
-        fn mode() -> Mode {
-            Mode::Once
-        }
-
         mod on_last_frame {
-            use crate::Frame;
 
             use super::*;
 
             #[fixture]
-            fn animation(frame_duration: Duration, mode: Mode) -> SpriteSheetAnimation {
-                SpriteSheetAnimation {
-                    frames: vec![Frame::new(0, frame_duration), Frame::new(1, frame_duration)],
-                    mode,
-                }
+            fn animation(frame_duration: Duration) -> SpriteSheetAnimation {
+                SpriteSheetAnimation::from_range(0..=1, frame_duration).once()
             }
 
             #[fixture]
