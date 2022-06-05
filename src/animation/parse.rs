@@ -6,7 +6,63 @@ use std::{
 
 use serde::{de, Deserialize, Deserializer};
 
+use crate::SpriteSheetAnimation;
+
 use super::Mode;
+
+impl SpriteSheetAnimation {
+    /// Parse content of a yaml string representing the animation
+    ///
+    /// # Yaml schema
+    ///
+    /// ```yaml
+    /// # The mode can be one of: 'once', 'repeat', 'ping-pong'
+    /// # or 'repeatFrom(n)' (where 'n' is the frame-index to repeat from)
+    /// # The default is 'repeat'
+    /// mode: ping-pong
+    /// frames:
+    ///   - index: 0 # index in the sprite sheet for that frame
+    ///     duration: 100 # duration of the frame in milliseconds
+    ///   - index: 1
+    ///     duration: 100
+    ///   - index: 2
+    ///     duration: 120
+    /// ```
+    ///
+    /// # Errors
+    ///
+    /// Returns an error if the content is not a valid yaml representation of an animation
+    #[cfg(feature = "unstable-load-from-file")]
+    pub fn from_yaml_str(yaml: &str) -> Result<Self, AnimationParseError> {
+        serde_yaml::from_str(yaml).map_err(AnimationParseError)
+    }
+
+    /// Parse content of a yaml bytes representing the animation
+    ///
+    /// # Yaml schema
+    ///
+    /// ```yaml
+    /// # The mode can be one of: 'once', 'repeat', 'ping-pong'
+    /// # or 'repeatFrom(n)' (where 'n' is the frame-index to repeat from)
+    /// # The default is 'repeat'
+    /// mode: ping-pong
+    /// frames:
+    ///   - index: 0 # index in the sprite sheet for that frame
+    ///     duration: 100 # duration of the frame in milliseconds
+    ///   - index: 1
+    ///     duration: 100
+    ///   - index: 2
+    ///     duration: 120
+    /// ```
+    ///
+    /// # Errors
+    ///
+    /// Returns an error if the content is not a valid yaml representation of an animation
+    #[cfg(feature = "unstable-load-from-file")]
+    pub fn from_yaml_bytes(yaml: &[u8]) -> Result<Self, AnimationParseError> {
+        serde_yaml::from_slice(yaml).map_err(AnimationParseError)
+    }
+}
 
 #[derive(Debug)]
 #[non_exhaustive]
@@ -107,7 +163,7 @@ mod tests {
                 duration: 120";
 
         // when
-        let animation = SpriteSheetAnimation::from_yaml(content).unwrap();
+        let animation = SpriteSheetAnimation::from_yaml_str(content).unwrap();
 
         // then
         assert_eq!(animation.mode, Mode::PingPong);
@@ -130,7 +186,7 @@ mod tests {
                 duration: 100";
 
         // when
-        let animation = SpriteSheetAnimation::from_yaml(content).unwrap();
+        let animation = SpriteSheetAnimation::from_yaml_str(content).unwrap();
 
         // then
         assert_eq!(animation.mode, Mode::RepeatFrom(0));
@@ -146,7 +202,7 @@ mod tests {
                 duration: 100";
 
         // when
-        let animation = SpriteSheetAnimation::from_yaml(content).unwrap();
+        let animation = SpriteSheetAnimation::from_yaml_str(content).unwrap();
 
         // then
         assert_eq!(animation.mode, Mode::RepeatFrom(0));
@@ -162,7 +218,7 @@ mod tests {
                 duration: 100";
 
         // when
-        let animation = SpriteSheetAnimation::from_yaml(content).unwrap();
+        let animation = SpriteSheetAnimation::from_yaml_str(content).unwrap();
 
         // then
         assert_eq!(animation.mode, Mode::Once);
@@ -180,7 +236,7 @@ mod tests {
                 duration: 100";
 
         // when
-        let animation = SpriteSheetAnimation::from_yaml(content).unwrap();
+        let animation = SpriteSheetAnimation::from_yaml_str(content).unwrap();
 
         // then
         assert_eq!(animation.mode, Mode::RepeatFrom(1));
