@@ -84,6 +84,7 @@ jobs:
       - run: cargo udeps
 
   release:
+    if: ${{ github.event_name != 'pull_request' }}
     needs: [test, documentation]
     environment: release
     runs-on: ubuntu-latest
