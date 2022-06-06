@@ -3,6 +3,7 @@ image:
 
 tasks:
   - name: serve docs
+    init: gp sync-await docs
     command: miniserve --index benimator/index.html target/doc
 
   - name: test
@@ -10,6 +11,7 @@ tasks:
       cp .cargo/fast_compiles_config .cargo/config.toml
       cargo update
       cargo +nightly doc --all-features --no-deps
+      gp sync-done docs
       cargo clippy --all-features --all-targets
       cargo test --all-features
       cargo test
@@ -32,7 +34,7 @@ ports:
   - name: documentation
     port: 8080
     visibility: private
-    onOpen: open-browser
+    onOpen: notify
 
 github:
   prebuilds:
