@@ -92,7 +92,11 @@ impl<'de> de::Visitor<'de> for DurationVisitor {
     where
         E: de::Error,
     {
-        Ok(Duration::from_millis(v))
+        if v > 0 {
+            Ok(Duration::from_millis(v))
+        } else {
+            Err(de::Error::invalid_value(de::Unexpected::Unsigned(v), &self))
+        }
     }
 
     fn expecting(&self, formatter: &mut Formatter<'_>) -> fmt::Result {
@@ -150,7 +154,7 @@ mod tests {
     use super::*;
 
     #[test]
-    fn load_from_yaml() {
+    fn parse_yaml() {
         // given
         let content = "
             mode: ping-pong
@@ -178,7 +182,7 @@ mod tests {
     }
 
     #[test]
-    fn load_from_yaml_default_mode() {
+    fn parse_yaml_default_mode() {
         // given
         let content = "
             frames:
@@ -193,7 +197,7 @@ mod tests {
     }
 
     #[test]
-    fn load_from_yaml_repeat() {
+    fn parse_yaml_repeat() {
         // given
         let content = "
             mode: repeat
@@ -209,7 +213,7 @@ mod tests {
     }
 
     #[test]
-    fn load_from_yaml_once() {
+    fn parse_yaml_once() {
         // given
         let content = "
             mode: once
@@ -225,7 +229,7 @@ mod tests {
     }
 
     #[test]
-    fn load_from_yaml_repeat_from() {
+    fn parse_yaml_repeat_from() {
         // given
         let content = "
             mode: repeat-from(1)
@@ -240,5 +244,20 @@ mod tests {
 
         // then
         assert_eq!(animation.mode, Mode::RepeatFrom(1));
+    }
+
+    #[test]
+    fn parse_yaml_zero_duration() {
+        // given
+        let content = "
+            frames:
+              - index: 0
+                duration: 0";
+
+        // when
+        let animation = SpriteSheetAnimation::from_yaml_str(content);
+
+        // then
+        assert!(animation.is_err());
     }
 }
