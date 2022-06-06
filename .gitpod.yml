@@ -2,6 +2,10 @@ image:
   file: .gitpod.Dockerfile
 
 tasks:
+  - name: doc
+    init: cargo +nightly doc --all-features --no-deps
+    command: miniserve --index benimator/index.html target/doc
+
   - name: test
     init: |
       cp .cargo/fast_compiles_config .cargo/config.toml
