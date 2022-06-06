@@ -107,12 +107,11 @@
 //! }
 //! ```
 //!
-//! ## **(Unstable)** Load animation from file
+//! ## Load animation from file **(Unstable)**
 //!
-//! By enabling the cargo feature: `unstable-load-from-file` you can write the animation in an asset file with the extension `.animation.yml`
-//! then load with the asset-server.
+//! By enabling the cargo feature: `unstable-load-from-file` you can write the animation in an asset file.
 //!
-//! Here is how the animation file looks like:
+//! First, create an asset file with the extension `.animation.yml`:
 //! ```yaml
 //! # The mode can be one of: 'once', 'repeat', 'ping-pong'
 //! # or 'repeatFrom(n)' (where 'n' is the frame-index to repeat from)
@@ -127,17 +126,13 @@
 //!     duration: 120
 //! ```
 //!
-//! And how to load it with the asset server
+//! And then load it with bevy's `AssetServer`:
 //! ```
 //! # use bevy::prelude::*;
 //! # use benimator::*;
-//! fn load(mut commands: Commands, asset_server: Res<AssetServer>) {
-//!
-//!     // Load animation from the asset server
-//!     let animation_handle: Handle<SpriteSheetAnimation> = asset_server.load("player_run.animation.yml");
-//!
-//!     // TODO insert the handle in an entity...
-//! }
+//! # fn load(mut commands: Commands, asset_server: Res<AssetServer>) {
+//! let handle: Handle<SpriteSheetAnimation> = asset_server.load("player_run.animation.yml");
+//! # }
 //! ```
 
 #[cfg(test)]
