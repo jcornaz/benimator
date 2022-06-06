@@ -6,9 +6,74 @@ use std::{
 
 use serde::{de, Deserialize, Deserializer};
 
-use crate::SpriteSheetAnimation;
+use super::{Frame, Mode, SpriteSheetAnimation};
 
-use super::Mode;
+#[derive(Deserialize)]
+pub(super) struct AnimationDto {
+    #[serde(default)]
+    mode: ModeDto,
+    frames: Vec<FrameDto>,
+}
+
+enum ModeDto {
+    Repeat,
+    RepeatFrom(usize),
+    Once,
+    PingPong,
+}
+
+impl Default for ModeDto {
+    fn default() -> Self {
+        ModeDto::Repeat
+    }
+}
+
+#[derive(Deserialize)]
+struct FrameDto {
+    index: usize,
+    duration: u64,
+}
+
+impl TryFrom<AnimationDto> for SpriteSheetAnimation {
+    type Error = InvalidAnimation;
+
+    fn try_from(value: AnimationDto) -> Result<Self, Self::Error> {
+        Ok(Self {
+            frames: value
+                .frames
+                .into_iter()
+                .map(|FrameDto { index, duration }| {
+                    if duration > 0 {
+                        Ok(Frame::new(index, Duration::from_millis(duration)))
+                    } else {
+                        Err(InvalidAnimation::ZeroDuration)
+                    }
+                })
+                .collect::<Result<_, _>>()?,
+            mode: match value.mode {
+                ModeDto::Repeat => Mode::RepeatFrom(0),
+                ModeDto::RepeatFrom(f) => Mode::RepeatFrom(f),
+                ModeDto::Once => Mode::Once,
+                ModeDto::PingPong => Mode::PingPong,
+            },
+        })
+    }
+}
+
+#[derive(Debug)]
+pub(super) enum InvalidAnimation {
+    ZeroDuration,
+}
+
+impl Display for InvalidAnimation {
+    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
+        match self {
+            InvalidAnimation::ZeroDuration => write!(f, "invalid duration, must be > 0"), /*  */
+        }
+    }
+}
+
+impl Error for InvalidAnimation {}
 
 impl SpriteSheetAnimation {
     /// Parse content of a yaml string representing the animation
@@ -76,35 +141,7 @@ impl Display for AnimationParseError {
 
 impl Error for AnimationParseError {}
 
-pub(super) fn deserialize_duration<'de, D>(deserializer: D) -> Result<Duration, D::Error>
-where
-    D: Deserializer<'de>,
-{
-    deserializer.deserialize_u64(DurationVisitor)
-}
-
-struct DurationVisitor;
-
-impl<'de> de::Visitor<'de> for DurationVisitor {
-    type Value = Duration;
-
-    fn visit_u64<E>(self, v: u64) -> Result<Self::Value, E>
-    where
-        E: de::Error,
-    {
-        if v > 0 {
-            Ok(Duration::from_millis(v))
-        } else {
-            Err(de::Error::invalid_value(de::Unexpected::Unsigned(v), &self))
-        }
-    }
-
-    fn expecting(&self, formatter: &mut Formatter<'_>) -> fmt::Result {
-        write!(formatter, "a positive integer")
-    }
-}
-
-impl<'de> Deserialize<'de> for Mode {
+impl<'de> Deserialize<'de> for ModeDto {
     fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
     where
         D: Deserializer<'de>,
@@ -116,23 +153,23 @@ impl<'de> Deserialize<'de> for Mode {
 struct ModeVisitor;
 
 impl<'de> de::Visitor<'de> for ModeVisitor {
-    type Value = Mode;
+    type Value = ModeDto;
 
     fn visit_str<E>(self, s: &str) -> Result<Self::Value, E>
     where
         E: de::Error,
     {
         match s {
-            "ping-pong" => Ok(Mode::PingPong),
-            "repeat" => Ok(Mode::RepeatFrom(0)),
-            "once" => Ok(Mode::Once),
+            "ping-pong" => Ok(ModeDto::PingPong),
+            "repeat" => Ok(ModeDto::Repeat),
+            "once" => Ok(ModeDto::Once),
             _ => {
                 match s
                     .strip_prefix("repeat-from(")
                     .and_then(|s| s.strip_suffix(')'))
                     .and_then(|s| s.parse::<usize>().ok())
                 {
-                    Some(index) => Ok(Mode::RepeatFrom(index)),
+                    Some(index) => Ok(ModeDto::RepeatFrom(index)),
                     None => Err(de::Error::invalid_value(de::Unexpected::Str(s), &self)),
                 }
             }
@@ -149,8 +186,6 @@ impl<'de> de::Visitor<'de> for ModeVisitor {
 
 #[cfg(test)]
 mod tests {
-    use super::super::{Frame, SpriteSheetAnimation};
-
     use super::*;
 
     #[test]

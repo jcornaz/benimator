@@ -19,12 +19,15 @@ use serde::Deserialize;
 /// See crate level documentation for usage
 #[derive(Debug, Clone, Default, TypeUuid)]
 #[cfg_attr(feature = "unstable-load-from-file", derive(Deserialize))]
+#[cfg_attr(
+    feature = "unstable-load-from-file",
+    serde(try_from = "parse::AnimationDto")
+)]
 #[uuid = "6378e9c2-ecd1-4029-9cd5-801caf68517c"]
 pub struct SpriteSheetAnimation {
     /// Frames
     pub(crate) frames: Vec<Frame>,
     /// Animation mode
-    #[cfg_attr(feature = "unstable-load-from-file", serde(default))]
     pub(crate) mode: Mode,
 }
 
@@ -52,15 +55,10 @@ pub enum AnimationMode {
 
 /// A single animation frame
 #[derive(Debug, Copy, Clone, Default, PartialEq, Eq)]
-#[cfg_attr(feature = "unstable-load-from-file", derive(Deserialize))]
 pub struct Frame {
     /// Index in the sprite atlas
     pub(crate) index: usize,
     /// How long should the frame be displayed
-    #[cfg_attr(
-        feature = "unstable-load-from-file",
-        serde(deserialize_with = "parse::deserialize_duration")
-    )]
     pub(crate) duration: Duration,
 }
 
