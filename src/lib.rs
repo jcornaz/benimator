@@ -115,7 +115,7 @@
 //! First, create an asset file with the extension `.animation.yml`:
 //! ```yaml
 //! # The mode can be one of: 'once', 'repeat', 'ping-pong'
-//! # or 'repeatFrom(n)' (where 'n' is the frame-index to repeat from)
+//! # or 'repeat-from: n' (where 'n' is the frame-index to repeat from)
 //! # The default is 'repeat'
 //! mode: ping-pong
 //! frames:

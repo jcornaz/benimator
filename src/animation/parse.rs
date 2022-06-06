@@ -4,7 +4,7 @@ use std::{
     time::Duration,
 };
 
-use serde::{de, Deserialize, Deserializer};
+use serde::Deserialize;
 
 use super::{Frame, Mode, SpriteSheetAnimation};
 
@@ -15,6 +15,8 @@ pub(super) struct AnimationDto {
     frames: Vec<FrameDto>,
 }
 
+#[derive(Deserialize)]
+#[serde(rename_all = "kebab-case")]
 enum ModeDto {
     Repeat,
     RepeatFrom(usize),
@@ -82,7 +84,7 @@ impl SpriteSheetAnimation {
     ///
     /// ```yaml
     /// # The mode can be one of: 'once', 'repeat', 'ping-pong'
-    /// # or 'repeatFrom(n)' (where 'n' is the frame-index to repeat from)
+    /// # or 'repeat-from: n' (where 'n' is the frame-index to repeat from)
     /// # The default is 'repeat'
     /// mode: ping-pong
     /// frames:
@@ -108,7 +110,7 @@ impl SpriteSheetAnimation {
     ///
     /// ```yaml
     /// # The mode can be one of: 'once', 'repeat', 'ping-pong'
-    /// # or 'repeatFrom(n)' (where 'n' is the frame-index to repeat from)
+    /// # or 'repeat-from: n' (where 'n' is the frame-index to repeat from)
     /// # The default is 'repeat'
     /// mode: ping-pong
     /// frames:
@@ -140,49 +142,6 @@ impl Display for AnimationParseError {
 }
 
 impl Error for AnimationParseError {}
-
-impl<'de> Deserialize<'de> for ModeDto {
-    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
-    where
-        D: Deserializer<'de>,
-    {
-        deserializer.deserialize_str(ModeVisitor)
-    }
-}
-
-struct ModeVisitor;
-
-impl<'de> de::Visitor<'de> for ModeVisitor {
-    type Value = ModeDto;
-
-    fn visit_str<E>(self, s: &str) -> Result<Self::Value, E>
-    where
-        E: de::Error,
-    {
-        match s {
-            "ping-pong" => Ok(ModeDto::PingPong),
-            "repeat" => Ok(ModeDto::Repeat),
-            "once" => Ok(ModeDto::Once),
-            _ => {
-                match s
-                    .strip_prefix("repeat-from(")
-                    .and_then(|s| s.strip_suffix(')'))
-                    .and_then(|s| s.parse::<usize>().ok())
-                {
-                    Some(index) => Ok(ModeDto::RepeatFrom(index)),
-                    None => Err(de::Error::invalid_value(de::Unexpected::Str(s), &self)),
-                }
-            }
-        }
-    }
-
-    fn expecting(&self, formatter: &mut Formatter<'_>) -> fmt::Result {
-        write!(
-            formatter,
-            "one of: 'repeat', 'once', 'ping-pong', 'repeat-from(n)'"
-        )
-    }
-}
 
 #[cfg(test)]
 mod tests {
@@ -267,7 +226,8 @@ mod tests {
     fn parse_yaml_repeat_from() {
         // given
         let content = "
-            mode: repeat-from(1)
+            mode:
+              repeat-from: 1
             frames:
               - index: 0
                 duration: 100
