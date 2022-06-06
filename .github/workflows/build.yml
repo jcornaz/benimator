@@ -112,7 +112,7 @@ jobs:
 
   release:
     if: ${{ github.event_name != 'pull_request' }}
-    needs: [test, documentation]
+    needs: [test, test-all-features, test-unstable-load-from-file, documentation]
     environment: release
     runs-on: ubuntu-latest
     steps:
