@@ -19,20 +19,43 @@ jobs:
     timeout-minutes: 15
     steps:
       - uses: actions/checkout@v3
-
       - name: Install rust toolchain
         uses: actions-rs/toolchain@v1
         with:
           toolchain: ${{ env.RUST_VERSION }}
           override: true
           profile: minimal
-
-      - run: cargo check --all-targets
-      - run: cargo test --no-default-features
+      - uses: Swatinem/rust-cache@v1
+      - run: cargo check --all-targets 
       - run: cargo test
-      - run: cargo test --features unstable-load-from-file
+      
+  test-all-features:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v3
+      - name: Install rust toolchain
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: ${{ env.RUST_VERSION }}
+          override: true
+          profile: minimal
+      - uses: Swatinem/rust-cache@v1
       - run: cargo test --all-features
-      - run: cargo test --all-features -- --ignored
+
+  test-unstable-load-from-file:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v3
+      - name: Install rust toolchain
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: ${{ env.RUST_VERSION }}
+          override: true
+          profile: minimal
+      - uses: Swatinem/rust-cache@v1
+      - run: cargo test --features unstable-load-from-file
 
   code-style:
     runs-on: ubuntu-latest
@@ -44,6 +67,7 @@ jobs:
           toolchain: stable
           override: true
           components: clippy, rustfmt
+      - uses: Swatinem/rust-cache@v1
       - run: cargo fmt --all -- --check
       - run: cargo clippy --all-features --all-targets
 
@@ -57,6 +81,7 @@ jobs:
           toolchain: nightly
           override: true
           profile: minimal
+      - uses: Swatinem/rust-cache@v1
       - run: cargo doc --all-features --no-deps
 
   unwanted-dependencies:
@@ -68,6 +93,7 @@ jobs:
           toolchain: stable
           override: true
           profile: minimal
+      - uses: Swatinem/rust-cache@v1
       - run: cargo install cargo-deny --locked
       - run: cargo deny check
 
@@ -80,6 +106,7 @@ jobs:
           toolchain: nightly
           override: true
           profile: minimal
+      - uses: Swatinem/rust-cache@v1
       - run: cargo install cargo-udeps --locked
       - run: cargo udeps
 
