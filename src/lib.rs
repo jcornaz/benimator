@@ -6,6 +6,7 @@
     clippy::pedantic
 )]
 #![allow(clippy::needless_pass_by_value, clippy::module_name_repetitions)]
+#![cfg_attr(nightly, feature(doc_auto_cfg))]
 
 //! A sprite-sheet animation plugin for [bevy](https://bevyengine.org)
 //!

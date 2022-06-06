@@ -2,15 +2,14 @@ image:
   file: .gitpod.Dockerfile
 
 tasks:
-  - name: doc
-    init: cargo +nightly doc --all-features --no-deps
+  - name: serve docs
     command: miniserve --index benimator/index.html target/doc
 
   - name: test
     init: |
       cp .cargo/fast_compiles_config .cargo/config.toml
       cargo update
-      cargo doc --all-features --no-deps
+      cargo +nightly doc --all-features --no-deps
       cargo clippy --all-features --all-targets
       cargo test --all-features
       cargo test
@@ -20,7 +19,7 @@ tasks:
         -x 'test --all-features --tests' \
         -x 'test --all-features' \
         -x 'clippy --all-features --all-targets' \
-        -x 'doc --all-features --no-deps'
+        -x '+nightly doc --all-features --no-deps'
 
 vscode:
   extensions:
@@ -30,10 +29,10 @@ vscode:
     - bungcip.better-toml
 
 ports:
-  - name: example (wasm)
-    port: 1334
+  - name: documentation
+    port: 8080
     visibility: private
-    onOpen: notify
+    onOpen: open-browser
 
 github:
   prebuilds:

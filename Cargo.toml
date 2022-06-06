@@ -10,6 +10,9 @@ repository = "https://github.com/jcornaz/benimator"
 keywords = ["game", "gamedev", "anmiation", "bevy"]
 categories = ["game-development"]
 
+[package.metadata.docs.rs]
+all-features = true
+
 [features]
 default = []
 unstable-load-from-file = ["serde", "serde_yaml", "anyhow", "bevy_utils"]
@@ -31,6 +34,9 @@ bevy = { version = "0.7.0", default-features = false, features = ["render", "x11
 rstest = { version = "0.13.0", default-features = false }
 criterion = { version = "0.3.5", default-features = false }
 
+[build-dependencies]
+rustc_version = "0.4.0"
+
 [[bench]]
 name = "play_component"
 harness = false
@@ -38,6 +44,3 @@ harness = false
 [[example]]
 name = "using_animation_file"
 required-features = ["unstable-load-from-file"]
-
-[profile.dev]
-debug = 0
