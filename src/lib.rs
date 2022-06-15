@@ -118,13 +118,17 @@
 //! # or 'repeat-from: n' (where 'n' is the frame-index to repeat from)
 //! # The default is 'repeat'
 //! mode: ping-pong
+//! frame-duration: 100  # duration of the frame in milliseconds
+//! frames: [0, 1, 2]  # Sequence of frame index
+//! ```
+//!
+//! You can specify different duration on each frame if you need to:
+//! ```yaml
 //! frames:
-//!   - index: 0 # index in the sprite sheet for that frame
-//!     duration: 100 # duration of the frame in milliseconds
-//!   - index: 1
+//!   - index: 0
 //!     duration: 100
-//!   - index: 2
-//!     duration: 120
+//!   - index: 1
+//!     duration: 200
 //! ```
 //!
 //! And then load it with bevy's `AssetServer`:
