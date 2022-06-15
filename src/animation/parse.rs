@@ -146,6 +146,12 @@ impl SpriteSheetAnimation {
     ///     duration: 120
     /// ```
     ///
+    /// There is also a short-hand notation if all frames have the same duration:
+    /// ```yaml
+    /// frame-duration: 100
+    /// frames: [0, 1, 2] # sequence of frame indices
+    /// ```
+    ///
     /// # Errors
     ///
     /// Returns an error if the content is not a valid yaml representation of an animation
@@ -170,6 +176,12 @@ impl SpriteSheetAnimation {
     ///     duration: 100
     ///   - index: 2
     ///     duration: 120
+    /// ```
+    ///
+    /// There is also a short-hand notation if all frames have the same duration:
+    /// ```yaml
+    /// frame-duration: 100
+    /// frames: [0, 1, 2] # sequence of frame indices
     /// ```
     ///
     /// # Errors
