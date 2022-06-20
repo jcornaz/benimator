@@ -12,7 +12,6 @@ use serde::{
 use super::{Frame, Mode, SpriteSheetAnimation};
 
 #[derive(Deserialize)]
-#[serde(deny_unknown_fields, rename_all = "kebab-case")]
 pub(super) struct AnimationDto {
     #[serde(default)]
     mode: ModeDto,
@@ -22,7 +21,6 @@ pub(super) struct AnimationDto {
 }
 
 #[derive(Deserialize)]
-#[serde(rename_all = "kebab-case")]
 enum ModeDto {
     Repeat,
     RepeatFrom(usize),
@@ -136,7 +134,7 @@ impl SpriteSheetAnimation {
     /// # The mode can be one of: 'once', 'repeat', 'ping-pong'
     /// # or 'repeat-from: n' (where 'n' is the frame-index to repeat from)
     /// # The default is 'repeat'
-    /// mode: ping-pong
+    /// mode: PingPong
     /// frames:
     ///   - index: 0 # index in the sprite sheet for that frame
     ///     duration: 100 # duration of the frame in milliseconds
@@ -148,7 +146,7 @@ impl SpriteSheetAnimation {
     ///
     /// There is also a short-hand notation if all frames have the same duration:
     /// ```yaml
-    /// frame-duration: 100
+    /// frame_duration: 100
     /// frames: [0, 1, 2] # sequence of frame indices
     /// ```
     ///
@@ -165,10 +163,10 @@ impl SpriteSheetAnimation {
     /// # Yaml schema
     ///
     /// ```yaml
-    /// # The mode can be one of: 'once', 'repeat', 'ping-pong'
-    /// # or 'repeat-from: n' (where 'n' is the frame-index to repeat from)
+    /// # The mode can be one of: 'Once', 'Repeat', 'PingPong'
+    /// # or 'RepeatFrom: n' (where 'n' is the frame-index to repeat from)
     /// # The default is 'repeat'
-    /// mode: ping-pong
+    /// mode: PingPong
     /// frames:
     ///   - index: 0 # index in the sprite sheet for that frame
     ///     duration: 100 # duration of the frame in milliseconds
@@ -213,7 +211,7 @@ mod tests {
     fn parse_yaml() {
         // given
         let content = "
-            mode: ping-pong
+            mode: PingPong
             frames:
               - index: 0 # index in the sprite sheet for that frame
                 duration: 100 # duration of the frame in milliseconds
@@ -256,7 +254,7 @@ mod tests {
     fn parse_yaml_repeat() {
         // given
         let content = "
-            mode: repeat
+            mode: Repeat
             frames:
               - index: 0
                 duration: 100";
@@ -272,7 +270,7 @@ mod tests {
     fn parse_yaml_once() {
         // given
         let content = "
-            mode: once
+            mode: Once
             frames:
               - index: 0
                 duration: 100";
@@ -289,7 +287,7 @@ mod tests {
         // given
         let content = "
             mode:
-              repeat-from: 1
+              RepeatFrom: 1
             frames:
               - index: 0
                 duration: 100
@@ -322,7 +320,7 @@ mod tests {
     fn parse_yaml_same_duraton_for_all_frames() {
         // given
         let content = "
-            frame-duration: 100
+            frame_duration: 100
             frames:
               - index: 0
               - index: 1
@@ -348,7 +346,7 @@ mod tests {
     fn parse_yaml_same_duraton_for_all_frames_short_hand() {
         // given
         let content = "
-            frame-duration: 100
+            frame_duration: 100
             frames: [0, 1, 2]
         ";
 

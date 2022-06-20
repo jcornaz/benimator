@@ -114,11 +114,11 @@
 //!
 //! First, create an asset file with the extension `.animation.yml`:
 //! ```yaml
-//! # The mode can be one of: 'once', 'repeat', 'ping-pong'
-//! # or 'repeat-from: n' (where 'n' is the frame-index to repeat from)
+//! # The mode can be one of: 'Once', 'Repeat', 'PingPong'
+//! # or 'RepeatFrom: n' (where 'n' is the frame-index to repeat from)
 //! # The default is 'repeat'
-//! mode: ping-pong
-//! frame-duration: 100  # duration of the frame in milliseconds
+//! mode: PingPong
+//! frame_duration: 100  # duration of the frame in milliseconds
 //! frames: [0, 1, 2]  # Sequence of frame index
 //! ```
 //!
