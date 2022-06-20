@@ -116,7 +116,7 @@
 //! ```yaml
 //! # The mode can be one of: 'Once', 'Repeat', 'PingPong'
 //! # or 'RepeatFrom: n' (where 'n' is the frame-index to repeat from)
-//! # The default is 'repeat'
+//! # The default is 'Repeat'
 //! mode: PingPong
 //! frame_duration: 100  # duration of the frame in milliseconds
 //! frames: [0, 1, 2]  # Sequence of frame index
@@ -139,6 +139,10 @@
 //! let handle: Handle<SpriteSheetAnimation> = asset_server.load("player_run.animation.yml");
 //! # }
 //! ```
+//!
+//! It is also possible to use `ron` instead of `yaml`.
+//!
+//! For more info on the format see: [`SpriteSheetAnimation::from_yaml_str`] and [`SpriteSheetAnimation::from_ron_str`].
 
 #[cfg(test)]
 #[macro_use]
