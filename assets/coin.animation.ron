@@ -1,0 +1,5 @@
+(
+  mode: Repeat,
+  frame_duration: Some(100),
+  frames: [0, 1, 2, 3, 4],
+)
