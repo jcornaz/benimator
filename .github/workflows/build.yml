@@ -25,6 +25,7 @@ jobs:
           toolchain: ${{ env.RUST_VERSION }}
           override: true
           profile: minimal
+      - uses: Swatinem/rust-cache@v1
       - run: cargo check --all-targets 
       - run: cargo test
       
@@ -39,6 +40,7 @@ jobs:
           toolchain: ${{ env.RUST_VERSION }}
           override: true
           profile: minimal
+      - uses: Swatinem/rust-cache@v1
       - run: cargo test --all-features
 
   test-unstable-load-from-file:
@@ -52,6 +54,7 @@ jobs:
           toolchain: ${{ env.RUST_VERSION }}
           override: true
           profile: minimal
+      - uses: Swatinem/rust-cache@v1
       - run: cargo test --features unstable-load-from-file
 
   code-style:
@@ -64,6 +67,7 @@ jobs:
           toolchain: stable
           override: true
           components: clippy, rustfmt
+      - uses: Swatinem/rust-cache@v1
       - run: cargo fmt --all -- --check
       - run: cargo clippy --all-features --all-targets
 
@@ -77,6 +81,7 @@ jobs:
           toolchain: nightly
           override: true
           profile: minimal
+      - uses: Swatinem/rust-cache@v1
       - run: cargo doc --all-features --no-deps
 
   unwanted-dependencies:
@@ -88,6 +93,7 @@ jobs:
           toolchain: stable
           override: true
           profile: minimal
+      - uses: Swatinem/rust-cache@v1
       - run: cargo install cargo-deny --locked
       - run: cargo deny check
 
@@ -100,6 +106,7 @@ jobs:
           toolchain: nightly
           override: true
           profile: minimal
+      - uses: Swatinem/rust-cache@v1
       - run: cargo install cargo-udeps --locked
       - run: cargo udeps
 
