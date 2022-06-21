@@ -29,6 +29,7 @@ vscode:
     - matklad.rust-analyzer
     - serayuzgur.crates
     - bungcip.better-toml
+    - valmack.circleci-config-validator
 
 ports:
   - name: documentation
