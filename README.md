@@ -80,11 +80,14 @@ benimator = "3"
 
 ## Cargo features
 
+* `yaml` deserialization from yaml asset files (also requires `unstable-load-from-file`)
+* `ron` deserialization from ron asset files (also requires `unstable-load-from-file`)
+
 ### Unstable features
 
 **Any API behind one of theses feature flags is unstable, should not be considered complete nor part of the public API. Breaking changes to that API may happen in minor releases**
 
-* `unstable-load-from-file` Load animation assets from yaml/ron files.
+* `unstable-load-from-file` Load animation assets from yaml/ron files. It also requires either `ron` or `yaml` (or both) features.
 
 ## MSRV
 

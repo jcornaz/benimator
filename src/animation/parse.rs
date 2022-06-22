@@ -153,6 +153,7 @@ impl SpriteSheetAnimation {
     /// # Errors
     ///
     /// Returns an error if the content is not a valid yaml representation of an animation
+    #[cfg(feature = "yaml")]
     pub fn from_yaml_str(yaml: &str) -> Result<Self, AnimationParseError> {
         Self::from_yaml_bytes(yaml.as_bytes())
     }
@@ -184,8 +185,9 @@ impl SpriteSheetAnimation {
     /// # Errors
     ///
     /// Returns an error if the content is not a valid yaml representation of an animation
+    #[cfg(feature = "yaml")]
     pub fn from_yaml_bytes(yaml: &[u8]) -> Result<Self, AnimationParseError> {
-        serde_yaml::from_slice(yaml).map_err(AnimationParseError::new)
+        yaml::from_slice(yaml).map_err(AnimationParseError::new)
     }
 
     /// Parse content of a ron file represenging the animation
@@ -212,6 +214,7 @@ impl SpriteSheetAnimation {
     /// # Errors
     ///
     /// Returns an error if the content is not a valid ron representation of an animation
+    #[cfg(feature = "ron")]
     pub fn from_ron_str(ron: &str) -> Result<Self, AnimationParseError> {
         Self::from_ron_bytes(ron.as_bytes())
     }
@@ -240,6 +243,7 @@ impl SpriteSheetAnimation {
     /// # Errors
     ///
     /// Returns an error if the content is not a valid ron representation of an animation
+    #[cfg(feature = "ron")]
     pub fn from_ron_bytes(ron: &[u8]) -> Result<Self, AnimationParseError> {
         ron::Options::default()
             .with_default_extension(ron::extensions::Extensions::IMPLICIT_SOME)
@@ -270,6 +274,7 @@ impl Error for AnimationParseError {}
 mod tests {
     use super::*;
 
+    #[cfg(feature = "yaml")]
     mod yaml {
         use super::*;
 
@@ -431,6 +436,7 @@ mod tests {
         }
     }
 
+    #[cfg(feature = "ron")]
     mod ron {
         use super::*;
 

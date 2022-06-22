@@ -58,7 +58,8 @@ jobs:
           override: true
           profile: minimal
       - uses: Swatinem/rust-cache@v1
-      - run: cargo test --features unstable-load-from-file
+      - run: cargo test --features "unstable-load-from-file, yaml"
+      - run: cargo test --features "unstable-load-from-file, ron"
 
   code-style:
     runs-on: ubuntu-latest
