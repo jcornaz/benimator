@@ -9,7 +9,7 @@ on:
   workflow_dispatch:
 
 env:
-  RUST_VERSION: 1.59.0
+  RUST_VERSION: 1.60.0
   CARGO_INCREMENTAL: 0
   RUSTFLAGS: "-D warnings"
 
@@ -26,9 +26,9 @@ jobs:
           override: true
           profile: minimal
       - uses: Swatinem/rust-cache@v1
-      - run: cargo check --all-targets 
+      - run: cargo check --all-targets
       - run: cargo test
-      
+
   test-all-features:
     runs-on: ubuntu-latest
     timeout-minutes: 15
@@ -112,7 +112,8 @@ jobs:
 
   release:
     if: ${{ github.event_name != 'pull_request' }}
-    needs: [test, test-all-features, test-unstable-load-from-file, documentation]
+    needs:
+      [test, test-all-features, test-unstable-load-from-file, documentation]
     environment: release
     runs-on: ubuntu-latest
     steps:
