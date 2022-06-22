@@ -207,7 +207,7 @@ impl PlaySpeedMultiplier {
         Self(multiplier)
     }
 
-    fn transform(&self, duration: Duration) -> Duration {
+    fn transform(self, duration: Duration) -> Duration {
         duration.mul_f64(self.0)
     }
 }
