@@ -174,8 +174,7 @@ fn animate(
         )
     {
         let adjusted_delta = optional_speed_multiplier
-            .map(|m| Duration::from_secs_f64(time.delta().as_secs_f64() * m.0))
-            .unwrap_or(time.delta());
+            .map_or(time.delta(), |m| Duration::from_secs_f64(time.delta().as_secs_f64() * m.0));
 
         if state.update(sprite, animation, adjusted_delta) {
             commands.entity(entity).remove::<Play>();
