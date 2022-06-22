@@ -229,10 +229,10 @@ impl SpriteSheetAnimation {
     ///   frames: [
     ///     (
     ///       index: 0, //index in the sprite sheet for that frame
-    ///       duration: Some(100), // duration of the frame in milliseconds
+    ///       duration: 100, // duration of the frame in milliseconds
     ///     ),
-    ///     (index: 1, duration: Some(100)),
-    ///     (index: 2, duration: Some(120)),
+    ///     (index: 1, duration: 100),
+    ///     (index: 2, duration: 120),
     ///   ]
     /// )
     /// ```
@@ -241,7 +241,10 @@ impl SpriteSheetAnimation {
     ///
     /// Returns an error if the content is not a valid ron representation of an animation
     pub fn from_ron_bytes(ron: &[u8]) -> Result<Self, AnimationParseError> {
-        ron::de::from_bytes(ron).map_err(AnimationParseError::new)
+        ron::Options::default()
+            .with_default_extension(ron::extensions::Extensions::IMPLICIT_SOME)
+            .from_bytes(ron)
+            .map_err(AnimationParseError::new)
     }
 }
 
@@ -440,10 +443,10 @@ mod tests {
                 frames: [
                     (
                         index: 0, // index in the sprite sheet for that frame
-                        duration: Some(100), // # duration of the frame in milliseconds
+                        duration: 100, // # duration of the frame in milliseconds
                     ),
-                    (index: 1, duration: Some(100)),
-                    (index: 2, duration: Some(120)),
+                    (index: 1, duration: 100),
+                    (index: 2, duration: 120),
                 ]
             )";
 
