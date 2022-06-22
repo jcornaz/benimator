@@ -191,6 +191,18 @@ impl Component for Play {
     type Storage = SparseStorage;
 }
 
+/// Component that, when applied, can change the playback's rate of the animation.
+///
+/// Receives a f64 multiplier which will alter the delta, speeding up or slowing down to the desired playback rate.
+#[derive(Debug, Copy, Clone, Default, Reflect)]
+#[reflect(Component)]
+pub struct PlaySpeedMultiplier(pub f64);
+
+impl Component for PlaySpeedMultiplier {
+    type Storage = SparseStorage;
+}
+
+
 impl Plugin for AnimationPlugin {
     fn build(&self, app: &mut App) {
         app.add_asset::<SpriteSheetAnimation>()
