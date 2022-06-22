@@ -263,11 +263,7 @@ mod tests {
             animation: SpriteSheetAnimation,
             smaller_duration: Duration,
         ) {
-            state.update(
-                &mut sprite_at_second_frame,
-                &animation,
-                smaller_duration,
-            );
+            state.update(&mut sprite_at_second_frame, &animation, smaller_duration);
             assert_eq!(sprite_at_second_frame.index, 0);
         }
 
@@ -317,11 +313,7 @@ mod tests {
             animation: SpriteSheetAnimation,
             frame_duration: Duration,
         ) {
-            assert!(!state.update(
-                &mut sprite_at_second_frame,
-                &animation,
-                frame_duration,
-            ));
+            assert!(!state.update(&mut sprite_at_second_frame, &animation, frame_duration,));
         }
 
         #[rstest]
@@ -372,11 +364,7 @@ mod tests {
                 animation: SpriteSheetAnimation,
                 frame_duration: Duration,
             ) {
-                state.update(
-                    &mut sprite_at_second_frame,
-                    &animation,
-                    frame_duration,
-                );
+                state.update(&mut sprite_at_second_frame, &animation, frame_duration);
                 assert_eq!(sprite_at_second_frame.index, 2);
             }
 
@@ -387,11 +375,7 @@ mod tests {
                 animation: SpriteSheetAnimation,
                 frame_duration: Duration,
             ) {
-                assert!(!state.update(
-                    &mut sprite_at_second_frame,
-                    &animation,
-                    frame_duration,
-                ));
+                assert!(!state.update(&mut sprite_at_second_frame, &animation, frame_duration,));
             }
         }
 
@@ -425,11 +409,7 @@ mod tests {
                 animation: SpriteSheetAnimation,
                 frame_duration: Duration,
             ) {
-                state.update(
-                    &mut sprite_at_second_frame,
-                    &animation,
-                    frame_duration,
-                );
+                state.update(&mut sprite_at_second_frame, &animation, frame_duration);
                 assert_eq!(sprite_at_second_frame.index, 2);
             }
 
@@ -440,11 +420,7 @@ mod tests {
                 animation: SpriteSheetAnimation,
                 frame_duration: Duration,
             ) {
-                assert!(!state.update(
-                    &mut sprite_at_second_frame,
-                    &animation,
-                    frame_duration,
-                ));
+                assert!(!state.update(&mut sprite_at_second_frame, &animation, frame_duration,));
             }
         }
     }
@@ -476,11 +452,7 @@ mod tests {
                 animation: SpriteSheetAnimation,
                 frame_duration: Duration,
             ) {
-                state.update(
-                    &mut sprite_at_second_frame,
-                    &animation,
-                    frame_duration,
-                );
+                state.update(&mut sprite_at_second_frame, &animation, frame_duration);
                 assert_eq!(sprite_at_second_frame.index, 0);
             }
 
@@ -491,11 +463,7 @@ mod tests {
                 animation: SpriteSheetAnimation,
                 frame_duration: Duration,
             ) {
-                state.update(
-                    &mut sprite_at_second_frame,
-                    &animation,
-                    frame_duration,
-                );
+                state.update(&mut sprite_at_second_frame, &animation, frame_duration);
                 assert!(state.going_backward);
             }
         }
@@ -524,11 +492,7 @@ mod tests {
                 animation: SpriteSheetAnimation,
                 frame_duration: Duration,
             ) {
-                state.update(
-                    &mut sprite_at_second_frame,
-                    &animation,
-                    frame_duration,
-                );
+                state.update(&mut sprite_at_second_frame, &animation, frame_duration);
                 assert_eq!(sprite_at_second_frame.index, 0);
             }
         }
@@ -562,11 +526,7 @@ mod tests {
                 animation: SpriteSheetAnimation,
                 frame_duration: Duration,
             ) {
-                state.update(
-                    &mut sprite_at_second_frame,
-                    &animation,
-                    frame_duration,
-                );
+                state.update(&mut sprite_at_second_frame, &animation, frame_duration);
                 assert_eq!(sprite_at_second_frame.index, 1);
             }
 
@@ -577,11 +537,7 @@ mod tests {
                 animation: SpriteSheetAnimation,
                 frame_duration: Duration,
             ) {
-                assert!(state.update(
-                    &mut sprite_at_second_frame,
-                    &animation,
-                    frame_duration,
-                ));
+                assert!(state.update(&mut sprite_at_second_frame, &animation, frame_duration,));
             }
 
             #[rstest]
@@ -591,11 +547,7 @@ mod tests {
                 animation: SpriteSheetAnimation,
                 frame_duration: Duration,
             ) {
-                state.update(
-                    &mut sprite_at_second_frame,
-                    &animation,
-                    frame_duration,
-                );
+                state.update(&mut sprite_at_second_frame, &animation, frame_duration);
                 let expected_state = SpriteSheetAnimationState::default();
                 assert_eq!(state.current_frame, expected_state.current_frame);
                 assert_eq!(state.elapsed_in_frame, expected_state.elapsed_in_frame);
