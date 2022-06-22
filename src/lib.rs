@@ -199,7 +199,8 @@ impl Component for Play {
 pub struct PlaySpeedMultiplier(f64);
 
 impl PlaySpeedMultiplier {
-    /// Creates a new PlaySpeedMultiplier Component with the multiplier set as desired
+    /// Creates a new `PlaySpeedMultiplier` Component with the multiplier set as desired
+    #[must_use]
     pub fn new(multiplier: f64) -> Self {
         Self(multiplier)
     }
