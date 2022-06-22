@@ -146,22 +146,19 @@ fn remove(
     }
 }
 
+type AnimationSystemQuery<'a> = (
+    Entity,
+    &'a mut TextureAtlasSprite,
+    &'a Handle<SpriteSheetAnimation>,
+    &'a mut SpriteSheetAnimationState,
+    Option<&'a PlaySpeedMultiplier>,
+);
+
 fn animate(
     mut commands: Commands<'_, '_>,
     time: Res<'_, Time>,
     animation_defs: Res<'_, Assets<SpriteSheetAnimation>>,
-    mut animations: Query<
-        '_,
-        '_,
-        (
-            Entity,
-            &mut TextureAtlasSprite,
-            &Handle<SpriteSheetAnimation>,
-            &mut SpriteSheetAnimationState,
-            Option<&PlaySpeedMultiplier>,
-        ),
-        With<Play>,
-    >,
+    mut animations: Query<'_, '_, AnimationSystemQuery<'_>, With<Play>>,
 ) {
     for (entity, sprite, animation, mut state, optional_speed_multiplier) in
         animations.iter_mut().filter_map(
