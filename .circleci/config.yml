@@ -78,7 +78,7 @@ workflows:
       - check-documentation
       - release:
           requires: [test, test-all-features, check-documentation]
-          context: [crates-io, github]
+          context: [crates-io, github-public]
   release-rc:
     triggers:
       - schedule:
@@ -92,7 +92,7 @@ workflows:
       - check-documentation
       - release:
           requires: [test, test-all-features, check-documentation]
-          context: [crates-io, github]
+          context: [crates-io, github-public]
   release-beta:
     triggers:
       - schedule:
@@ -106,7 +106,7 @@ workflows:
       - check-documentation
       - release:
           requires: [test, test-all-features, check-documentation]
-          context: [crates-io, github]
+          context: [crates-io, github-public]
   release-alpha:
     triggers:
       - schedule:
@@ -120,4 +120,4 @@ workflows:
       - check-documentation
       - release:
           requires: [test, test-all-features, check-documentation]
-          context: [crates-io, github]
+          context: [crates-io, github-public]
