@@ -154,6 +154,8 @@ use bevy_ecs::component::SparseStorage;
 use bevy_ecs::prelude::*;
 use bevy_reflect::Reflect;
 
+use std::time::Duration;
+
 pub use animation::{Frame, SpriteSheetAnimation};
 pub use state::SpriteSheetAnimationState;
 
@@ -204,6 +206,10 @@ impl PlaySpeedMultiplier {
     pub fn new(multiplier: f64) -> Self {
         Self(multiplier)
     }
+
+    fn transform(&self, duration: Duration) -> Duration {
+        duration.mul_f64(self.0)
+    }
 }
 
 impl Default for PlaySpeedMultiplier {
@@ -232,5 +238,26 @@ impl Plugin for AnimationPlugin {
 
         #[cfg(feature = "unstable-load-from-file")]
         app.init_asset_loader::<animation::load::SpriteSheetAnimationLoader>();
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn identity_transformation() {
+        assert_eq!(
+            PlaySpeedMultiplier::default().transform(Duration::from_secs(1)),
+            Duration::from_secs(1)
+        );
+    }
+
+    #[test]
+    fn double_speed() {
+        assert_eq!(
+            PlaySpeedMultiplier::from(2.0).transform(Duration::from_secs(2)),
+            Duration::from_secs(4)
+        );
     }
 }

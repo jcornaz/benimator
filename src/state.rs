@@ -160,7 +160,7 @@ fn animate(
     animation_defs: Res<'_, Assets<SpriteSheetAnimation>>,
     mut animations: Query<'_, '_, AnimationSystemQuery<'_>, With<Play>>,
 ) {
-    for (entity, sprite, animation, mut state, optional_speed_multiplier) in
+    for (entity, sprite, animation, mut state, speed_multiplier) in
         animations.iter_mut().filter_map(
             |(entity, sprite, anim_handle, state, optional_speed_multiplier)| {
                 animation_defs
@@ -170,11 +170,12 @@ fn animate(
             },
         )
     {
-        let adjusted_delta = optional_speed_multiplier.map_or(time.delta(), |m| {
-            Duration::from_secs_f64(time.delta().as_secs_f64() * m.0)
-        });
+        let delta = speed_multiplier
+            .copied()
+            .unwrap_or_default()
+            .transform(time.delta());
 
-        if state.update(sprite, animation, adjusted_delta) {
+        if state.update(sprite, animation, delta) {
             commands.entity(entity).remove::<Play>();
         }
     }
