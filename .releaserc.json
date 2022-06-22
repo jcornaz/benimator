@@ -47,7 +47,7 @@
       {
         "verifyConditionsCmd": "cargo publish --dry-run --allow-dirty",
         "prepareCmd": "cargo install cargo-edit && cargo set-version ${nextRelease.version}",
-        "publishCmd": "cargo publish --allow-dirty"
+        "publishCmd": "cargo publish --allow-dirty --no-verify"
       }
     ],
     [
