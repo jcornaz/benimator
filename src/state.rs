@@ -6,7 +6,7 @@ use bevy_core::prelude::*;
 use bevy_ecs::prelude::*;
 use bevy_sprite::prelude::*;
 
-use crate::{animation::Mode, Play, SpriteSheetAnimation};
+use crate::{animation::Mode, Play, PlaySpeedMultiplier, SpriteSheetAnimation};
 
 pub(crate) fn maintenance_systems() -> SystemSet {
     SystemSet::new().with_system(insert).with_system(remove)
@@ -146,33 +146,36 @@ fn remove(
     }
 }
 
+type AnimationSystemQuery<'a> = (
+    Entity,
+    &'a mut TextureAtlasSprite,
+    &'a Handle<SpriteSheetAnimation>,
+    &'a mut SpriteSheetAnimationState,
+    Option<&'a PlaySpeedMultiplier>,
+);
+
 fn animate(
     mut commands: Commands<'_, '_>,
     time: Res<'_, Time>,
     animation_defs: Res<'_, Assets<SpriteSheetAnimation>>,
-    mut animations: Query<
-        '_,
-        '_,
-        (
-            Entity,
-            &mut TextureAtlasSprite,
-            &Handle<SpriteSheetAnimation>,
-            &mut SpriteSheetAnimationState,
-        ),
-        With<Play>,
-    >,
+    mut animations: Query<'_, '_, AnimationSystemQuery<'_>, With<Play>>,
 ) {
-    for (entity, sprite, animation, mut state) in
-        animations
-            .iter_mut()
-            .filter_map(|(entity, sprite, anim_handle, state)| {
+    for (entity, sprite, animation, mut state, speed_multiplier) in
+        animations.iter_mut().filter_map(
+            |(entity, sprite, anim_handle, state, optional_speed_multiplier)| {
                 animation_defs
                     .get(anim_handle)
                     .filter(|anim| anim.has_frames())
-                    .map(|anim| (entity, sprite, anim, state))
-            })
+                    .map(|anim| (entity, sprite, anim, state, optional_speed_multiplier))
+            },
+        )
     {
-        if state.update(sprite, animation, time.delta()) {
+        let delta = speed_multiplier
+            .copied()
+            .unwrap_or_default()
+            .transform(time.delta());
+
+        if state.update(sprite, animation, delta) {
             commands.entity(entity).remove::<Play>();
         }
     }
@@ -308,7 +311,7 @@ mod tests {
             animation: SpriteSheetAnimation,
             frame_duration: Duration,
         ) {
-            assert!(!state.update(&mut sprite_at_second_frame, &animation, frame_duration));
+            assert!(!state.update(&mut sprite_at_second_frame, &animation, frame_duration,));
         }
 
         #[rstest]
@@ -370,7 +373,7 @@ mod tests {
                 animation: SpriteSheetAnimation,
                 frame_duration: Duration,
             ) {
-                assert!(!state.update(&mut sprite_at_second_frame, &animation, frame_duration));
+                assert!(!state.update(&mut sprite_at_second_frame, &animation, frame_duration,));
             }
         }
 
@@ -415,7 +418,7 @@ mod tests {
                 animation: SpriteSheetAnimation,
                 frame_duration: Duration,
             ) {
-                assert!(!state.update(&mut sprite_at_second_frame, &animation, frame_duration));
+                assert!(!state.update(&mut sprite_at_second_frame, &animation, frame_duration,));
             }
         }
     }
@@ -532,7 +535,7 @@ mod tests {
                 animation: SpriteSheetAnimation,
                 frame_duration: Duration,
             ) {
-                assert!(state.update(&mut sprite_at_second_frame, &animation, frame_duration));
+                assert!(state.update(&mut sprite_at_second_frame, &animation, frame_duration,));
             }
 
             #[rstest]

@@ -154,6 +154,8 @@ use bevy_ecs::component::SparseStorage;
 use bevy_ecs::prelude::*;
 use bevy_reflect::Reflect;
 
+use std::time::Duration;
+
 pub use animation::{Frame, SpriteSheetAnimation};
 pub use state::SpriteSheetAnimationState;
 
@@ -191,6 +193,43 @@ impl Component for Play {
     type Storage = SparseStorage;
 }
 
+/// Component that, when applied, can change the playback's rate of the animation.
+///
+/// Receives a f64 multiplier which will alter the delta, speeding up or slowing down to the desired playback rate.
+#[derive(Debug, Copy, Component, Clone, Reflect)]
+#[reflect(Component)]
+pub struct PlaySpeedMultiplier(f64);
+
+impl PlaySpeedMultiplier {
+    /// Creates a new `PlaySpeedMultiplier` Component with the multiplier set as desired
+    #[must_use]
+    pub fn new(multiplier: f64) -> Self {
+        Self(multiplier)
+    }
+
+    fn transform(self, duration: Duration) -> Duration {
+        duration.mul_f64(self.0)
+    }
+}
+
+impl Default for PlaySpeedMultiplier {
+    fn default() -> Self {
+        Self(1.0)
+    }
+}
+
+impl From<f64> for PlaySpeedMultiplier {
+    fn from(mult: f64) -> Self {
+        Self(mult)
+    }
+}
+
+impl From<f32> for PlaySpeedMultiplier {
+    fn from(mult: f32) -> Self {
+        Self(mult.into())
+    }
+}
+
 impl Plugin for AnimationPlugin {
     fn build(&self, app: &mut App) {
         app.add_asset::<SpriteSheetAnimation>()
@@ -199,5 +238,26 @@ impl Plugin for AnimationPlugin {
 
         #[cfg(feature = "unstable-load-from-file")]
         app.init_asset_loader::<animation::load::SpriteSheetAnimationLoader>();
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn identity_transformation() {
+        assert_eq!(
+            PlaySpeedMultiplier::default().transform(Duration::from_secs(1)),
+            Duration::from_secs(1)
+        );
+    }
+
+    #[test]
+    fn double_speed() {
+        assert_eq!(
+            PlaySpeedMultiplier::from(2.0).transform(Duration::from_secs(2)),
+            Duration::from_secs(4)
+        );
     }
 }
