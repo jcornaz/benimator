@@ -194,12 +194,33 @@ impl Component for Play {
 /// Component that, when applied, can change the playback's rate of the animation.
 ///
 /// Receives a f64 multiplier which will alter the delta, speeding up or slowing down to the desired playback rate.
-#[derive(Debug, Copy, Clone, Default, Reflect)]
+#[derive(Debug, Copy, Component, Clone, Reflect)]
 #[reflect(Component)]
-pub struct PlaySpeedMultiplier(pub f64);
+pub struct PlaySpeedMultiplier(f64);
 
-impl Component for PlaySpeedMultiplier {
-    type Storage = SparseStorage;
+impl PlaySpeedMultiplier {
+    /// Creates a new PlaySpeedMultiplier Component with the multiplier set as desired
+    pub fn new(multiplier: f64) -> Self {
+        Self(multiplier)
+    }
+}
+
+impl Default for PlaySpeedMultiplier {
+    fn default() -> Self {
+        Self(1.0)
+    }
+}
+
+impl From<f64> for PlaySpeedMultiplier {
+    fn from(mult: f64) -> Self {
+        Self(mult)
+    }
+}
+
+impl From<f32> for PlaySpeedMultiplier {
+    fn from(mult: f32) -> Self {
+        Self(mult.into())
+    }
 }
 
 impl Plugin for AnimationPlugin {

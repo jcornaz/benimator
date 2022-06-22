@@ -64,19 +64,12 @@ impl SpriteSheetAnimationState {
         mut sprite: impl DerefMut<Target = TextureAtlasSprite>,
         animation: &SpriteSheetAnimation,
         delta: Duration,
-        optional_multiplier: Option<&PlaySpeedMultiplier>,
     ) -> bool {
         debug_assert!(animation.has_frames());
 
         let mut frame = animation.frames[self.current_frame % animation.frames.len()];
 
-        self.elapsed_in_frame += match optional_multiplier {
-            // Alter the playback rate
-            Some(m) => Duration::from_secs_f64(delta.as_secs_f64() * m.0),
-            // Playback at the normal speed
-            None => delta,
-        };
-
+        self.elapsed_in_frame += delta;
         while self.elapsed_in_frame >= frame.duration {
             match animation.mode {
                 Mode::RepeatFrom(loop_from) => {
@@ -180,7 +173,11 @@ fn animate(
             },
         )
     {
-        if state.update(sprite, animation, time.delta(), optional_speed_multiplier) {
+        let adjusted_delta = optional_speed_multiplier
+            .map(|m| Duration::from_secs_f64(time.delta().as_secs_f64() * m.0))
+            .unwrap_or(time.delta());
+
+        if state.update(sprite, animation, adjusted_delta) {
             commands.entity(entity).remove::<Play>();
         }
     }
@@ -255,7 +252,7 @@ mod tests {
             animation: SpriteSheetAnimation,
             smaller_duration: Duration,
         ) {
-            state.update(&mut sprite, &animation, smaller_duration, None);
+            state.update(&mut sprite, &animation, smaller_duration);
             assert_eq!(sprite.index, 0);
         }
 
@@ -270,7 +267,6 @@ mod tests {
                 &mut sprite_at_second_frame,
                 &animation,
                 smaller_duration,
-                None,
             );
             assert_eq!(sprite_at_second_frame.index, 0);
         }
@@ -282,7 +278,7 @@ mod tests {
             animation: SpriteSheetAnimation,
             frame_duration: Duration,
         ) {
-            state.update(&mut sprite, &animation, frame_duration, None);
+            state.update(&mut sprite, &animation, frame_duration);
             assert_eq!(sprite.index, 1);
         }
 
@@ -293,8 +289,8 @@ mod tests {
             animation: SpriteSheetAnimation,
             smaller_duration: Duration,
         ) {
-            state.update(&mut sprite, &animation, smaller_duration, None);
-            state.update(&mut sprite, &animation, smaller_duration, None);
+            state.update(&mut sprite, &animation, smaller_duration);
+            state.update(&mut sprite, &animation, smaller_duration);
             assert_eq!(sprite.index, 1);
         }
 
@@ -306,8 +302,8 @@ mod tests {
             frame_duration: Duration,
             smaller_duration: Duration,
         ) {
-            state.update(&mut sprite, &animation, smaller_duration, None);
-            state.update(&mut sprite, &animation, smaller_duration, None);
+            state.update(&mut sprite, &animation, smaller_duration);
+            state.update(&mut sprite, &animation, smaller_duration);
             assert_eq!(
                 state.elapsed_in_frame,
                 (smaller_duration + smaller_duration) - frame_duration
@@ -325,7 +321,6 @@ mod tests {
                 &mut sprite_at_second_frame,
                 &animation,
                 frame_duration,
-                None
             ));
         }
 
@@ -336,7 +331,7 @@ mod tests {
             animation: SpriteSheetAnimation,
             frame_duration: Duration,
         ) {
-            state.update(&mut sprite, &animation, frame_duration * 2, None);
+            state.update(&mut sprite, &animation, frame_duration * 2);
             assert_eq!(sprite.index, 2);
         }
     }
@@ -381,7 +376,6 @@ mod tests {
                     &mut sprite_at_second_frame,
                     &animation,
                     frame_duration,
-                    None,
                 );
                 assert_eq!(sprite_at_second_frame.index, 2);
             }
@@ -397,7 +391,6 @@ mod tests {
                     &mut sprite_at_second_frame,
                     &animation,
                     frame_duration,
-                    None
                 ));
             }
         }
@@ -436,7 +429,6 @@ mod tests {
                     &mut sprite_at_second_frame,
                     &animation,
                     frame_duration,
-                    None,
                 );
                 assert_eq!(sprite_at_second_frame.index, 2);
             }
@@ -452,7 +444,6 @@ mod tests {
                     &mut sprite_at_second_frame,
                     &animation,
                     frame_duration,
-                    None
                 ));
             }
         }
@@ -489,7 +480,6 @@ mod tests {
                     &mut sprite_at_second_frame,
                     &animation,
                     frame_duration,
-                    None,
                 );
                 assert_eq!(sprite_at_second_frame.index, 0);
             }
@@ -505,7 +495,6 @@ mod tests {
                     &mut sprite_at_second_frame,
                     &animation,
                     frame_duration,
-                    None,
                 );
                 assert!(state.going_backward);
             }
@@ -539,7 +528,6 @@ mod tests {
                     &mut sprite_at_second_frame,
                     &animation,
                     frame_duration,
-                    None,
                 );
                 assert_eq!(sprite_at_second_frame.index, 0);
             }
@@ -578,7 +566,6 @@ mod tests {
                     &mut sprite_at_second_frame,
                     &animation,
                     frame_duration,
-                    None,
                 );
                 assert_eq!(sprite_at_second_frame.index, 1);
             }
@@ -594,7 +581,6 @@ mod tests {
                     &mut sprite_at_second_frame,
                     &animation,
                     frame_duration,
-                    None
                 ));
             }
 
@@ -609,7 +595,6 @@ mod tests {
                     &mut sprite_at_second_frame,
                     &animation,
                     frame_duration,
-                    None,
                 );
                 let expected_state = SpriteSheetAnimationState::default();
                 assert_eq!(state.current_frame, expected_state.current_frame);
