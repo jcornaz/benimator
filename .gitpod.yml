@@ -18,8 +18,7 @@ tasks:
     command: |
       cargo watch \
         -x 'test --tests' \
-        -x 'test --all-features --tests' \
-        -x 'test --all-features' \
+        -x 'test --all-features \
         -x 'clippy --all-features --all-targets' \
         -x '+nightly doc --all-features --no-deps'
 
