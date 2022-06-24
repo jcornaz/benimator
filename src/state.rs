@@ -106,11 +106,9 @@ impl SpriteSheetAnimationState {
 
             self.elapsed_in_frame -= frame.duration;
             frame = animation.frames[self.current_frame];
-            sprite.index = frame.index;
         }
-        if sprite.index > frame.index {
-            sprite.index = frame.index;
-        }
+
+        sprite.index = frame.index;
 
         false
     }
