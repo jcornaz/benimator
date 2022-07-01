@@ -1,3 +1,5 @@
+#![allow(clippy::forget_non_drop)] // Problems in bevy implementation of `Bundle`
+
 use bevy::prelude::*;
 use criterion::{criterion_group, criterion_main, BatchSize, BenchmarkId, Criterion};
 use std::time::Duration;
