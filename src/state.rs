@@ -238,7 +238,7 @@ mod tests {
 
         #[fixture]
         fn animation(frame_duration: Duration) -> SpriteSheetAnimation {
-            SpriteSheetAnimation::from_range(1..=3, frame_duration)
+            SpriteSheetAnimation::from_range(0..=2, frame_duration)
         }
 
         #[fixture]
@@ -249,21 +249,22 @@ mod tests {
         #[rstest]
         fn nothing_happens_if_not_enough_time_has_elapsed_and_index_is_already_set(
             mut state: SpriteSheetAnimationState,
-            mut sprite_at_second_frame: TextureAtlasSprite,
+            mut sprite: TextureAtlasSprite,
             animation: SpriteSheetAnimation,
             smaller_duration: Duration,
         ) {
-            state.update(&mut sprite_at_second_frame, &animation, smaller_duration);
-            assert_eq!(sprite_at_second_frame.index, 1);
+            state.update(&mut sprite, &animation, smaller_duration);
+            assert_eq!(sprite.index, 0);
         }
 
         #[rstest]
         fn updates_index_if_less_than_expected_index(
             mut state: SpriteSheetAnimationState,
             mut sprite: TextureAtlasSprite,
-            animation: SpriteSheetAnimation,
+            frame_duration: Duration,
             smaller_duration: Duration,
         ) {
+            let animation = SpriteSheetAnimation::from_range(1..=3, frame_duration);
             state.update(&mut sprite, &animation, smaller_duration);
             assert_eq!(sprite.index, 1);
         }
@@ -272,9 +273,10 @@ mod tests {
         fn updates_index_if_greater_than_expected_index(
             mut state: SpriteSheetAnimationState,
             mut sprite_at_third_frame: TextureAtlasSprite,
-            animation: SpriteSheetAnimation,
+            frame_duration: Duration,
             smaller_duration: Duration,
         ) {
+            let animation = SpriteSheetAnimation::from_range(1..=3, frame_duration);
             state.update(&mut sprite_at_third_frame, &animation, smaller_duration);
             assert_eq!(sprite_at_third_frame.index, 1);
         }
@@ -287,7 +289,7 @@ mod tests {
             frame_duration: Duration,
         ) {
             state.update(&mut sprite, &animation, frame_duration);
-            assert_eq!(sprite.index, 2);
+            assert_eq!(sprite.index, 1);
         }
 
         #[rstest]
@@ -299,7 +301,7 @@ mod tests {
         ) {
             state.update(&mut sprite, &animation, smaller_duration);
             state.update(&mut sprite, &animation, smaller_duration);
-            assert_eq!(sprite.index, 2);
+            assert_eq!(sprite.index, 1);
         }
 
         #[rstest]
@@ -336,7 +338,7 @@ mod tests {
             frame_duration: Duration,
         ) {
             state.update(&mut sprite, &animation, frame_duration * 2);
-            assert_eq!(sprite.index, 3);
+            assert_eq!(sprite.index, 2);
         }
     }
 
