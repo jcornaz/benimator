@@ -72,10 +72,10 @@ For more details see the [documentation](https://docs.rs/benimator)
 
 ## Installation
 
-Add to `Cargo.toml`:
+Add the dependency to your project
 
-```toml
-benimator = "3"
+```sh
+cargo add benimator
 ```
 
 ## Cargo features
