@@ -68,6 +68,7 @@ impl SpriteSheetAnimationState {
         debug_assert!(animation.has_frames());
 
         let mut frame = animation.frames[self.current_frame % animation.frames.len()];
+        sprite.index = frame.index;
 
         self.elapsed_in_frame += delta;
         while self.elapsed_in_frame >= frame.duration {
@@ -106,9 +107,6 @@ impl SpriteSheetAnimationState {
 
             self.elapsed_in_frame -= frame.duration;
             frame = animation.frames[self.current_frame];
-            sprite.index = frame.index;
-        }
-        if sprite.index > frame.index {
             sprite.index = frame.index;
         }
 
@@ -196,6 +194,11 @@ mod tests {
     }
 
     #[fixture]
+    fn sprite_at_third_frame() -> TextureAtlasSprite {
+        TextureAtlasSprite::new(2)
+    }
+
+    #[fixture]
     fn frame_duration() -> Duration {
         Duration::from_secs(1)
     }
@@ -255,14 +258,27 @@ mod tests {
         }
 
         #[rstest]
-        fn updates_index_if_not_on_expected_index(
+        fn updates_index_if_less_than_expected_index(
             mut state: SpriteSheetAnimationState,
-            mut sprite_at_second_frame: TextureAtlasSprite,
-            animation: SpriteSheetAnimation,
+            mut sprite: TextureAtlasSprite,
+            frame_duration: Duration,
             smaller_duration: Duration,
         ) {
-            state.update(&mut sprite_at_second_frame, &animation, smaller_duration);
-            assert_eq!(sprite_at_second_frame.index, 0);
+            let animation = SpriteSheetAnimation::from_range(1..=3, frame_duration);
+            state.update(&mut sprite, &animation, smaller_duration);
+            assert_eq!(sprite.index, 1);
+        }
+
+        #[rstest]
+        fn updates_index_if_greater_than_expected_index(
+            mut state: SpriteSheetAnimationState,
+            mut sprite_at_third_frame: TextureAtlasSprite,
+            frame_duration: Duration,
+            smaller_duration: Duration,
+        ) {
+            let animation = SpriteSheetAnimation::from_range(1..=3, frame_duration);
+            state.update(&mut sprite_at_third_frame, &animation, smaller_duration);
+            assert_eq!(sprite_at_third_frame.index, 1);
         }
 
         #[rstest]
@@ -499,14 +515,37 @@ mod tests {
     mod run_once {
         use super::*;
 
-        mod on_last_frame {
+        #[fixture]
+        fn animation(frame_duration: Duration) -> SpriteSheetAnimation {
+            SpriteSheetAnimation::from_range(0..=1, frame_duration).once()
+        }
 
+        mod on_first_frame {
             use super::*;
 
             #[fixture]
-            fn animation(frame_duration: Duration) -> SpriteSheetAnimation {
-                SpriteSheetAnimation::from_range(0..=1, frame_duration).once()
+            fn state() -> SpriteSheetAnimationState {
+                SpriteSheetAnimationState {
+                    current_frame: 0,
+                    elapsed_in_frame: Duration::from_nanos(500),
+                    going_backward: false,
+                }
             }
+
+            #[rstest]
+            fn final_index_set_if_frames_skipped_past_end(
+                mut state: SpriteSheetAnimationState,
+                mut sprite: TextureAtlasSprite,
+                animation: SpriteSheetAnimation,
+                frame_duration: Duration,
+            ) {
+                state.update(&mut sprite, &animation, frame_duration * 4);
+                assert_eq!(sprite.index, 1);
+            }
+        }
+
+        mod on_last_frame {
+            use super::*;
 
             #[fixture]
             fn state() -> SpriteSheetAnimationState {
