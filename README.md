@@ -82,6 +82,8 @@ cargo add benimator
 
 * `yaml` deserialization from yaml asset files (also requires `unstable-load-from-file`)
 * `ron` deserialization from ron asset files (also requires `unstable-load-from-file`)
+* `bevy-07` all integrations with bevy 0.7
+* `bevy-app-07` integration with `bevy_app` 0.7 (incl. bevy plugin)
 
 ### Unstable features
 
