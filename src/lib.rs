@@ -167,6 +167,7 @@ mod state;
 ///
 /// See crate level documentation for usage
 #[non_exhaustive]
+#[cfg(feature = "bevy-app-07")]
 #[derive(Default)]
 pub struct AnimationPlugin;
 
