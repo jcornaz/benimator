@@ -19,6 +19,11 @@ unstable-load-from-file = ["serde", "anyhow", "bevy_utils"]
 bevy-07 = ["bevy-app-07"]
 
 [dependencies]
+# Private dependencies (do not leak into the public API)
+yaml = { package = "serde_yaml", version = "0.8.25", default-features = false, optional = true }
+ron = { version = "0.7.1", default-features = false, optional = true }
+
+# Private dependencies (Present in the public API)
 bevy_core = { version = "0.7.0", default-features = false }
 bevy_ecs = { version = "0.7.0", default-features = false }
 bevy-app-07 = { package = "bevy_app",version = "0.7.0", default-features = false, optional = true }
@@ -27,8 +32,6 @@ bevy_sprite = { version = "0.7.0", default-features = false }
 bevy_asset = { version = "0.7.0", default-features = false }
 bevy_utils = { version = "0.7.0", default-features = false, optional = true }
 serde = { version = "1.0", default-features = false, features = ["derive"], optional = true }
-yaml = { package = "serde_yaml", version = "0.8.25", default-features = false, optional = true }
-ron = { version = "0.7.1", default-features = false, optional = true }
 anyhow = { version = "1.0", default-features = false, optional = true }
 
 [dev-dependencies]
