@@ -14,22 +14,27 @@
 //!
 //! 1. Add the [`AnimationPlugin`] plugin
 //!
-//! ```no_run
-//! use std::time::Duration;
-//! use bevy::prelude::*;
-//! use benimator::*;
+#![cfg_attr(
+    feature = "bevy-app-07",
+    doc = "
+```no_run
+# use bevy::prelude::*;
+use benimator::*;
+
+fn main() {
+    App::new()
+        .add_plugins(DefaultPlugins)
+        .add_plugin(AnimationPlugin::default()) // <-- Enable sprite-sheet animations
+        .add_startup_system(spawn)
+        // ...
+        .run()
+}
+
+fn spawn() { /* ... */ }
+```
+"
+)]
 //!
-//! fn main() {
-//!     App::new()
-//!         .add_plugins(DefaultPlugins)
-//!         .add_plugin(AnimationPlugin::default()) // <-- Enable sprite-sheet animations
-//!         .add_startup_system(spawn.system())
-//!         // ...
-//!         .run()
-//! }
-//!
-//! fn spawn() { /* ... */ }
-//! ```
 //!
 //! 2. Create a [`SpriteSheetAnimation`] and insert the asset handle to the sprite sheet entity you want to animate
 //!
@@ -148,8 +153,6 @@
 #[macro_use]
 extern crate rstest;
 
-use bevy_app::prelude::*;
-use bevy_asset::AddAsset;
 use bevy_ecs::component::SparseStorage;
 use bevy_ecs::prelude::*;
 use bevy_reflect::Reflect;
@@ -169,6 +172,7 @@ mod state;
 ///
 /// See crate level documentation for usage
 #[non_exhaustive]
+#[cfg(feature = "bevy-app-07")]
 #[derive(Default)]
 pub struct AnimationPlugin;
 
@@ -230,15 +234,30 @@ impl From<f32> for PlaySpeedMultiplier {
     }
 }
 
-impl Plugin for AnimationPlugin {
-    fn build(&self, app: &mut App) {
+#[cfg(feature = "bevy-app-07")]
+impl bevy_app_07::Plugin for AnimationPlugin {
+    fn build(&self, app: &mut bevy_app_07::App) {
+        use bevy_asset::AddAsset;
+
         app.add_asset::<SpriteSheetAnimation>()
-            .add_system_set_to_stage(CoreStage::PreUpdate, state::maintenance_systems())
-            .add_system_set_to_stage(CoreStage::Update, state::post_update_systems());
+            .add_system_set_to_stage(bevy_app_07::CoreStage::PreUpdate, maintenance_systems())
+            .add_system_set_to_stage(bevy_app_07::CoreStage::Update, animation_systems());
 
         #[cfg(feature = "unstable-load-from-file")]
         app.init_asset_loader::<animation::load::SpriteSheetAnimationLoader>();
     }
+}
+
+/// System set that automatically insert and remove components (i.e. [`SpriteSheetAnimationState`])
+pub fn maintenance_systems() -> SystemSet {
+    SystemSet::new()
+        .with_system(state::insert)
+        .with_system(state::remove)
+}
+
+/// System set that animate the sprite-sheets
+pub fn animation_systems() -> SystemSet {
+    SystemSet::new().with_system(state::animate)
 }
 
 #[cfg(test)]

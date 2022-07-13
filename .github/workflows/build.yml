@@ -17,7 +17,22 @@ env:
   RUSTFLAGS: "-D warnings"
 
 jobs:
-  test:
+  test-no-feature:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v3
+      - name: Install rust toolchain
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: ${{ env.RUST_VERSION }}
+          override: true
+          profile: minimal
+      - uses: Swatinem/rust-cache@v1
+      - run: cargo check --all-targets --no-default-features
+      - run: cargo test --no-default-features
+
+  test-default-features:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
@@ -44,11 +59,20 @@ jobs:
           override: true
           profile: minimal
       - uses: Swatinem/rust-cache@v1
+      - run: cargo check --all-targets --all-features
       - run: cargo test --all-features
 
-  test-unstable-load-from-file:
+  test-feature:
     runs-on: ubuntu-latest
     timeout-minutes: 15
+    strategy:
+      matrix:
+        feature:
+          - "unstable-load-from-file, yaml"
+          - "unstable-load-from-file, ron"
+          - "bevy-07"
+          - "bevy-app-07"
+
     steps:
       - uses: actions/checkout@v3
       - name: Install rust toolchain
@@ -58,8 +82,8 @@ jobs:
           override: true
           profile: minimal
       - uses: Swatinem/rust-cache@v1
-      - run: cargo test --features "unstable-load-from-file, yaml"
-      - run: cargo test --features "unstable-load-from-file, ron"
+      - run: cargo check --all-targets --no-default-features --features "${{ matrix.feature }}"
+      - run: cargo test --no-default-features --features "${{ matrix.feature }}"
 
   code-style:
     runs-on: ubuntu-latest
@@ -117,7 +141,11 @@ jobs:
   release:
     if: ${{ github.event_name != 'pull_request' }}
     needs:
-      [test, test-all-features, test-unstable-load-from-file, documentation]
+      - test-no-feature
+      - test-default-features
+      - test-all-features
+      - test-feature
+      - documentation
     environment: release
     runs-on: ubuntu-latest
     steps:

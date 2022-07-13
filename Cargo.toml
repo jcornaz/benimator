@@ -16,11 +16,12 @@ all-features = true
 [features]
 default = []
 unstable-load-from-file = ["serde", "anyhow", "bevy_utils"]
+bevy-07 = ["bevy-app-07"]
 
 [dependencies]
 bevy_core = { version = "0.7.0", default-features = false }
 bevy_ecs = { version = "0.7.0", default-features = false }
-bevy_app = { version = "0.7.0", default-features = false }
+bevy-app-07 = { package = "bevy_app",version = "0.7.0", default-features = false, optional = true }
 bevy_reflect = { version = "0.7.0", default-features = false }
 bevy_sprite = { version = "0.7.0", default-features = false }
 bevy_asset = { version = "0.7.0", default-features = false }
@@ -41,7 +42,24 @@ rustc_version = "0.4.0"
 [[bench]]
 name = "play_component"
 harness = false
+required-features = ["bevy-07"]
+
+[[example]]
+name = "change_animation"
+required-features = ["bevy-07"]
+
+[[example]]
+name = "end_of_animation_detection"
+required-features = ["bevy-07"]
+
+[[example]]
+name = "ping_pong"
+required-features = ["bevy-07"]
+
+[[example]]
+name = "readme"
+required-features = ["bevy-07"]
 
 [[example]]
 name = "using_animation_file"
-required-features = ["unstable-load-from-file", "yaml"]
+required-features = ["unstable-load-from-file", "yaml", "bevy-07"]

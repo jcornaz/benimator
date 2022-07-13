@@ -8,14 +8,6 @@ use bevy_sprite::prelude::*;
 
 use crate::{animation::Mode, Play, PlaySpeedMultiplier, SpriteSheetAnimation};
 
-pub(crate) fn maintenance_systems() -> SystemSet {
-    SystemSet::new().with_system(insert).with_system(remove)
-}
-
-pub(crate) fn post_update_systems() -> SystemSet {
-    SystemSet::new().with_system(animate)
-}
-
 /// Animation state component which is automatically inserted/removed
 ///
 /// It can be used to reset the animation state.
@@ -114,7 +106,7 @@ impl SpriteSheetAnimationState {
     }
 }
 
-fn insert(
+pub(crate) fn insert(
     mut commands: Commands<'_, '_>,
     query: Query<
         '_,
@@ -133,7 +125,7 @@ fn insert(
     }
 }
 
-fn remove(
+pub(crate) fn remove(
     mut commands: Commands<'_, '_>,
     removed: RemovedComponents<'_, Handle<SpriteSheetAnimation>>,
 ) {
@@ -152,7 +144,7 @@ type AnimationSystemQuery<'a> = (
     Option<&'a PlaySpeedMultiplier>,
 );
 
-fn animate(
+pub(crate) fn animate(
     mut commands: Commands<'_, '_>,
     time: Res<'_, Time>,
     animation_defs: Res<'_, Assets<SpriteSheetAnimation>>,

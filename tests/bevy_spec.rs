@@ -1,3 +1,5 @@
+#![cfg(feature = "bevy-07")]
+
 use std::time::Duration;
 
 use bevy::asset::AssetPlugin;
