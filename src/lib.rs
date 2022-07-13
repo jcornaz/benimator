@@ -166,13 +166,13 @@ pub use state::SpriteSheetAnimationState;
 pub use animation::AnimationMode;
 
 mod animation;
+mod integrations;
 mod state;
 
 /// Plugin to enable sprite-sheet animation
 ///
 /// See crate level documentation for usage
 #[non_exhaustive]
-#[cfg(feature = "bevy-app-07")]
 #[derive(Default)]
 pub struct AnimationPlugin;
 
@@ -232,41 +232,6 @@ impl From<f32> for PlaySpeedMultiplier {
     fn from(mult: f32) -> Self {
         Self(mult.into())
     }
-}
-
-#[cfg(feature = "bevy-app-07")]
-impl bevy_app_07::Plugin for AnimationPlugin {
-    fn build(&self, app: &mut bevy_app_07::App) {
-        use bevy_asset::AddAsset;
-
-        app.add_asset::<SpriteSheetAnimation>()
-            .add_system_set_to_stage(bevy_app_07::CoreStage::PreUpdate, maintenance_systems())
-            .add_system_set_to_stage(bevy_app_07::CoreStage::Update, animation_systems());
-
-        #[cfg(feature = "unstable-load-from-file")]
-        app.init_asset_loader::<animation::load::SpriteSheetAnimationLoader>();
-    }
-}
-
-/// System set that automatically insert and remove components (i.e. [`SpriteSheetAnimationState`])
-pub fn maintenance_systems() -> SystemSet {
-    SystemSet::new()
-        .with_system(state::insert)
-        .with_system(state::remove)
-}
-
-/// System set that animate the sprite-sheets
-#[must_use]
-#[allow(unused_mut)]
-pub fn animation_systems() -> SystemSet {
-    let mut set = SystemSet::new();
-
-    #[cfg(feature = "bevy-sprite-07")]
-    {
-        set = set.with_system(state::animate::<bevy_sprite_07::TextureAtlasSprite>);
-    }
-
-    set
 }
 
 #[cfg(test)]
