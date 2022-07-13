@@ -27,7 +27,7 @@ It will be possible to add support for newer major versions of bevy without remo
 
 Users will be able to update the version of benimator while staying on an old version of bevy until they have the time to update bevy.
 
-It would be possible to add support for older versions of bevy (0.1 - 0.7) if someone were in need. (But that won't be added eagerly)
+It would be possible to add support for older versions of bevy (0.1 - 0.7) if necessary. (But that won't be added eagerly)
 
 Though, it'll enable greater stability of benimator's API, to make bevy an optional dependency is a breaking change.
 
