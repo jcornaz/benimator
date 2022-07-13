@@ -1,10 +1,8 @@
-use std::ops::DerefMut;
-use std::time::Duration;
+use std::{ops::DerefMut, time::Duration};
 
 use bevy_asset::{Assets, Handle};
 use bevy_core::prelude::*;
 use bevy_ecs::prelude::*;
-use bevy_sprite::prelude::*;
 
 use crate::{animation::Mode, Play, PlaySpeedMultiplier, SpriteSheetAnimation};
 
@@ -32,6 +30,10 @@ pub struct SpriteSheetAnimationState {
     going_backward: bool,
 }
 
+pub trait SpriteState {
+    fn set_current_index(&mut self, index: usize);
+}
+
 impl SpriteSheetAnimationState {
     /// Reset animation state
     ///
@@ -53,14 +55,14 @@ impl SpriteSheetAnimationState {
     /// Returns true if the animation has ended
     fn update(
         &mut self,
-        mut sprite: impl DerefMut<Target = TextureAtlasSprite>,
+        mut sprite: &mut impl SpriteState,
         animation: &SpriteSheetAnimation,
         delta: Duration,
     ) -> bool {
         debug_assert!(animation.has_frames());
 
         let mut frame = animation.frames[self.current_frame % animation.frames.len()];
-        sprite.index = frame.index;
+        sprite.set_current_index(frame.index);
 
         self.elapsed_in_frame += delta;
         while self.elapsed_in_frame >= frame.duration {
@@ -99,7 +101,7 @@ impl SpriteSheetAnimationState {
 
             self.elapsed_in_frame -= frame.duration;
             frame = animation.frames[self.current_frame];
-            sprite.index = frame.index;
+            sprite.set_current_index(frame.index);
         }
 
         false
@@ -136,21 +138,21 @@ pub(crate) fn remove(
     }
 }
 
-type AnimationSystemQuery<'a> = (
+type AnimationSystemQuery<'a, T> = (
     Entity,
-    &'a mut TextureAtlasSprite,
+    &'a mut T,
     &'a Handle<SpriteSheetAnimation>,
     &'a mut SpriteSheetAnimationState,
     Option<&'a PlaySpeedMultiplier>,
 );
 
-pub(crate) fn animate(
+pub(crate) fn animate<T: SpriteState + Component>(
     mut commands: Commands<'_, '_>,
     time: Res<'_, Time>,
     animation_defs: Res<'_, Assets<SpriteSheetAnimation>>,
-    mut animations: Query<'_, '_, AnimationSystemQuery<'_>, With<Play>>,
+    mut animations: Query<'_, '_, AnimationSystemQuery<'_, T>, With<Play>>,
 ) {
-    for (entity, sprite, animation, mut state, speed_multiplier) in
+    for (entity, mut sprite, animation, mut state, speed_multiplier) in
         animations.iter_mut().filter_map(
             |(entity, sprite, anim_handle, state, optional_speed_multiplier)| {
                 animation_defs
@@ -165,9 +167,22 @@ pub(crate) fn animate(
             .unwrap_or_default()
             .transform(time.delta());
 
-        if state.update(sprite, animation, delta) {
+        if state.update(&mut sprite, animation, delta) {
             commands.entity(entity).remove::<Play>();
         }
+    }
+}
+
+impl<'w, T: SpriteState> SpriteState for Mut<'w, T> {
+    fn set_current_index(&mut self, index: usize) {
+        self.deref_mut().set_current_index(index);
+    }
+}
+
+#[cfg(feature = "bevy-sprite-07")]
+impl SpriteState for bevy_sprite_07::TextureAtlasSprite {
+    fn set_current_index(&mut self, index: usize) {
+        self.index = index;
     }
 }
 
@@ -175,19 +190,29 @@ pub(crate) fn animate(
 mod tests {
     use super::*;
 
+    struct TextureAtlasSprite {
+        index: usize,
+    }
+
+    impl SpriteState for TextureAtlasSprite {
+        fn set_current_index(&mut self, index: usize) {
+            self.index = index;
+        }
+    }
+
     #[fixture]
     fn sprite() -> TextureAtlasSprite {
-        TextureAtlasSprite::new(0)
+        TextureAtlasSprite { index: 0 }
     }
 
     #[fixture]
     fn sprite_at_second_frame() -> TextureAtlasSprite {
-        TextureAtlasSprite::new(1)
+        TextureAtlasSprite { index: 1 }
     }
 
     #[fixture]
     fn sprite_at_third_frame() -> TextureAtlasSprite {
-        TextureAtlasSprite::new(2)
+        TextureAtlasSprite { index: 2 }
     }
 
     #[fixture]

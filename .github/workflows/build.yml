@@ -72,6 +72,7 @@ jobs:
           - "unstable-load-from-file, ron"
           - "bevy-07"
           - "bevy-app-07"
+          - "bevy-sprite-07"
 
     steps:
       - uses: actions/checkout@v3

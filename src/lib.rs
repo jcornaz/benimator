@@ -257,7 +257,14 @@ pub fn maintenance_systems() -> SystemSet {
 
 /// System set that animate the sprite-sheets
 pub fn animation_systems() -> SystemSet {
-    SystemSet::new().with_system(state::animate)
+    let mut set = SystemSet::new();
+
+    #[cfg(feature = "bevy-sprite-07")]
+    {
+        set = set.with_system(state::animate::<bevy_sprite_07::TextureAtlasSprite>);
+    }
+
+    set
 }
 
 #[cfg(test)]
