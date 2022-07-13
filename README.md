@@ -113,7 +113,10 @@ It *will* be increased to the latest stable version in a major release. (even if
 
 Discussions, issues and pull requests are welcome.
 
-It is possible to directly discuss with me (`Jomag#2675`) via the [bevy discord](https://discord.com/invite/gMUk5Ph) 
+It is possible to directly discuss with me (`Jomag#2675`) via the [bevy discord](https://discord.com/invite/gMUk5Ph).
+
+If you want to understand the "architecture" decisions made you may look at the [doc/adr](doc/adr) directory.
+
 
 ## License
 
