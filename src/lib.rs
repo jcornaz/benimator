@@ -14,22 +14,27 @@
 //!
 //! 1. Add the [`AnimationPlugin`] plugin
 //!
-//! ```no_run
-//! use std::time::Duration;
-//! use bevy::prelude::*;
-//! use benimator::*;
+#![cfg_attr(
+    feature = "bevy-app-07",
+    doc = "
+```no_run
+# use bevy::prelude::*;
+use benimator::*;
+
+fn main() {
+    App::new()
+        .add_plugins(DefaultPlugins)
+        .add_plugin(AnimationPlugin::default()) // <-- Enable sprite-sheet animations
+        .add_startup_system(spawn)
+        // ...
+        .run()
+}
+
+fn spawn() { /* ... */ }
+```
+"
+)]
 //!
-//! fn main() {
-//!     App::new()
-//!         .add_plugins(DefaultPlugins)
-//!         .add_plugin(AnimationPlugin::default()) // <-- Enable sprite-sheet animations
-//!         .add_startup_system(spawn.system())
-//!         // ...
-//!         .run()
-//! }
-//!
-//! fn spawn() { /* ... */ }
-//! ```
 //!
 //! 2. Create a [`SpriteSheetAnimation`] and insert the asset handle to the sprite sheet entity you want to animate
 //!
