@@ -55,7 +55,7 @@ impl SpriteSheetAnimationState {
     /// Returns true if the animation has ended
     fn update(
         &mut self,
-        mut sprite: &mut impl SpriteState,
+        sprite: &mut impl SpriteState,
         animation: &SpriteSheetAnimation,
         delta: Duration,
     ) -> bool {
@@ -138,6 +138,7 @@ pub(crate) fn remove(
     }
 }
 
+#[allow(dead_code)]
 type AnimationSystemQuery<'a, T> = (
     Entity,
     &'a mut T,
@@ -146,6 +147,7 @@ type AnimationSystemQuery<'a, T> = (
     Option<&'a PlaySpeedMultiplier>,
 );
 
+#[allow(dead_code)]
 pub(crate) fn animate<T: SpriteState + Component>(
     mut commands: Commands<'_, '_>,
     time: Res<'_, Time>,

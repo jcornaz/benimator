@@ -256,6 +256,8 @@ pub fn maintenance_systems() -> SystemSet {
 }
 
 /// System set that animate the sprite-sheets
+#[must_use]
+#[allow(unused_mut)]
 pub fn animation_systems() -> SystemSet {
     let mut set = SystemSet::new();
 
