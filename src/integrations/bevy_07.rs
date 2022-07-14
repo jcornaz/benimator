@@ -3,25 +3,31 @@ use std::ops::DerefMut;
 use crate::{
     state::SpriteState, Play, PlaySpeedMultiplier, SpriteSheetAnimation, SpriteSheetAnimationState,
 };
+#[cfg(feature = "bevy-app-07")]
 use bevy_app_07::prelude::*;
 use bevy_asset::prelude::*;
 use bevy_core::prelude::*;
 use bevy_ecs::prelude::*;
+#[cfg(feature = "bevy-sprite-07")]
 use bevy_sprite_07::prelude::*;
 
+#[cfg(feature = "bevy-app-07")]
 impl Plugin for crate::AnimationPlugin {
     fn build(&self, app: &mut App) {
         app.add_asset::<crate::SpriteSheetAnimation>()
             .add_system_to_stage(CoreStage::PreUpdate, insert_state)
-            .add_system_to_stage(CoreStage::PreUpdate, remove_state)
-            .add_system_to_stage(CoreStage::Update, animate);
+            .add_system_to_stage(CoreStage::PreUpdate, remove_state);
+
+        #[cfg(feature = "bevy-sprite-07")]
+        app.add_system_to_stage(CoreStage::Update, animate::<TextureAtlasSprite>);
 
         #[cfg(feature = "unstable-load-from-file")]
         app.init_asset_loader::<crate::animation::load::SpriteSheetAnimationLoader>();
     }
 }
 
-impl SpriteState for bevy_sprite_07::TextureAtlasSprite {
+#[cfg(feature = "bevy-sprite-07")]
+impl SpriteState for TextureAtlasSprite {
     fn set_current_index(&mut self, index: usize) {
         self.index = index;
     }
@@ -57,19 +63,19 @@ pub(crate) fn remove_state(
     }
 }
 
-type AnimationSystemQuery<'a> = (
+type AnimationSystemQuery<'a, T> = (
     Entity,
-    &'a mut TextureAtlasSprite,
+    &'a mut T,
     &'a Handle<SpriteSheetAnimation>,
     &'a mut SpriteSheetAnimationState,
     Option<&'a PlaySpeedMultiplier>,
 );
 
-pub(crate) fn animate(
+pub(crate) fn animate<T: SpriteState + Component>(
     mut commands: Commands<'_, '_>,
     time: Res<'_, Time>,
     animation_defs: Res<'_, Assets<SpriteSheetAnimation>>,
-    mut animations: Query<'_, '_, AnimationSystemQuery<'_>, With<Play>>,
+    mut animations: Query<'_, '_, AnimationSystemQuery<'_, T>, With<Play>>,
 ) {
     for (entity, mut sprite, animation, mut state, speed_multiplier) in
         animations.iter_mut().filter_map(

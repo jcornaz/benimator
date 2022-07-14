@@ -51,7 +51,8 @@ impl SpriteSheetAnimationState {
     /// Update the animation and the sprite (if necessary)
     ///
     /// Returns true if the animation has ended
-    pub fn update(
+    #[allow(dead_code)] // <-- TODO stabilize the API and make the method public
+    pub(crate) fn update(
         &mut self,
         sprite: &mut impl SpriteState,
         animation: &SpriteSheetAnimation,
