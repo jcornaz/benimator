@@ -166,7 +166,7 @@ pub use state::SpriteSheetAnimationState;
 pub use animation::AnimationMode;
 
 mod animation;
-mod integrations;
+pub mod integration;
 mod state;
 
 /// Plugin to enable sprite-sheet animation

@@ -19,7 +19,7 @@ impl Plugin for crate::AnimationPlugin {
             .add_system_to_stage(CoreStage::PreUpdate, remove_state);
 
         #[cfg(feature = "bevy-sprite-07")]
-        app.add_system_to_stage(CoreStage::Update, animate::<TextureAtlasSprite>);
+        app.add_system_set_to_stage(CoreStage::Update, animation_systems::<TextureAtlasSprite>());
 
         #[cfg(feature = "unstable-load-from-file")]
         app.init_asset_loader::<crate::animation::load::SpriteSheetAnimationLoader>();
@@ -71,7 +71,14 @@ type AnimationSystemQuery<'a, T> = (
     Option<&'a PlaySpeedMultiplier>,
 );
 
-pub(crate) fn animate<T: SpriteState + Component>(
+/// Animation system set
+///
+/// Generic over the type of sprite atlas comonent.
+pub fn animation_systems<T: SpriteState + Component>() -> SystemSet {
+    SystemSet::new().with_system(animate::<T>)
+}
+
+fn animate<T: SpriteState + Component>(
     mut commands: Commands<'_, '_>,
     time: Res<'_, Time>,
     animation_defs: Res<'_, Assets<SpriteSheetAnimation>>,
