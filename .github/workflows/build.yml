@@ -137,7 +137,7 @@ jobs:
           profile: minimal
       - uses: Swatinem/rust-cache@v1
       - run: cargo install cargo-udeps --locked
-      - run: cargo udeps
+      - run: cargo udeps --all-features
 
   release:
     if: ${{ github.event_name != 'pull_request' }}

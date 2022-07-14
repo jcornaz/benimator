@@ -1,10 +1,8 @@
-use std::{ops::DerefMut, time::Duration};
+use std::time::Duration;
 
-use bevy_asset::{Assets, Handle};
-use bevy_core::prelude::*;
 use bevy_ecs::prelude::*;
 
-use crate::{animation::Mode, Play, PlaySpeedMultiplier, SpriteSheetAnimation};
+use crate::{animation::Mode, SpriteSheetAnimation};
 
 /// Animation state component which is automatically inserted/removed
 ///
@@ -53,7 +51,8 @@ impl SpriteSheetAnimationState {
     /// Update the animation and the sprite (if necessary)
     ///
     /// Returns true if the animation has ended
-    fn update(
+    #[allow(dead_code)] // <-- TODO stabilize the API and make the method public
+    pub(crate) fn update(
         &mut self,
         sprite: &mut impl SpriteState,
         animation: &SpriteSheetAnimation,
@@ -105,86 +104,6 @@ impl SpriteSheetAnimationState {
         }
 
         false
-    }
-}
-
-pub(crate) fn insert(
-    mut commands: Commands<'_, '_>,
-    query: Query<
-        '_,
-        '_,
-        Entity,
-        (
-            With<Handle<SpriteSheetAnimation>>,
-            Without<SpriteSheetAnimationState>,
-        ),
-    >,
-) {
-    for entity in query.iter() {
-        commands
-            .entity(entity)
-            .insert(SpriteSheetAnimationState::default());
-    }
-}
-
-pub(crate) fn remove(
-    mut commands: Commands<'_, '_>,
-    removed: RemovedComponents<'_, Handle<SpriteSheetAnimation>>,
-) {
-    for entity in removed.iter() {
-        commands
-            .entity(entity)
-            .remove::<SpriteSheetAnimationState>();
-    }
-}
-
-#[allow(dead_code)]
-type AnimationSystemQuery<'a, T> = (
-    Entity,
-    &'a mut T,
-    &'a Handle<SpriteSheetAnimation>,
-    &'a mut SpriteSheetAnimationState,
-    Option<&'a PlaySpeedMultiplier>,
-);
-
-#[allow(dead_code)]
-pub(crate) fn animate<T: SpriteState + Component>(
-    mut commands: Commands<'_, '_>,
-    time: Res<'_, Time>,
-    animation_defs: Res<'_, Assets<SpriteSheetAnimation>>,
-    mut animations: Query<'_, '_, AnimationSystemQuery<'_, T>, With<Play>>,
-) {
-    for (entity, mut sprite, animation, mut state, speed_multiplier) in
-        animations.iter_mut().filter_map(
-            |(entity, sprite, anim_handle, state, optional_speed_multiplier)| {
-                animation_defs
-                    .get(anim_handle)
-                    .filter(|anim| anim.has_frames())
-                    .map(|anim| (entity, sprite, anim, state, optional_speed_multiplier))
-            },
-        )
-    {
-        let delta = speed_multiplier
-            .copied()
-            .unwrap_or_default()
-            .transform(time.delta());
-
-        if state.update(&mut sprite, animation, delta) {
-            commands.entity(entity).remove::<Play>();
-        }
-    }
-}
-
-impl<'w, T: SpriteState> SpriteState for Mut<'w, T> {
-    fn set_current_index(&mut self, index: usize) {
-        self.deref_mut().set_current_index(index);
-    }
-}
-
-#[cfg(feature = "bevy-sprite-07")]
-impl SpriteState for bevy_sprite_07::TextureAtlasSprite {
-    fn set_current_index(&mut self, index: usize) {
-        self.index = index;
     }
 }
 
