@@ -3,29 +3,23 @@ use std::ops::DerefMut;
 use crate::{
     state::SpriteState, Play, PlaySpeedMultiplier, SpriteSheetAnimation, SpriteSheetAnimationState,
 };
-#[cfg(feature = "bevy-app-07")]
 use bevy_app_07::prelude::*;
 use bevy_asset::prelude::*;
 use bevy_core::prelude::*;
 use bevy_ecs::prelude::*;
-#[cfg(feature = "bevy-sprite-07")]
 use bevy_sprite_07::prelude::*;
 
-#[cfg(feature = "bevy-app-07")]
 impl Plugin for crate::AnimationPlugin {
     fn build(&self, app: &mut App) {
         app.add_asset::<crate::SpriteSheetAnimation>()
-            .add_system_set_to_stage(CoreStage::PreUpdate, auto_insert_state());
-
-        #[cfg(feature = "bevy-sprite-07")]
-        app.add_system_set_to_stage(CoreStage::Update, animation_systems::<TextureAtlasSprite>());
+            .add_system_set_to_stage(CoreStage::PreUpdate, auto_insert_state())
+            .add_system_set_to_stage(CoreStage::Update, animation_systems::<TextureAtlasSprite>());
 
         #[cfg(feature = "unstable-load-from-file")]
         app.init_asset_loader::<crate::animation::load::SpriteSheetAnimationLoader>();
     }
 }
 
-#[cfg(feature = "bevy-sprite-07")]
 impl SpriteState for TextureAtlasSprite {
     fn set_current_index(&mut self, index: usize) {
         self.index = index;
@@ -33,7 +27,7 @@ impl SpriteState for TextureAtlasSprite {
 }
 
 /// Systems to automatically insert (and remove) the state component
-pub fn auto_insert_state() -> SystemSet {
+fn auto_insert_state() -> SystemSet {
     SystemSet::new()
         .with_system(insert_state)
         .with_system(remove_state)
@@ -47,7 +41,7 @@ pub fn auto_insert_state() -> SystemSet {
 ///
 /// * `bevy_asset::assets::Assets<benimator::SpriteSheetAnimation>`
 /// * `bevy_core::time::Time`
-pub fn animation_systems<T: SpriteState + Component>() -> SystemSet {
+fn animation_systems<T: SpriteState + Component>() -> SystemSet {
     SystemSet::new().with_system(animate::<T>)
 }
 
