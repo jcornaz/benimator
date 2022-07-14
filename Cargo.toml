@@ -24,6 +24,10 @@ yaml = { package = "serde_yaml", version = "0.8.25", default-features = false, o
 ron = { version = "0.7.1", default-features = false, optional = true }
 
 # Public dependencies (Present in the public API)
+serde = { version = "1.0", default-features = false, features = ["derive"], optional = true }
+anyhow = { version = "1.0", default-features = false, optional = true }
+
+## Bevy 0.7
 bevy_core = { version = "0.7.0", default-features = false }
 bevy_ecs = { version = "0.7.0", default-features = false }
 bevy_reflect = { version = "0.7.0", default-features = false }
@@ -31,8 +35,6 @@ bevy_asset = { version = "0.7.0", default-features = false }
 bevy-app-07 = { package = "bevy_app",version = "0.7.0", default-features = false, optional = true }
 bevy-sprite-07 = { package = "bevy_sprite", version = "0.7.0", default-features = false, optional = true }
 bevy_utils = { version = "0.7.0", default-features = false, optional = true }
-serde = { version = "1.0", default-features = false, features = ["derive"], optional = true }
-anyhow = { version = "1.0", default-features = false, optional = true }
 
 [dev-dependencies]
 bevy = { version = "0.7.0", default-features = false, features = ["render", "x11", "png"] }
