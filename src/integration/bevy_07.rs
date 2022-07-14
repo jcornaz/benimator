@@ -15,8 +15,7 @@ use bevy_sprite_07::prelude::*;
 impl Plugin for crate::AnimationPlugin {
     fn build(&self, app: &mut App) {
         app.add_asset::<crate::SpriteSheetAnimation>()
-            .add_system_to_stage(CoreStage::PreUpdate, insert_state)
-            .add_system_to_stage(CoreStage::PreUpdate, remove_state);
+            .add_system_set_to_stage(CoreStage::PreUpdate, auto_insert_state());
 
         #[cfg(feature = "bevy-sprite-07")]
         app.add_system_set_to_stage(CoreStage::Update, animation_systems::<TextureAtlasSprite>());
@@ -33,7 +32,26 @@ impl SpriteState for TextureAtlasSprite {
     }
 }
 
-pub(crate) fn insert_state(
+/// Systems to automatically insert (and remove) the state component
+pub fn auto_insert_state() -> SystemSet {
+    SystemSet::new()
+        .with_system(insert_state)
+        .with_system(remove_state)
+}
+
+/// Animation systems
+///
+/// Generic over the type of sprite atlas comonent.
+///
+/// # Required resources
+///
+/// * `bevy_asset::assets::Assets<benimator::SpriteSheetAnimation>`
+/// * `bevy_core::time::Time`
+pub fn animation_systems<T: SpriteState + Component>() -> SystemSet {
+    SystemSet::new().with_system(animate::<T>)
+}
+
+fn insert_state(
     mut commands: Commands<'_, '_>,
     query: Query<
         '_,
@@ -52,7 +70,7 @@ pub(crate) fn insert_state(
     }
 }
 
-pub(crate) fn remove_state(
+fn remove_state(
     mut commands: Commands<'_, '_>,
     removed: RemovedComponents<'_, Handle<SpriteSheetAnimation>>,
 ) {
@@ -70,13 +88,6 @@ type AnimationSystemQuery<'a, T> = (
     &'a mut SpriteSheetAnimationState,
     Option<&'a PlaySpeedMultiplier>,
 );
-
-/// Animation system set
-///
-/// Generic over the type of sprite atlas comonent.
-pub fn animation_systems<T: SpriteState + Component>() -> SystemSet {
-    SystemSet::new().with_system(animate::<T>)
-}
 
 fn animate<T: SpriteState + Component>(
     mut commands: Commands<'_, '_>,
