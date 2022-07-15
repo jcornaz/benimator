@@ -252,9 +252,10 @@ impl SpriteSheetAnimation {
     }
 }
 
+/// Error when parsing an animation file content
 #[derive(Debug)]
 #[non_exhaustive]
-pub struct AnimationParseError(anyhow::Error);
+pub struct AnimationParseError(pub(crate) anyhow::Error);
 
 impl AnimationParseError {
     fn new(err: impl Error + Send + Sync + 'static) -> Self {

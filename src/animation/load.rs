@@ -1,9 +1,15 @@
-use super::SpriteSheetAnimation;
-use bevy_asset::{AssetLoader, LoadContext, LoadedAsset};
-use bevy_utils::BoxedFuture;
+use std::{error::Error, fmt::Display};
 
+use crate::SpriteSheetAnimation;
+
+use super::AnimationParseError;
+
+/// Loader of animation file
+///
+/// It is not necessary to use this directly if you are using the bevy plugin,
+/// as it is already registered as an asset loader.
 #[derive(Debug)]
-pub(crate) struct SpriteSheetAnimationLoader {
+pub struct SpriteSheetAnimationLoader {
     extensions: Vec<&'static str>,
 }
 
@@ -25,28 +31,45 @@ impl Default for SpriteSheetAnimationLoader {
     }
 }
 
-impl AssetLoader for SpriteSheetAnimationLoader {
-    fn load<'a>(
-        &'a self,
-        bytes: &'a [u8],
-        load_context: &'a mut LoadContext<'_>,
-    ) -> BoxedFuture<'a, Result<(), anyhow::Error>> {
-        Box::pin(async move {
-            let custom_asset = match load_context.path().extension().unwrap().to_str().unwrap() {
-                #[cfg(feature = "yaml")]
-                "yaml" | "yml" => SpriteSheetAnimation::from_yaml_bytes(bytes)?,
-
-                #[cfg(feature = "ron")]
-                "ron" => SpriteSheetAnimation::from_ron_bytes(bytes)?,
-
-                _ => unreachable!(),
-            };
-            load_context.set_default_asset(LoadedAsset::new(custom_asset));
-            Ok(())
-        })
-    }
-
-    fn extensions(&self) -> &[&str] {
+impl SpriteSheetAnimationLoader {
+    /// Returns supported extensions
+    ///
+    /// [`SpriteSheetAnimationLoader::load`] can only succeed one of the returned extensions
+    #[must_use]
+    pub fn supported_extensions(&self) -> &[&str] {
         &self.extensions
     }
+
+    /// Load animation from file content
+    ///
+    /// # Errors
+    ///
+    /// Returns an error if the extension is not supported or if the data content is not valid for that extension
+    #[allow(clippy::unused_self)]
+    pub fn load(
+        &self,
+        extension: &str,
+        data: &[u8],
+    ) -> Result<SpriteSheetAnimation, AnimationParseError> {
+        match extension {
+            #[cfg(feature = "yaml")]
+            "yaml" | "yml" => SpriteSheetAnimation::from_yaml_bytes(data),
+
+            #[cfg(feature = "ron")]
+            "ron" => SpriteSheetAnimation::from_ron_bytes(data),
+
+            _ => Err(AnimationParseError(UnexpectedExtension.into())),
+        }
+    }
 }
+
+#[derive(Debug, Clone, Copy)]
+struct UnexpectedExtension;
+
+impl Display for UnexpectedExtension {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "Unexpected extension")
+    }
+}
+
+impl Error for UnexpectedExtension {}

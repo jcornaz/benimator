@@ -4,7 +4,9 @@ use crate::{
     state::SpriteState, Play, PlaySpeedMultiplier, SpriteSheetAnimation, SpriteSheetAnimationState,
 };
 use bevy_app_07::prelude::*;
-use bevy_asset::prelude::*;
+use bevy_asset_07::prelude::*;
+#[cfg(feature = "unstable-load-from-file")]
+use bevy_asset_07::{AssetLoader, BoxedFuture, LoadContext, LoadedAsset};
 use bevy_core::prelude::*;
 use bevy_ecs::prelude::*;
 use bevy_sprite_07::prelude::*;
@@ -113,5 +115,27 @@ fn animate<T: SpriteState + Component>(
 impl<'w, T: SpriteState> SpriteState for Mut<'w, T> {
     fn set_current_index(&mut self, index: usize) {
         self.deref_mut().set_current_index(index);
+    }
+}
+
+#[cfg(feature = "unstable-load-from-file")]
+impl AssetLoader for crate::animation::load::SpriteSheetAnimationLoader {
+    fn load<'a>(
+        &'a self,
+        bytes: &'a [u8],
+        load_context: &'a mut LoadContext<'_>,
+    ) -> BoxedFuture<'a, Result<(), anyhow::Error>> {
+        Box::pin(async move {
+            let custom_asset = self.load(
+                load_context.path().extension().unwrap().to_str().unwrap(),
+                bytes,
+            )?;
+            load_context.set_default_asset(LoadedAsset::new(custom_asset));
+            Ok(())
+        })
+    }
+
+    fn extensions(&self) -> &[&str] {
+        self.supported_extensions()
     }
 }

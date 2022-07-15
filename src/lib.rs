@@ -165,6 +165,9 @@ pub use state::SpriteSheetAnimationState;
 #[allow(deprecated)]
 pub use animation::AnimationMode;
 
+#[cfg(feature = "unstable-load-from-file")]
+pub use animation::{AnimationParseError, SpriteSheetAnimationLoader};
+
 mod animation;
 pub mod integration;
 mod state;
