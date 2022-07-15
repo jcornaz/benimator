@@ -15,7 +15,7 @@ all-features = true
 
 [features]
 default = []
-unstable-load-from-file = ["serde", "anyhow", "bevy_utils"]
+unstable-load-from-file = ["serde", "anyhow"]
 
 [dependencies]
 bevy_core = { version = "0.7.0", default-features = false }
@@ -24,7 +24,6 @@ bevy_app = { version = "0.7.0", default-features = false }
 bevy_reflect = { version = "0.7.0", default-features = false }
 bevy_sprite = { version = "0.7.0", default-features = false }
 bevy_asset = { version = "0.7.0", default-features = false }
-bevy_utils = { version = "0.7.0", default-features = false, optional = true }
 serde = { version = "1.0", default-features = false, features = ["derive"], optional = true }
 yaml = { package = "serde_yaml", version = "0.8.25", default-features = false, optional = true }
 ron = { version = "0.7.1", default-features = false, optional = true }
