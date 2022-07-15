@@ -15,7 +15,7 @@ all-features = true
 
 [features]
 default = []
-unstable-load-from-file = ["serde", "anyhow", "bevy_utils"]
+unstable-load-from-file = ["serde", "anyhow"]
 bevy-07 = ["bevy-app-07", "bevy-asset-07", "bevy-sprite-07"]
 
 [dependencies]
@@ -32,10 +32,8 @@ bevy_core = { version = "0.7.0", default-features = false }
 bevy_ecs = { version = "0.7.0", default-features = false }
 bevy_reflect = { version = "0.7.0", default-features = false }
 
-bevy_utils = { version = "0.7.0", default-features = false, optional = true }
-
 # Bevy 0.7
-bevy-app-07 = { package = "bevy_app",version = "0.7.0", default-features = false, optional = true }
+bevy-app-07 = { package = "bevy_app", version = "0.7.0", default-features = false, optional = true }
 bevy-asset-07 = { package = "bevy_asset", version = "0.7.0", default-features = false, optional = true }
 bevy-sprite-07 = { package = "bevy_sprite", version = "0.7.0", default-features = false, optional = true }
 
