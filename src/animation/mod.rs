@@ -9,6 +9,9 @@ use std::{ops::RangeInclusive, time::Duration};
 use bevy_reflect::TypeUuid;
 
 #[cfg(feature = "unstable-load-from-file")]
+pub use load::SpriteSheetAnimationLoader;
+
+#[cfg(feature = "unstable-load-from-file")]
 pub use parse::AnimationParseError;
 
 #[cfg(feature = "unstable-load-from-file")]
