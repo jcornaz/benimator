@@ -1,9 +1,9 @@
-use super::SpriteSheetAnimation;
-use bevy_asset::{AssetLoader, LoadContext, LoadedAsset};
-use bevy_utils::BoxedFuture;
+use crate::SpriteSheetAnimation;
+
+use super::AnimationParseError;
 
 #[derive(Debug)]
-pub(crate) struct SpriteSheetAnimationLoader {
+pub struct SpriteSheetAnimationLoader {
     extensions: Vec<&'static str>,
 }
 
@@ -25,28 +25,25 @@ impl Default for SpriteSheetAnimationLoader {
     }
 }
 
-impl AssetLoader for SpriteSheetAnimationLoader {
-    fn load<'a>(
-        &'a self,
-        bytes: &'a [u8],
-        load_context: &'a mut LoadContext<'_>,
-    ) -> BoxedFuture<'a, Result<(), anyhow::Error>> {
-        Box::pin(async move {
-            let custom_asset = match load_context.path().extension().unwrap().to_str().unwrap() {
-                #[cfg(feature = "yaml")]
-                "yaml" | "yml" => SpriteSheetAnimation::from_yaml_bytes(bytes)?,
-
-                #[cfg(feature = "ron")]
-                "ron" => SpriteSheetAnimation::from_ron_bytes(bytes)?,
-
-                _ => unreachable!(),
-            };
-            load_context.set_default_asset(LoadedAsset::new(custom_asset));
-            Ok(())
-        })
+impl SpriteSheetAnimationLoader {
+    pub fn supported_extensions(&self) -> &[&str] {
+        &self.extensions
     }
 
-    fn extensions(&self) -> &[&str] {
-        &self.extensions
+    #[allow(clippy::unused_self)]
+    pub fn load(
+        &self,
+        extension: &str,
+        bytes: &[u8],
+    ) -> Result<SpriteSheetAnimation, AnimationParseError> {
+        match extension {
+            #[cfg(feature = "yaml")]
+            "yaml" | "yml" => SpriteSheetAnimation::from_yaml_bytes(bytes),
+
+            #[cfg(feature = "ron")]
+            "ron" => SpriteSheetAnimation::from_ron_bytes(bytes),
+
+            _ => unreachable!(),
+        }
     }
 }
