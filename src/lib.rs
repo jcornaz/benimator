@@ -155,7 +155,6 @@ extern crate rstest;
 
 use bevy_ecs::component::SparseStorage;
 use bevy_ecs::prelude::*;
-use bevy_reflect::Reflect;
 
 use std::time::Duration;
 
@@ -192,8 +191,7 @@ pub enum AnimationPostUpdateSystem {
 /// Insert the components to play the animation, and remove it to pause it.
 ///
 /// If the animation mode is [`AnimationMode::Once`] this component is automatically removed at the end of the animation.
-#[derive(Debug, Copy, Clone, Default, Reflect)]
-#[reflect(Component)]
+#[derive(Debug, Copy, Clone, Default)]
 pub struct Play;
 
 impl Component for Play {
@@ -203,8 +201,7 @@ impl Component for Play {
 /// Component that, when applied, can change the playback's rate of the animation.
 ///
 /// Receives a f64 multiplier which will alter the delta, speeding up or slowing down to the desired playback rate.
-#[derive(Debug, Copy, Component, Clone, Reflect)]
-#[reflect(Component)]
+#[derive(Debug, Copy, Component, Clone)]
 pub struct PlaySpeedMultiplier(f64);
 
 impl PlaySpeedMultiplier {
