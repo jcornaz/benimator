@@ -20,7 +20,7 @@ bevy-07 = ["bevy-app-07", "bevy-asset-07", "bevy-sprite-07"]
 
 [dependencies]
 # Private dependencies (do not leak into the public API)
-yaml = { package = "serde_yaml", version = "0.8.25", default-features = false, optional = true }
+yaml = { package = "serde_yaml", version = "0.8.26", default-features = false, optional = true }
 ron = { version = "0.7.1", default-features = false, optional = true }
 
 # Public dependencies (Present in the public API)
