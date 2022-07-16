@@ -9,6 +9,7 @@ use bevy_asset_07::prelude::*;
 use bevy_asset_07::{AssetLoader, BoxedFuture, LoadContext, LoadedAsset};
 use bevy_core::prelude::*;
 use bevy_ecs::prelude::*;
+use bevy_reflect_07::{TypeUuid, Uuid};
 use bevy_sprite_07::prelude::*;
 
 impl Plugin for crate::AnimationPlugin {
@@ -116,6 +117,13 @@ impl<'w, T: SpriteState> SpriteState for Mut<'w, T> {
     fn set_current_index(&mut self, index: usize) {
         self.deref_mut().set_current_index(index);
     }
+}
+
+impl TypeUuid for SpriteSheetAnimation {
+    const TYPE_UUID: Uuid = Uuid::from_bytes([
+        0x63, 0x78, 0xe9, 0xc2, 0xec, 0xd1, 0x40, 0x29, 0x9c, 0xd5, 0x80, 0x1c, 0xaf, 0x68, 0x51,
+        0x7c,
+    ]);
 }
 
 #[cfg(feature = "unstable-load-from-file")]

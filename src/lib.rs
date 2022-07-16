@@ -15,7 +15,7 @@
 //! 1. Add the [`AnimationPlugin`] plugin
 //!
 #![cfg_attr(
-    feature = "bevy-app-07",
+    feature = "bevy-07",
     doc = "
 ```no_run
 # use bevy::prelude::*;
@@ -37,31 +37,33 @@ fn spawn() { /* ... */ }
 //!
 //!
 //! 2. Create a [`SpriteSheetAnimation`] and insert the asset handle to the sprite sheet entity you want to animate
-//!
-//! ```
-//! # use std::time::Duration;
-//! # use bevy::prelude::*;
-//! # use benimator::*;
-//!
-//! fn spawn(mut commands: Commands, mut animations: ResMut<Assets<SpriteSheetAnimation>>) {
-//!
-//!     // Create an animation
-//!     let animation_handle = animations.add(SpriteSheetAnimation::from_range(
-//!         0..=2,                               // Indices of the sprite atlas
-//!         Duration::from_secs_f64(1.0 / 12.0), // Duration of each frame
-//!     ));
-//!
-//!     commands
-//!         .spawn_bundle(SpriteSheetBundle {
-//!             // TODO: Configure the sprite sheet
-//!             ..Default::default()
-//!         })
-//!         // Insert the asset handle of the animation
-//!         .insert(animation_handle)
-//!         // Start the animation immediately
-//!         .insert(Play);
-//! }
-//! ```
+#![cfg_attr(
+    feature = "bevy-07",
+    doc = "
+```
+# use std::time::Duration;
+# use bevy::prelude::*;
+# use benimator::*;
+
+fn spawn(mut commands: Commands, mut animations: ResMut<Assets<SpriteSheetAnimation>>) {
+    // Create an animation
+    let animation_handle = animations.add(SpriteSheetAnimation::from_range(
+        0..=2,                               // Indices of the sprite atlas
+        Duration::from_secs_f64(1.0 / 12.0), // Duration of each frame
+    ));
+    commands
+        .spawn_bundle(SpriteSheetBundle {
+            // TODO: Configure the sprite sheet
+            ..Default::default()
+        })
+        // Insert the asset handle of the animation
+        .insert(animation_handle)
+        // Start the animation immediately
+        .insert(Play);
+}
+```
+"
+)]
 //!
 //! ## Run the animation only once
 //!
@@ -136,15 +138,19 @@ fn spawn() { /* ... */ }
 //!     duration: 200
 //! ```
 //!
-//! And then load it with bevy's `AssetServer`:
-//! ```
-//! # use bevy::prelude::*;
-//! # use benimator::*;
-//! # fn load(mut commands: Commands, asset_server: Res<AssetServer>) {
-//! let handle: Handle<SpriteSheetAnimation> = asset_server.load("player_run.animation.yml");
-//! # }
-//! ```
-//!
+#![cfg_attr(
+    feature = "bevy-07",
+    doc = r#"
+And then load it with bevy's `AssetServer`:
+```
+# use bevy::prelude::*;
+# use benimator::*;
+# fn load(mut commands: Commands, asset_server: Res<AssetServer>) {
+let handle: Handle<SpriteSheetAnimation> = asset_server.load("player_run.animation.yml");
+# }
+```
+"#
+)]
 //! It is also possible to use `ron` instead of `yaml`.
 //!
 //! For more info on the format see: [`SpriteSheetAnimation::from_yaml_str`] and [`SpriteSheetAnimation::from_ron_str`].
@@ -155,7 +161,6 @@ extern crate rstest;
 
 use bevy_ecs::component::SparseStorage;
 use bevy_ecs::prelude::*;
-use bevy_reflect::Reflect;
 
 use std::time::Duration;
 
@@ -192,8 +197,7 @@ pub enum AnimationPostUpdateSystem {
 /// Insert the components to play the animation, and remove it to pause it.
 ///
 /// If the animation mode is [`AnimationMode::Once`] this component is automatically removed at the end of the animation.
-#[derive(Debug, Copy, Clone, Default, Reflect)]
-#[reflect(Component)]
+#[derive(Debug, Copy, Clone, Default)]
 pub struct Play;
 
 impl Component for Play {
@@ -203,8 +207,7 @@ impl Component for Play {
 /// Component that, when applied, can change the playback's rate of the animation.
 ///
 /// Receives a f64 multiplier which will alter the delta, speeding up or slowing down to the desired playback rate.
-#[derive(Debug, Copy, Component, Clone, Reflect)]
-#[reflect(Component)]
+#[derive(Debug, Copy, Component, Clone)]
 pub struct PlaySpeedMultiplier(f64);
 
 impl PlaySpeedMultiplier {
