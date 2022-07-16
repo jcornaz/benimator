@@ -25,7 +25,7 @@ bevy_reflect = { version = "0.7.0", default-features = false }
 bevy_sprite = { version = "0.7.0", default-features = false }
 bevy_asset = { version = "0.7.0", default-features = false }
 serde = { version = "1.0", default-features = false, features = ["derive"], optional = true }
-yaml = { package = "serde_yaml", version = "0.8.25", default-features = false, optional = true }
+yaml = { package = "serde_yaml", version = "0.8.26", default-features = false, optional = true }
 ron = { version = "0.7.1", default-features = false, optional = true }
 anyhow = { version = "1.0", default-features = false, optional = true }
 
