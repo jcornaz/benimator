@@ -18,6 +18,7 @@ allow = [
     "ISC",
     "Zlib",
     "CC0-1.0",
+    "Unicode-DFS-2016",
 ]
 
 [[licenses.clarify]]
