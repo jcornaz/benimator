@@ -2,7 +2,7 @@ use std::time::Duration;
 
 use bevy_ecs::prelude::*;
 
-use crate::{animation::Mode, SpriteSheetAnimation};
+use crate::{animation::Mode, Frame, SpriteSheetAnimation};
 
 /// Animation state component which is automatically inserted/removed
 ///
@@ -22,14 +22,14 @@ use crate::{animation::Mode, SpriteSheetAnimation};
 /// ```
 #[derive(Default, Component)]
 pub struct SpriteSheetAnimationState {
-    current_frame: usize,
+    animation_frame_index: usize,
     elapsed_in_frame: Duration,
     // Control ping_pong backward frame navigation.
     going_backward: bool,
 }
 
 pub trait SpriteState {
-    fn set_current_index(&mut self, index: usize);
+    fn set_index(&mut self, index: usize);
 }
 
 impl SpriteSheetAnimationState {
@@ -40,12 +40,32 @@ impl SpriteSheetAnimationState {
         *self = Self::default();
     }
 
-    /// Returns the index of the current frame
+    #[must_use]
+    #[deprecated(since = "4.0.0", note = "please use `animation_frame_index` instead")]
+    #[doc(hidden)]
+    pub fn current_frame_index(&self) -> usize {
+        self.animation_frame_index()
+    }
+
+    /// Returns the index of the current *animation* frame
     ///
     /// The index is relative to the animation sequence. **not** to the sprite-sheet.
     #[must_use]
-    pub fn current_frame_index(&self) -> usize {
-        self.current_frame
+    pub fn animation_frame_index(&self) -> usize {
+        self.animation_frame_index
+    }
+
+    /// Returns the index of the current *sprite* frame
+    ///
+    /// The index is relative to the sprite atlas. **not** to the animation frame sequence.
+    #[must_use]
+    pub fn sprite_frame_index(&self, animation: &SpriteSheetAnimation) -> usize {
+        self.frame(animation).index
+    }
+
+    #[must_use]
+    fn frame<'a>(&self, animation: &'a SpriteSheetAnimation) -> &'a Frame {
+        &animation.frames[self.animation_frame_index() % animation.frames.len()]
     }
 
     /// Update the animation and the sprite (if necessary)
@@ -60,37 +80,37 @@ impl SpriteSheetAnimationState {
     ) -> bool {
         debug_assert!(animation.has_frames());
 
-        let mut frame = animation.frames[self.current_frame % animation.frames.len()];
-        sprite.set_current_index(frame.index);
+        let mut frame = self.frame(animation);
+        sprite.set_index(frame.index);
 
         self.elapsed_in_frame += delta;
         while self.elapsed_in_frame >= frame.duration {
             match animation.mode {
                 Mode::RepeatFrom(loop_from) => {
-                    if self.current_frame < animation.frames.len() - 1 {
-                        self.current_frame += 1;
+                    if self.animation_frame_index < animation.frames.len() - 1 {
+                        self.animation_frame_index += 1;
                     } else {
-                        self.current_frame = loop_from;
+                        self.animation_frame_index = loop_from;
                     }
                 }
                 Mode::PingPong => {
                     if self.going_backward {
-                        if self.current_frame == 0 {
+                        if self.animation_frame_index == 0 {
                             self.going_backward = false;
-                            self.current_frame += 1;
+                            self.animation_frame_index += 1;
                         } else {
-                            self.current_frame -= 1;
+                            self.animation_frame_index -= 1;
                         }
-                    } else if self.current_frame < animation.frames.len() - 1 {
-                        self.current_frame += 1;
+                    } else if self.animation_frame_index < animation.frames.len() - 1 {
+                        self.animation_frame_index += 1;
                     } else {
                         self.going_backward = true;
-                        self.current_frame -= 1;
+                        self.animation_frame_index -= 1;
                     }
                 }
                 Mode::Once => {
-                    if self.current_frame < animation.frames.len() - 1 {
-                        self.current_frame += 1;
+                    if self.animation_frame_index < animation.frames.len() - 1 {
+                        self.animation_frame_index += 1;
                     } else {
                         self.reset();
                         return true;
@@ -99,8 +119,8 @@ impl SpriteSheetAnimationState {
             }
 
             self.elapsed_in_frame -= frame.duration;
-            frame = animation.frames[self.current_frame];
-            sprite.set_current_index(frame.index);
+            frame = self.frame(animation);
+            sprite.set_index(frame.index);
         }
 
         false
@@ -116,7 +136,7 @@ mod tests {
     }
 
     impl SpriteState for TextureAtlasSprite {
-        fn set_current_index(&mut self, index: usize) {
+        fn set_index(&mut self, index: usize) {
             self.index = index;
         }
     }
@@ -136,13 +156,20 @@ mod tests {
         frame_duration - Duration::from_millis(1)
     }
 
+    #[rstest]
+    fn sprite_index(frame_duration: Duration) {
+        let animation = SpriteSheetAnimation::from_range(3..=5, frame_duration);
+        let state = SpriteSheetAnimationState::default();
+        assert_eq!(state.sprite_frame_index(&animation), 3);
+    }
+
     mod reset {
         use super::*;
 
         #[fixture]
         fn state() -> SpriteSheetAnimationState {
             SpriteSheetAnimationState {
-                current_frame: 1,
+                animation_frame_index: 1,
                 elapsed_in_frame: Duration::from_secs(1),
                 going_backward: false,
             }
@@ -151,7 +178,7 @@ mod tests {
         #[rstest]
         fn resets_current_frame(mut state: SpriteSheetAnimationState) {
             state.reset();
-            assert_eq!(state.current_frame, 0);
+            assert_eq!(state.animation_frame_index, 0);
         }
 
         #[rstest]
@@ -293,7 +320,7 @@ mod tests {
             #[fixture]
             fn state() -> SpriteSheetAnimationState {
                 SpriteSheetAnimationState {
-                    current_frame: 4,
+                    animation_frame_index: 4,
                     elapsed_in_frame: Duration::from_nanos(0),
                     going_backward: false,
                 }
@@ -338,7 +365,7 @@ mod tests {
             #[fixture]
             fn state() -> SpriteSheetAnimationState {
                 SpriteSheetAnimationState {
-                    current_frame: 4,
+                    animation_frame_index: 4,
                     elapsed_in_frame: Duration::from_nanos(0),
                     going_backward: false,
                 }
@@ -381,7 +408,7 @@ mod tests {
             #[fixture]
             fn state() -> SpriteSheetAnimationState {
                 SpriteSheetAnimationState {
-                    current_frame: 1,
+                    animation_frame_index: 1,
                     elapsed_in_frame: Duration::from_nanos(500),
                     going_backward: false,
                 }
@@ -421,7 +448,7 @@ mod tests {
             #[fixture]
             fn state() -> SpriteSheetAnimationState {
                 SpriteSheetAnimationState {
-                    current_frame: 1,
+                    animation_frame_index: 1,
                     elapsed_in_frame: Duration::from_nanos(500),
                     going_backward: true,
                 }
@@ -454,7 +481,7 @@ mod tests {
             #[fixture]
             fn state() -> SpriteSheetAnimationState {
                 SpriteSheetAnimationState {
-                    current_frame: 0,
+                    animation_frame_index: 0,
                     elapsed_in_frame: Duration::from_nanos(500),
                     going_backward: false,
                 }
@@ -478,7 +505,7 @@ mod tests {
             #[fixture]
             fn state() -> SpriteSheetAnimationState {
                 SpriteSheetAnimationState {
-                    current_frame: 1,
+                    animation_frame_index: 1,
                     elapsed_in_frame: Duration::from_nanos(500),
                     going_backward: false,
                 }
@@ -514,7 +541,10 @@ mod tests {
             ) {
                 state.update(&mut sprite, &animation, frame_duration);
                 let expected_state = SpriteSheetAnimationState::default();
-                assert_eq!(state.current_frame, expected_state.current_frame);
+                assert_eq!(
+                    state.animation_frame_index,
+                    expected_state.animation_frame_index
+                );
                 assert_eq!(state.elapsed_in_frame, expected_state.elapsed_in_frame);
             }
         }
