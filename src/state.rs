@@ -48,11 +48,18 @@ impl SpriteSheetAnimationState {
         *self = Self::default();
     }
 
-    /// Returns the index of the current frame
+    #[must_use]
+    #[deprecated(since = "3.7.0", note = "please use `animation_frame_index` instead")]
+    #[doc(hidden)]
+    pub fn current_frame_index(&self) -> usize {
+        self.animation_frame_index()
+    }
+
+    /// Returns the index of the current *animation* frame
     ///
     /// The index is relative to the animation sequence. **not** to the sprite-sheet.
     #[must_use]
-    pub fn current_frame_index(&self) -> usize {
+    pub fn animation_frame_index(&self) -> usize {
         self.current_frame
     }
 
