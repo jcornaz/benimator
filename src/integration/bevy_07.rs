@@ -24,7 +24,7 @@ impl Plugin for crate::AnimationPlugin {
 }
 
 impl SpriteState for TextureAtlasSprite {
-    fn set_current_index(&mut self, index: usize) {
+    fn set_index(&mut self, index: usize) {
         self.index = index;
     }
 }
@@ -114,8 +114,8 @@ fn animate<T: SpriteState + Component>(
 }
 
 impl<'w, T: SpriteState> SpriteState for Mut<'w, T> {
-    fn set_current_index(&mut self, index: usize) {
-        self.deref_mut().set_current_index(index);
+    fn set_index(&mut self, index: usize) {
+        self.deref_mut().set_index(index);
     }
 }
 
