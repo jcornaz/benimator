@@ -26,8 +26,8 @@ Bug fixes should be released as soon as the fix is merged in the main branch.
 Features may wait 1 or 2 weeks to be bundled with other features in a minor release, to avoid spamming users with release notes.
 Breaking changes should happen as rarely as possible.
 
-Changelog generation is helpful, but I often would like to reviewed and modify it before release.
-Being able to add special prose for bigger releases (major and minor) would be especially appreciable.
+Changelog generation is helpful, but I often would like to reviewe and modify it before release.
+Being able to add a "release-note" prose for bigger releases (major and minor) would be especially appreciable.
 
 ## Decision
 
