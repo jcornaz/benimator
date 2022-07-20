@@ -10,6 +10,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 <csr-id-02918b10c515fefcfda0819bdb3a38e27d79fd08/>
 <csr-id-4b5bc45f9b62226512900ee736ba2708310304b5/>
+<csr-id-47f13304be05f1a004ce8645a0f7f4ecd80b37b5/>
+<csr-id-a32b1ad15dbbc0065d2bde20b886eebd60fb9fd6/>
+<csr-id-0b8f79bcef66fea29319bf6aad364510bc9ff852/>
+<csr-id-d15c32905856fb7da846eaa7d1f7114e475a91f2/>
+<csr-id-ee9c0b1b192876b1ad376f8ef5e44d343b4207b2/>
 
 ### New Features
 
@@ -77,6 +82,12 @@ See the [related decision](https://github.com/jcornaz/benimator/blob/main/doc/ad
 ### Refactoring (BREAKING)
 
  - <csr-id-68ec6d9de6c2babb98171345ab55fa43e8314be0/> Make the integration with `bevy_app` optional and disabled by default
+
+## 3.7.0 (2022-07-17)
+
+### New Features
+
+ - <csr-id-e1249d62a7a0f2a63e401d44288295c81aaa5693/> rename state's `current_frame_index` to `animation_frame_index` (old name is deprecated)
 
 ## v3.6.1 (2022-07-01)
 
