@@ -45,3 +45,4 @@ The changelog will be reviewed and adapted when releasing.
 
 To get the list of unreleased changes, one will need to use `cargo changelog` or the git log.
 
+Only a single `main` branch is needed (unlike when using `semantic-release` that required a branch per pre-release stage)
