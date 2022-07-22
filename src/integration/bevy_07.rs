@@ -162,14 +162,6 @@ mod tests {
 
     use super::*;
 
-    struct TestTime(Duration);
-
-    impl TimeResource for TestTime {
-        fn delta_time(&self) -> Duration {
-            self.0
-        }
-    }
-
     #[rstest]
     fn updates_sprite_atlas(mut app: App) {
         set_delta_time_per_update(&mut app, Duration::from_secs(1));
@@ -243,16 +235,42 @@ mod tests {
         );
     }
 
+    #[cfg(all(feature = "unstable-load-from-file", feature = "yaml"))]
+    #[rstest]
+    fn load_asset_file(mut app: App) {
+        let handle: Handle<SpriteSheetAnimation> = app
+            .world
+            .resource::<AssetServer>()
+            .load("coin.animation.yml");
+
+        app.update();
+        let mut loops = 0;
+        while let bevy_asset_07::LoadState::Loading =
+            app.world.resource::<AssetServer>().get_load_state(&handle)
+        {
+            assert!(loops < 100);
+            loops += 1;
+            std::thread::sleep(Duration::from_millis(50));
+            app.update();
+        }
+        assert!(app
+            .world
+            .resource::<Assets<SpriteSheetAnimation>>()
+            .get(&handle)
+            .is_some());
+    }
+
     #[fixture]
     fn app() -> App {
         let mut app = App::new();
         app.add_plugin(CorePlugin).add_plugin(AssetPlugin);
-        install::<TestTime>(&mut app);
+        app.world.insert_resource(Duration::ZERO);
+        install::<Duration>(&mut app);
         app
     }
 
     fn set_delta_time_per_update(app: &mut App, delta: Duration) {
-        app.world.insert_resource(TestTime(delta));
+        app.world.insert_resource(delta);
     }
 
     fn spawn(app: &mut App, bundle: impl Bundle) -> Entity {
@@ -266,5 +284,11 @@ mod tests {
         app.world
             .resource_mut::<Assets<SpriteSheetAnimation>>()
             .add(animation)
+    }
+
+    impl TimeResource for Duration {
+        fn delta_time(&self) -> Duration {
+            *self
+        }
     }
 }
