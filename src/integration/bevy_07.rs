@@ -1,4 +1,5 @@
 use std::ops::DerefMut;
+use std::time::Duration;
 
 use bevy_app_07::prelude::*;
 use bevy_asset_07::prelude::*;
@@ -6,6 +7,7 @@ use bevy_asset_07::prelude::*;
 use bevy_asset_07::{AssetLoader, BoxedFuture, LoadContext, LoadedAsset};
 use bevy_core::prelude::*;
 use bevy_ecs::prelude::*;
+use bevy_ecs::system::Resource;
 use bevy_reflect_07::{TypeUuid, Uuid};
 use bevy_sprite_07::prelude::*;
 
@@ -13,15 +15,29 @@ use crate::{
     state::SpriteState, Play, PlaySpeedMultiplier, SpriteSheetAnimation, SpriteSheetAnimationState,
 };
 
+trait TimeResource: Resource {
+    fn delta_time(&self) -> Duration;
+}
+
+impl TimeResource for Time {
+    fn delta_time(&self) -> Duration {
+        self.delta()
+    }
+}
+
 impl Plugin for crate::AnimationPlugin {
     fn build(&self, app: &mut App) {
-        app.add_asset::<SpriteSheetAnimation>()
-            .add_system_set_to_stage(CoreStage::PreUpdate, auto_insert_state())
-            .add_system_set_to_stage(CoreStage::Update, animation_systems());
-
-        #[cfg(feature = "unstable-load-from-file")]
-        app.init_asset_loader::<crate::animation::load::SpriteSheetAnimationLoader>();
+        install::<Time>(app);
     }
+}
+
+fn install<T: TimeResource>(app: &mut App) {
+    app.add_asset::<SpriteSheetAnimation>()
+        .add_system_set_to_stage(CoreStage::PreUpdate, auto_insert_state())
+        .add_system_to_stage(CoreStage::Update, animate::<T>);
+
+    #[cfg(feature = "unstable-load-from-file")]
+    app.init_asset_loader::<crate::animation::load::SpriteSheetAnimationLoader>();
 }
 
 impl SpriteState for TextureAtlasSprite {
@@ -35,10 +51,6 @@ fn auto_insert_state() -> SystemSet {
     SystemSet::new()
         .with_system(insert_state)
         .with_system(remove_state)
-}
-
-fn animation_systems() -> SystemSet {
-    SystemSet::new().with_system(animate)
 }
 
 fn insert_state(
@@ -79,9 +91,9 @@ type AnimationSystemQuery<'a> = (
     Option<&'a PlaySpeedMultiplier>,
 );
 
-fn animate(
+fn animate<T: TimeResource>(
     mut commands: Commands<'_, '_>,
-    time: Res<'_, Time>,
+    time: Res<'_, T>,
     animation_defs: Res<'_, Assets<SpriteSheetAnimation>>,
     mut animations: Query<'_, '_, AnimationSystemQuery<'_>, With<Play>>,
 ) {
@@ -98,7 +110,7 @@ fn animate(
         let delta = speed_multiplier
             .copied()
             .unwrap_or_default()
-            .transform(time.delta());
+            .transform(time.delta_time());
 
         if state.update(&mut sprite, animation, delta) {
             commands.entity(entity).remove::<Play>();
@@ -148,32 +160,111 @@ mod tests {
     use bevy_asset_07::AssetPlugin;
     use bevy_core::CorePlugin;
 
-    use crate::AnimationPlugin;
-
     use super::*;
 
-    #[test]
-    fn plugin_does_not_crash() {
+    struct TestTime(Duration);
+
+    impl TimeResource for TestTime {
+        fn delta_time(&self) -> Duration {
+            self.0
+        }
+    }
+
+    #[rstest]
+    fn updates_sprite_atlas(mut app: App) {
+        set_delta_time_per_update(&mut app, Duration::from_secs(1));
+        let animation = add_animation(
+            &mut app,
+            SpriteSheetAnimation::from_range(0..=2, Duration::from_secs(1)),
+        );
+        let entity = spawn(&mut app, (TextureAtlasSprite::new(0), animation, Play));
+
+        app.update();
+
+        assert_eq!(
+            app.world.get::<TextureAtlasSprite>(entity).unwrap().index,
+            1
+        );
+    }
+
+    #[rstest]
+    fn does_not_update_without_play_component(mut app: App) {
+        set_delta_time_per_update(&mut app, Duration::from_secs(1));
+        let animation = add_animation(
+            &mut app,
+            SpriteSheetAnimation::from_range(0..=2, Duration::from_secs(1)),
+        );
+        let entity = spawn(&mut app, (TextureAtlasSprite::new(0), animation));
+
+        app.update();
+
+        assert_eq!(
+            app.world.get::<TextureAtlasSprite>(entity).unwrap().index,
+            0
+        );
+    }
+
+    #[rstest]
+    fn removes_play_at_end_of_animation(mut app: App) {
+        set_delta_time_per_update(&mut app, Duration::from_secs(2));
+        let animation = add_animation(
+            &mut app,
+            SpriteSheetAnimation::from_range(0..=1, Duration::from_secs(1)).once(),
+        );
+        let entity = spawn(&mut app, (TextureAtlasSprite::new(0), animation, Play));
+
+        app.update();
+
+        assert!(app.world.get::<Play>(entity).is_none());
+    }
+
+    #[rstest]
+    fn speed_is_affected_by_playbackspeed_component(mut app: App) {
+        set_delta_time_per_update(&mut app, Duration::from_secs(1));
+        let animation = add_animation(
+            &mut app,
+            SpriteSheetAnimation::from_range(0..=3, Duration::from_secs(1)).once(),
+        );
+        let entity = spawn(
+            &mut app,
+            (
+                TextureAtlasSprite::new(0),
+                animation,
+                Play,
+                PlaySpeedMultiplier::from(2.0),
+            ),
+        );
+
+        app.update();
+
+        assert_eq!(
+            app.world.get::<TextureAtlasSprite>(entity).unwrap().index,
+            2
+        );
+    }
+
+    #[fixture]
+    fn app() -> App {
         let mut app = App::new();
+        app.add_plugin(CorePlugin).add_plugin(AssetPlugin);
+        install::<TestTime>(&mut app);
+        app
+    }
 
-        app.add_plugin(CorePlugin)
-            .add_plugin(AssetPlugin)
-            .add_plugin(AnimationPlugin::default());
+    fn set_delta_time_per_update(app: &mut App, delta: Duration) {
+        app.world.insert_resource(TestTime(delta));
+    }
 
-        let animation = app
-            .world
-            .get_resource_mut::<Assets<SpriteSheetAnimation>>()
-            .unwrap()
-            .add(SpriteSheetAnimation::from_range(
-                0..=2,
-                Duration::from_nanos(1),
-            ));
+    fn spawn(app: &mut App, bundle: impl Bundle) -> Entity {
+        app.world.spawn().insert_bundle(bundle).id()
+    }
 
+    fn add_animation(
+        app: &mut App,
+        animation: SpriteSheetAnimation,
+    ) -> Handle<SpriteSheetAnimation> {
         app.world
-            .spawn()
-            .insert_bundle((TextureAtlasSprite::new(0), animation, Play));
-
-        app.update();
-        app.update();
+            .resource_mut::<Assets<SpriteSheetAnimation>>()
+            .add(animation)
     }
 }
