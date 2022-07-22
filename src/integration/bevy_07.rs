@@ -1,8 +1,5 @@
 use std::ops::DerefMut;
 
-use crate::{
-    state::SpriteState, Play, PlaySpeedMultiplier, SpriteSheetAnimation, SpriteSheetAnimationState,
-};
 use bevy_app_07::prelude::*;
 use bevy_asset_07::prelude::*;
 #[cfg(feature = "unstable-load-from-file")]
@@ -12,9 +9,13 @@ use bevy_ecs::prelude::*;
 use bevy_reflect_07::{TypeUuid, Uuid};
 use bevy_sprite_07::prelude::*;
 
+use crate::{
+    state::SpriteState, Play, PlaySpeedMultiplier, SpriteSheetAnimation, SpriteSheetAnimationState,
+};
+
 impl Plugin for crate::AnimationPlugin {
     fn build(&self, app: &mut App) {
-        app.add_asset::<crate::SpriteSheetAnimation>()
+        app.add_asset::<SpriteSheetAnimation>()
             .add_system_set_to_stage(CoreStage::PreUpdate, auto_insert_state())
             .add_system_set_to_stage(CoreStage::Update, animation_systems::<TextureAtlasSprite>());
 
@@ -145,5 +146,42 @@ impl AssetLoader for crate::animation::load::SpriteSheetAnimationLoader {
 
     fn extensions(&self) -> &[&str] {
         self.supported_extensions()
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use std::time::Duration;
+
+    use bevy_asset_07::AssetPlugin;
+    use bevy_core::CorePlugin;
+
+    use crate::AnimationPlugin;
+
+    use super::*;
+
+    #[test]
+    fn plugin_does_not_crash() {
+        let mut app = App::new();
+
+        app.add_plugin(CorePlugin)
+            .add_plugin(AssetPlugin)
+            .add_plugin(AnimationPlugin::default());
+
+        let animation = app
+            .world
+            .get_resource_mut::<Assets<SpriteSheetAnimation>>()
+            .unwrap()
+            .add(SpriteSheetAnimation::from_range(
+                0..=2,
+                Duration::from_nanos(1),
+            ));
+
+        app.world
+            .spawn()
+            .insert_bundle((TextureAtlasSprite::new(0), animation, Play));
+
+        app.update();
+        app.update();
     }
 }
