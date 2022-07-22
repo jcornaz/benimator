@@ -17,7 +17,7 @@ impl Plugin for crate::AnimationPlugin {
     fn build(&self, app: &mut App) {
         app.add_asset::<SpriteSheetAnimation>()
             .add_system_set_to_stage(CoreStage::PreUpdate, auto_insert_state())
-            .add_system_set_to_stage(CoreStage::Update, animation_systems::<TextureAtlasSprite>());
+            .add_system_set_to_stage(CoreStage::Update, animation_systems());
 
         #[cfg(feature = "unstable-load-from-file")]
         app.init_asset_loader::<crate::animation::load::SpriteSheetAnimationLoader>();
@@ -37,16 +37,8 @@ fn auto_insert_state() -> SystemSet {
         .with_system(remove_state)
 }
 
-/// Animation systems
-///
-/// Generic over the type of sprite atlas comonent.
-///
-/// # Required resources
-///
-/// * `bevy_asset::assets::Assets<benimator::SpriteSheetAnimation>`
-/// * `bevy_core::time::Time`
-fn animation_systems<T: SpriteState + Component>() -> SystemSet {
-    SystemSet::new().with_system(animate::<T>)
+fn animation_systems() -> SystemSet {
+    SystemSet::new().with_system(animate)
 }
 
 fn insert_state(
@@ -79,19 +71,19 @@ fn remove_state(
     }
 }
 
-type AnimationSystemQuery<'a, T> = (
+type AnimationSystemQuery<'a> = (
     Entity,
-    &'a mut T,
+    &'a mut TextureAtlasSprite,
     &'a Handle<SpriteSheetAnimation>,
     &'a mut SpriteSheetAnimationState,
     Option<&'a PlaySpeedMultiplier>,
 );
 
-fn animate<T: SpriteState + Component>(
+fn animate(
     mut commands: Commands<'_, '_>,
     time: Res<'_, Time>,
     animation_defs: Res<'_, Assets<SpriteSheetAnimation>>,
-    mut animations: Query<'_, '_, AnimationSystemQuery<'_, T>, With<Play>>,
+    mut animations: Query<'_, '_, AnimationSystemQuery<'_>, With<Play>>,
 ) {
     for (entity, mut sprite, animation, mut state, speed_multiplier) in
         animations.iter_mut().filter_map(
