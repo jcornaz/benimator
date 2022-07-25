@@ -1,4 +1,3 @@
-use std::ops::DerefMut;
 use std::time::Duration;
 
 use bevy_app_07::prelude::*;
@@ -11,9 +10,7 @@ use bevy_ecs::system::Resource;
 use bevy_reflect_07::{TypeUuid, Uuid};
 use bevy_sprite_07::prelude::*;
 
-use crate::{
-    state::SpriteState, Play, PlaySpeedMultiplier, SpriteSheetAnimation, SpriteSheetAnimationState,
-};
+use crate::{Play, PlaySpeedMultiplier, SpriteSheetAnimation, SpriteSheetAnimationState};
 
 trait TimeResource: Resource {
     fn delta_time(&self) -> Duration;
@@ -38,12 +35,6 @@ fn install<T: TimeResource>(app: &mut App) {
 
     #[cfg(feature = "unstable-load-from-file")]
     app.init_asset_loader::<crate::animation::load::SpriteSheetAnimationLoader>();
-}
-
-impl SpriteState for TextureAtlasSprite {
-    fn set_index(&mut self, index: usize) {
-        self.index = index;
-    }
 }
 
 /// Systems to automatically insert (and remove) the state component
@@ -112,15 +103,10 @@ fn animate<T: TimeResource>(
             .unwrap_or_default()
             .transform(time.delta_time());
 
-        if state.update(&mut sprite, animation, delta) {
+        if state.update(animation, delta) {
             commands.entity(entity).remove::<Play>();
         }
-    }
-}
-
-impl<'w, T: SpriteState> SpriteState for Mut<'w, T> {
-    fn set_index(&mut self, index: usize) {
-        self.deref_mut().set_index(index);
+        sprite.index = state.sprite_frame_index(animation);
     }
 }
 

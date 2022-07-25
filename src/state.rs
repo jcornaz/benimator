@@ -28,10 +28,6 @@ pub struct SpriteSheetAnimationState {
     going_backward: bool,
 }
 
-pub trait SpriteState {
-    fn set_index(&mut self, index: usize);
-}
-
 impl SpriteSheetAnimationState {
     /// Reset animation state
     ///
@@ -68,29 +64,22 @@ impl SpriteSheetAnimationState {
         &animation.frames[self.animation_frame_index() % animation.frames.len()]
     }
 
-    /// Update the animation and the sprite (if necessary)
+    /// Update the animation state
     ///
     /// Returns true if the animation has ended
-    #[allow(dead_code)] // <-- TODO stabilize the API and make the method public
-    pub(crate) fn update(
-        &mut self,
-        sprite: &mut impl SpriteState,
-        animation: &SpriteSheetAnimation,
-        delta: Duration,
-    ) -> bool {
+    #[allow(dead_code)]
+    pub fn update(&mut self, animation: &SpriteSheetAnimation, delta: Duration) -> bool {
         debug_assert!(animation.has_frames());
-
         let mut frame = self.frame(animation);
-        sprite.set_index(frame.index);
-
         self.elapsed_in_frame += delta;
         while self.elapsed_in_frame >= frame.duration {
+            let on_last_frame = self.animation_frame_index >= animation.frames.len() - 1;
             match animation.mode {
                 Mode::RepeatFrom(loop_from) => {
-                    if self.animation_frame_index < animation.frames.len() - 1 {
-                        self.animation_frame_index += 1;
-                    } else {
+                    if on_last_frame {
                         self.animation_frame_index = loop_from;
+                    } else {
+                        self.animation_frame_index += 1;
                     }
                 }
                 Mode::PingPong => {
@@ -101,26 +90,23 @@ impl SpriteSheetAnimationState {
                         } else {
                             self.animation_frame_index -= 1;
                         }
-                    } else if self.animation_frame_index < animation.frames.len() - 1 {
-                        self.animation_frame_index += 1;
-                    } else {
+                    } else if on_last_frame {
                         self.going_backward = true;
                         self.animation_frame_index -= 1;
+                    } else {
+                        self.animation_frame_index += 1;
                     }
                 }
                 Mode::Once => {
-                    if self.animation_frame_index < animation.frames.len() - 1 {
-                        self.animation_frame_index += 1;
-                    } else {
-                        self.reset();
+                    if on_last_frame {
                         return true;
                     }
+                    self.animation_frame_index += 1;
                 }
             }
 
             self.elapsed_in_frame -= frame.duration;
             frame = self.frame(animation);
-            sprite.set_index(frame.index);
         }
 
         false
@@ -130,21 +116,6 @@ impl SpriteSheetAnimationState {
 #[cfg(test)]
 mod tests {
     use super::*;
-
-    struct TextureAtlasSprite {
-        index: usize,
-    }
-
-    impl SpriteState for TextureAtlasSprite {
-        fn set_index(&mut self, index: usize) {
-            self.index = index;
-        }
-    }
-
-    #[fixture]
-    fn sprite() -> TextureAtlasSprite {
-        TextureAtlasSprite { index: 0 }
-    }
 
     #[fixture]
     fn frame_duration() -> Duration {
@@ -204,71 +175,65 @@ mod tests {
         #[rstest]
         fn nothing_happens_if_not_enough_time_has_elapsed_and_index_is_already_set(
             mut state: SpriteSheetAnimationState,
-            mut sprite: TextureAtlasSprite,
             animation: SpriteSheetAnimation,
             smaller_duration: Duration,
         ) {
-            state.update(&mut sprite, &animation, smaller_duration);
-            assert_eq!(sprite.index, 0);
+            state.update(&animation, smaller_duration);
+            assert_eq!(state.sprite_frame_index(&animation), 0);
         }
 
         #[rstest]
         fn updates_index_if_less_than_expected_index(
             mut state: SpriteSheetAnimationState,
-            mut sprite: TextureAtlasSprite,
             frame_duration: Duration,
             smaller_duration: Duration,
         ) {
             let animation = SpriteSheetAnimation::from_range(1..=3, frame_duration);
-            state.update(&mut sprite, &animation, smaller_duration);
-            assert_eq!(sprite.index, 1);
+            state.update(&animation, smaller_duration);
+            assert_eq!(state.sprite_frame_index(&animation), 1);
         }
 
         #[rstest]
         fn updates_index_if_greater_than_expected_index(
             mut state: SpriteSheetAnimationState,
-            mut sprite: TextureAtlasSprite,
             frame_duration: Duration,
             smaller_duration: Duration,
         ) {
             let animation = SpriteSheetAnimation::from_range(1..=3, frame_duration);
-            state.update(&mut sprite, &animation, smaller_duration);
-            assert_eq!(sprite.index, 1);
+            state.update(&animation, smaller_duration);
+            assert_eq!(state.sprite_frame_index(&animation), 1);
         }
 
         #[rstest]
         fn updates_index_if_enough_time_has_elapsed(
             mut state: SpriteSheetAnimationState,
-            mut sprite: TextureAtlasSprite,
             animation: SpriteSheetAnimation,
             frame_duration: Duration,
         ) {
-            state.update(&mut sprite, &animation, frame_duration);
-            assert_eq!(sprite.index, 1);
+            state.update(&animation, frame_duration);
+            assert_eq!(state.sprite_frame_index(&animation), 1);
         }
 
         #[rstest]
         fn updates_index_if_enough_time_has_elapsed_after_multiple_updates(
             mut state: SpriteSheetAnimationState,
-            mut sprite: TextureAtlasSprite,
             animation: SpriteSheetAnimation,
             smaller_duration: Duration,
         ) {
-            state.update(&mut sprite, &animation, smaller_duration);
-            state.update(&mut sprite, &animation, smaller_duration);
-            assert_eq!(sprite.index, 1);
+            state.update(&animation, smaller_duration);
+            state.update(&animation, smaller_duration);
+            assert_eq!(state.sprite_frame_index(&animation), 1);
         }
 
         #[rstest]
         fn elapsed_duration_is_reset(
             mut state: SpriteSheetAnimationState,
-            mut sprite: TextureAtlasSprite,
             animation: SpriteSheetAnimation,
             frame_duration: Duration,
             smaller_duration: Duration,
         ) {
-            state.update(&mut sprite, &animation, smaller_duration);
-            state.update(&mut sprite, &animation, smaller_duration);
+            state.update(&animation, smaller_duration);
+            state.update(&animation, smaller_duration);
             assert_eq!(
                 state.elapsed_in_frame,
                 (smaller_duration + smaller_duration) - frame_duration
@@ -278,22 +243,20 @@ mod tests {
         #[rstest]
         fn returns_false(
             mut state: SpriteSheetAnimationState,
-            mut sprite: TextureAtlasSprite,
             animation: SpriteSheetAnimation,
             frame_duration: Duration,
         ) {
-            assert!(!state.update(&mut sprite, &animation, frame_duration,));
+            assert!(!state.update(&animation, frame_duration,));
         }
 
         #[rstest]
         fn skips_frame_if_too_much_time_elapsed(
             mut state: SpriteSheetAnimationState,
-            mut sprite: TextureAtlasSprite,
             animation: SpriteSheetAnimation,
             frame_duration: Duration,
         ) {
-            state.update(&mut sprite, &animation, frame_duration * 2);
-            assert_eq!(sprite.index, 2);
+            state.update(&animation, frame_duration * 2);
+            assert_eq!(state.sprite_frame_index(&animation), 2);
         }
     }
 
@@ -329,22 +292,20 @@ mod tests {
             #[rstest]
             fn returns_to_loop_frame(
                 mut state: SpriteSheetAnimationState,
-                mut sprite: TextureAtlasSprite,
                 animation: SpriteSheetAnimation,
                 frame_duration: Duration,
             ) {
-                state.update(&mut sprite, &animation, frame_duration);
-                assert_eq!(sprite.index, 2);
+                state.update(&animation, frame_duration);
+                assert_eq!(state.sprite_frame_index(&animation), 2);
             }
 
             #[rstest]
             fn returns_false(
                 mut state: SpriteSheetAnimationState,
-                mut sprite: TextureAtlasSprite,
                 animation: SpriteSheetAnimation,
                 frame_duration: Duration,
             ) {
-                assert!(!state.update(&mut sprite, &animation, frame_duration,));
+                assert!(!state.update(&animation, frame_duration,));
             }
         }
 
@@ -374,22 +335,20 @@ mod tests {
             #[rstest]
             fn returns_to_first_frame(
                 mut state: SpriteSheetAnimationState,
-                mut sprite: TextureAtlasSprite,
                 animation: SpriteSheetAnimation,
                 frame_duration: Duration,
             ) {
-                state.update(&mut sprite, &animation, frame_duration);
-                assert_eq!(sprite.index, 2);
+                state.update(&animation, frame_duration);
+                assert_eq!(state.sprite_frame_index(&animation), 2);
             }
 
             #[rstest]
             fn returns_false(
                 mut state: SpriteSheetAnimationState,
-                mut sprite: TextureAtlasSprite,
                 animation: SpriteSheetAnimation,
                 frame_duration: Duration,
             ) {
-                assert!(!state.update(&mut sprite, &animation, frame_duration,));
+                assert!(!state.update(&animation, frame_duration,));
             }
         }
     }
@@ -417,22 +376,20 @@ mod tests {
             #[rstest]
             fn returns_to_previous_frame(
                 mut state: SpriteSheetAnimationState,
-                mut sprite: TextureAtlasSprite,
                 animation: SpriteSheetAnimation,
                 frame_duration: Duration,
             ) {
-                state.update(&mut sprite, &animation, frame_duration);
-                assert_eq!(sprite.index, 0);
+                state.update(&animation, frame_duration);
+                assert_eq!(state.sprite_frame_index(&animation), 0);
             }
 
             #[rstest]
             fn changes_state_to_backward(
                 mut state: SpriteSheetAnimationState,
-                mut sprite: TextureAtlasSprite,
                 animation: SpriteSheetAnimation,
                 frame_duration: Duration,
             ) {
-                state.update(&mut sprite, &animation, frame_duration);
+                state.update(&animation, frame_duration);
                 assert!(state.going_backward);
             }
         }
@@ -457,12 +414,11 @@ mod tests {
             #[rstest]
             fn continues_to_previous_frame(
                 mut state: SpriteSheetAnimationState,
-                mut sprite: TextureAtlasSprite,
                 animation: SpriteSheetAnimation,
                 frame_duration: Duration,
             ) {
-                state.update(&mut sprite, &animation, frame_duration);
-                assert_eq!(sprite.index, 0);
+                state.update(&animation, frame_duration);
+                assert_eq!(state.sprite_frame_index(&animation), 0);
             }
         }
     }
@@ -490,12 +446,11 @@ mod tests {
             #[rstest]
             fn final_index_set_if_frames_skipped_past_end(
                 mut state: SpriteSheetAnimationState,
-                mut sprite: TextureAtlasSprite,
                 animation: SpriteSheetAnimation,
                 frame_duration: Duration,
             ) {
-                state.update(&mut sprite, &animation, frame_duration * 4);
-                assert_eq!(sprite.index, 1);
+                state.update(&animation, frame_duration * 4);
+                assert_eq!(state.sprite_frame_index(&animation), 1);
             }
         }
 
@@ -514,38 +469,20 @@ mod tests {
             #[rstest]
             fn does_nothing(
                 mut state: SpriteSheetAnimationState,
-                mut sprite: TextureAtlasSprite,
                 animation: SpriteSheetAnimation,
                 frame_duration: Duration,
             ) {
-                state.update(&mut sprite, &animation, frame_duration);
-                assert_eq!(sprite.index, 1);
+                state.update(&animation, frame_duration);
+                assert_eq!(state.sprite_frame_index(&animation), 1);
             }
 
             #[rstest]
             fn returns_true(
                 mut state: SpriteSheetAnimationState,
-                mut sprite: TextureAtlasSprite,
                 animation: SpriteSheetAnimation,
                 frame_duration: Duration,
             ) {
-                assert!(state.update(&mut sprite, &animation, frame_duration,));
-            }
-
-            #[rstest]
-            fn returns_to_initial_state(
-                mut state: SpriteSheetAnimationState,
-                mut sprite: TextureAtlasSprite,
-                animation: SpriteSheetAnimation,
-                frame_duration: Duration,
-            ) {
-                state.update(&mut sprite, &animation, frame_duration);
-                let expected_state = SpriteSheetAnimationState::default();
-                assert_eq!(
-                    state.animation_frame_index,
-                    expected_state.animation_frame_index
-                );
-                assert_eq!(state.elapsed_in_frame, expected_state.elapsed_in_frame);
+                assert!(state.update(&animation, frame_duration,));
             }
         }
     }
