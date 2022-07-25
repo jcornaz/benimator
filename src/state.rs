@@ -100,9 +100,8 @@ impl SpriteSheetAnimationState {
                 Mode::Once => {
                     if on_last_frame {
                         return true;
-                    } else {
-                        self.animation_frame_index += 1;
                     }
+                    self.animation_frame_index += 1;
                 }
             }
 
