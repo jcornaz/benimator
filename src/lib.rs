@@ -159,9 +159,6 @@ let handle: Handle<SpriteSheetAnimation> = asset_server.load("player_run.animati
 #[macro_use]
 extern crate rstest;
 
-use bevy_ecs::component::SparseStorage;
-use bevy_ecs::prelude::*;
-
 use std::time::Duration;
 
 pub use animation::{Frame, SpriteSheetAnimation};
@@ -192,14 +189,10 @@ pub struct AnimationPlugin;
 #[derive(Debug, Copy, Clone, Default)]
 pub struct Play;
 
-impl Component for Play {
-    type Storage = SparseStorage;
-}
-
 /// Component that, when applied, can change the playback's rate of the animation.
 ///
 /// Receives a f64 multiplier which will alter the delta, speeding up or slowing down to the desired playback rate.
-#[derive(Debug, Copy, Component, Clone)]
+#[derive(Debug, Copy, Clone)]
 pub struct PlaySpeedMultiplier(f64);
 
 impl PlaySpeedMultiplier {

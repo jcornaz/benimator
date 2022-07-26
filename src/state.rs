@@ -1,7 +1,5 @@
 use std::time::Duration;
 
-use bevy_ecs::prelude::*;
-
 use crate::{animation::Mode, Frame, SpriteSheetAnimation};
 
 /// Animation state component which is automatically inserted/removed
@@ -20,7 +18,7 @@ use crate::{animation::Mode, Frame, SpriteSheetAnimation};
 ///   }
 /// }
 /// ```
-#[derive(Default, Component)]
+#[derive(Default)]
 pub struct SpriteSheetAnimationState {
     animation_frame_index: usize,
     elapsed_in_frame: Duration,
