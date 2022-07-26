@@ -39,7 +39,7 @@ impl SpriteSheetAnimationState {
     }
 
     #[must_use]
-    #[deprecated(since = "4.0.0", note = "please use `animation_frame_index` instead")]
+    #[deprecated(since = "3.7.0", note = "please use `animation_frame_index` instead")]
     #[doc(hidden)]
     pub fn current_frame_index(&self) -> usize {
         self.animation_frame_index()
