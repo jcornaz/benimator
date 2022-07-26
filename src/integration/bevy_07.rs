@@ -119,7 +119,7 @@ fn animate<T: TimeResource>(
             .transform(time.delta_time());
 
         state.update(animation, delta);
-        sprite.index = state.sprite_frame_index(animation);
+        sprite.index = state.sprite_frame_index();
         if state.is_ended() {
             commands.entity(entity).remove::<Play>();
         }
