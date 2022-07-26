@@ -73,8 +73,6 @@ impl SpriteSheetAnimationState {
     }
 
     /// Update the animation state
-    ///
-    /// Returns true if the animation has ended
     #[allow(dead_code)]
     pub fn update(&mut self, animation: &SpriteSheetAnimation, delta: Duration) {
         debug_assert!(animation.has_frames());
