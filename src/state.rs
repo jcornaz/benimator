@@ -27,6 +27,7 @@ pub struct SpriteSheetAnimationState {
     elapsed_in_frame: Duration,
     // Control ping_pong backward frame navigation.
     going_backward: bool,
+    is_ended: bool,
 }
 
 impl SpriteSheetAnimationState {
@@ -60,6 +61,12 @@ impl SpriteSheetAnimationState {
         self.frame(animation).index
     }
 
+    /// Returns true if the animation has ended
+    #[must_use]
+    pub fn is_ended(&self) -> bool {
+        self.is_ended
+    }
+
     #[must_use]
     fn frame<'a>(&self, animation: &'a SpriteSheetAnimation) -> &'a Frame {
         &animation.frames[self.animation_frame_index() % animation.frames.len()]
@@ -69,7 +76,7 @@ impl SpriteSheetAnimationState {
     ///
     /// Returns true if the animation has ended
     #[allow(dead_code)]
-    pub fn update(&mut self, animation: &SpriteSheetAnimation, delta: Duration) -> bool {
+    pub fn update(&mut self, animation: &SpriteSheetAnimation, delta: Duration) {
         debug_assert!(animation.has_frames());
         let mut frame = self.frame(animation);
         self.elapsed_in_frame += delta;
@@ -100,17 +107,16 @@ impl SpriteSheetAnimationState {
                 }
                 Mode::Once => {
                     if on_last_frame {
-                        return true;
+                        self.is_ended = true;
+                    } else {
+                        self.animation_frame_index += 1;
                     }
-                    self.animation_frame_index += 1;
                 }
             }
 
             self.elapsed_in_frame -= frame.duration;
             frame = self.frame(animation);
         }
-
-        false
     }
 }
 
@@ -143,7 +149,7 @@ mod tests {
             SpriteSheetAnimationState {
                 animation_frame_index: 1,
                 elapsed_in_frame: Duration::from_secs(1),
-                going_backward: false,
+                ..Default::default()
             }
         }
 
@@ -242,12 +248,13 @@ mod tests {
         }
 
         #[rstest]
-        fn returns_false(
+        fn is_not_ended(
             mut state: SpriteSheetAnimationState,
             animation: SpriteSheetAnimation,
             frame_duration: Duration,
         ) {
-            assert!(!state.update(&animation, frame_duration,));
+            state.update(&animation, frame_duration);
+            assert!(!state.is_ended());
         }
 
         #[rstest]
@@ -286,7 +293,7 @@ mod tests {
                 SpriteSheetAnimationState {
                     animation_frame_index: 4,
                     elapsed_in_frame: Duration::from_nanos(0),
-                    going_backward: false,
+                    ..Default::default()
                 }
             }
 
@@ -301,12 +308,13 @@ mod tests {
             }
 
             #[rstest]
-            fn returns_false(
+            fn is_not_ended(
                 mut state: SpriteSheetAnimationState,
                 animation: SpriteSheetAnimation,
                 frame_duration: Duration,
             ) {
-                assert!(!state.update(&animation, frame_duration,));
+                state.update(&animation, frame_duration);
+                assert!(!state.is_ended());
             }
         }
 
@@ -329,7 +337,7 @@ mod tests {
                 SpriteSheetAnimationState {
                     animation_frame_index: 4,
                     elapsed_in_frame: Duration::from_nanos(0),
-                    going_backward: false,
+                    ..Default::default()
                 }
             }
 
@@ -344,12 +352,13 @@ mod tests {
             }
 
             #[rstest]
-            fn returns_false(
+            fn is_not_ended(
                 mut state: SpriteSheetAnimationState,
                 animation: SpriteSheetAnimation,
                 frame_duration: Duration,
             ) {
-                assert!(!state.update(&animation, frame_duration,));
+                state.update(&animation, frame_duration);
+                assert!(!state.is_ended());
             }
         }
     }
@@ -370,7 +379,7 @@ mod tests {
                 SpriteSheetAnimationState {
                     animation_frame_index: 1,
                     elapsed_in_frame: Duration::from_nanos(500),
-                    going_backward: false,
+                    ..Default::default()
                 }
             }
 
@@ -409,6 +418,7 @@ mod tests {
                     animation_frame_index: 1,
                     elapsed_in_frame: Duration::from_nanos(500),
                     going_backward: true,
+                    ..Default::default()
                 }
             }
 
@@ -440,7 +450,7 @@ mod tests {
                 SpriteSheetAnimationState {
                     animation_frame_index: 0,
                     elapsed_in_frame: Duration::from_nanos(500),
-                    going_backward: false,
+                    ..Default::default()
                 }
             }
 
@@ -463,7 +473,7 @@ mod tests {
                 SpriteSheetAnimationState {
                     animation_frame_index: 1,
                     elapsed_in_frame: Duration::from_nanos(500),
-                    going_backward: false,
+                    ..Default::default()
                 }
             }
 
@@ -478,12 +488,13 @@ mod tests {
             }
 
             #[rstest]
-            fn returns_true(
+            fn is_ended(
                 mut state: SpriteSheetAnimationState,
                 animation: SpriteSheetAnimation,
                 frame_duration: Duration,
             ) {
-                assert!(state.update(&animation, frame_duration,));
+                state.update(&animation, frame_duration);
+                assert!(state.is_ended());
             }
         }
     }
