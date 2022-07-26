@@ -244,7 +244,6 @@ mod tests {
             .resource::<AssetServer>()
             .load("coin.animation.yml");
 
-        app.update();
         let mut loops = 0;
         while let bevy_asset_07::LoadState::Loading =
             app.world.resource::<AssetServer>().get_load_state(&handle)
@@ -254,6 +253,7 @@ mod tests {
             std::thread::sleep(Duration::from_millis(50));
             app.update();
         }
+        app.update();
         assert_eq!(
             app.world.resource::<AssetServer>().get_load_state(&handle),
             bevy_asset_07::LoadState::Loaded
