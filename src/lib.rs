@@ -103,18 +103,20 @@ fn spawn(mut commands: Commands, mut animations: ResMut<Assets<SpriteSheetAnimat
 //!
 //! For each entity with a [`SpriteSheetAnimation`], a [`SpriteSheetAnimationState`] component is automatically inserted.
 //! It can be used to reset the animation state by calling [`SpriteSheetAnimationState::reset`]
-//!
-//! ```
-//! # use bevy::prelude::*;
-//! # use benimator::SpriteSheetAnimationState;
-//!
-//! fn restart_anim_from_start(mut query: Query<&mut SpriteSheetAnimationState>) {
-//!   for mut state in query.iter_mut() {
-//!     state.reset();
-//!   }
-//! }
-//! ```
-//!
+#![cfg_attr(
+    feature = "bevy-07",
+    doc = "
+```
+# use bevy::prelude::*;
+# use benimator::SpriteSheetAnimationState;
+fn restart_anim_from_start(mut query: Query<&mut SpriteSheetAnimationState>) {
+  for mut state in query.iter_mut() {
+    state.reset();
+  }
+}
+```
+"
+)]
 //! ## Load animation from file **(Unstable)**
 //!
 //! By enabling the cargo feature: `unstable-load-from-file` you can write the animation in an asset file.

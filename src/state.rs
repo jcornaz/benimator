@@ -7,17 +7,20 @@ use crate::{animation::Mode, Frame, SpriteSheetAnimation};
 /// It can be used to reset the animation state.
 ///
 /// # Example
-///
-/// ```
-/// # use bevy::prelude::*;
-/// # use benimator::SpriteSheetAnimationState;
-///
-/// fn restart_anim_from_start(mut query: Query<&mut SpriteSheetAnimationState>) {
-///   for mut state in query.iter_mut() {
-///     state.reset();
-///   }
-/// }
-/// ```
+#[cfg_attr(
+    feature = "bevy-07",
+    doc = "
+```
+# use bevy::prelude::*;
+# use benimator::SpriteSheetAnimationState;
+fn restart_anim_from_start(mut query: Query<&mut SpriteSheetAnimationState>) {
+  for mut state in query.iter_mut() {
+    state.reset();
+  }
+}
+```
+"
+)]
 #[derive(Default)]
 pub struct SpriteSheetAnimationState {
     animation_frame_index: usize,
