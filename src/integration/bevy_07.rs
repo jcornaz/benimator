@@ -118,10 +118,11 @@ fn animate<T: TimeResource>(
             .unwrap_or_default()
             .transform(time.delta_time());
 
-        if state.update(animation, delta) {
+        state.update(animation, delta);
+        sprite.index = state.sprite_frame_index(animation);
+        if state.is_ended() {
             commands.entity(entity).remove::<Play>();
         }
-        sprite.index = state.sprite_frame_index(animation);
     }
 }
 
