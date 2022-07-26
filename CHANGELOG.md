@@ -6,15 +6,33 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
 
+<csr-id-d80e27892d13345b35255f6ea4c6f0d722780642/>
+<csr-id-2635bc539115d879e4978b39f934a4c690d8152d/>
+<csr-id-e5b3859748785255504708eb5fe4b87197079a3a/>
+<csr-id-ebcaf2e12d6791076bb43f9d23d5f1be1c8a4a1c/>
+<csr-id-944f1f225d2ed83273dd82ac64269c092a119dbb/>
+<csr-id-18e8e98fc9a6f856fc929b52a37a27db95883bed/>
+<csr-id-e5fc39fa02dd017fd44aa7bb8e7e1bc6dd40ae5a/>
+<csr-id-1d4af4112e2dceff574ec881fa349856d97b9f72/>
+
 ### New Features (BREAKING)
 
  - <csr-id-0f833620082906210ab94c45ff3f13434c905979/> Public `update` function for the state
-    The state is no longer automatically reset after the last frame of a `run_once` animation. So one must explicitly reset the state if they desire to restart the animation later.
+   The state is no longer automatically reset after the last frame of a `run_once` animation.
+   So one must explicitly reset the state if they desire to restart the animation later.
 
 ### Chore (BREAKING)
 
  - <csr-id-d80e27892d13345b35255f6ea4c6f0d722780642/> Remove `AnimationPostUpdateSystem`
    It had no effect. This may be reintroduced (with effect) if requested.
+
+### Refactor (BREAKING)
+
+ - <csr-id-2635bc539115d879e4978b39f934a4c690d8152d/> No longer require animation to get the sprite index
+
+### Documentation
+
+ - <csr-id-1290d5c505246815dda6d025673a599bec37083f/> Fix incorrect 'since' clause for a deprecation
 
 ## v4.0.0-alpha.6 (2022-07-17)
 
