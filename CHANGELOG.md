@@ -6,6 +6,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
 
+### New Features (BREAKING)
+
+ - <csr-id-0f833620082906210ab94c45ff3f13434c905979/> Public `update` function for the state
+    The state is no longer automatically reset after the last frame of a `run_once` animation. So one must explicitly reset the state if they desire to restart the animation later.
+
+### Chore (BREAKING)
+
+ - <csr-id-d80e27892d13345b35255f6ea4c6f0d722780642/> Remove `AnimationPostUpdateSystem`
+   It had no effect. This may be reintroduced (with effect) if requested.
+
 ## v4.0.0-alpha.6 (2022-07-17)
 
 <csr-id-02918b10c515fefcfda0819bdb3a38e27d79fd08/>
