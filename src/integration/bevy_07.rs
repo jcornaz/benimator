@@ -4,13 +4,28 @@ use bevy_app_07::prelude::*;
 use bevy_asset_07::prelude::*;
 #[cfg(feature = "unstable-load-from-file")]
 use bevy_asset_07::{AssetLoader, BoxedFuture, LoadContext, LoadedAsset};
-use bevy_core::prelude::*;
-use bevy_ecs::prelude::*;
-use bevy_ecs::system::Resource;
+use bevy_core_07::prelude::*;
+use bevy_ecs_07::{
+    component::{SparseStorage, TableStorage},
+    prelude::*,
+    system::Resource,
+};
 use bevy_reflect_07::{TypeUuid, Uuid};
 use bevy_sprite_07::prelude::*;
 
 use crate::{Play, PlaySpeedMultiplier, SpriteSheetAnimation, SpriteSheetAnimationState};
+
+impl Component for Play {
+    type Storage = SparseStorage;
+}
+
+impl Component for PlaySpeedMultiplier {
+    type Storage = SparseStorage;
+}
+
+impl Component for SpriteSheetAnimationState {
+    type Storage = TableStorage;
+}
 
 trait TimeResource: Resource {
     fn delta_time(&self) -> Duration;
@@ -144,7 +159,7 @@ mod tests {
     use std::time::Duration;
 
     use bevy_asset_07::AssetPlugin;
-    use bevy_core::CorePlugin;
+    use bevy_core_07::CorePlugin;
 
     use super::*;
 

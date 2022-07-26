@@ -103,18 +103,20 @@ fn spawn(mut commands: Commands, mut animations: ResMut<Assets<SpriteSheetAnimat
 //!
 //! For each entity with a [`SpriteSheetAnimation`], a [`SpriteSheetAnimationState`] component is automatically inserted.
 //! It can be used to reset the animation state by calling [`SpriteSheetAnimationState::reset`]
-//!
-//! ```
-//! # use bevy::prelude::*;
-//! # use benimator::SpriteSheetAnimationState;
-//!
-//! fn restart_anim_from_start(mut query: Query<&mut SpriteSheetAnimationState>) {
-//!   for mut state in query.iter_mut() {
-//!     state.reset();
-//!   }
-//! }
-//! ```
-//!
+#![cfg_attr(
+    feature = "bevy-07",
+    doc = "
+```
+# use bevy::prelude::*;
+# use benimator::SpriteSheetAnimationState;
+fn restart_anim_from_start(mut query: Query<&mut SpriteSheetAnimationState>) {
+  for mut state in query.iter_mut() {
+    state.reset();
+  }
+}
+```
+"
+)]
 //! ## Load animation from file **(Unstable)**
 //!
 //! By enabling the cargo feature: `unstable-load-from-file` you can write the animation in an asset file.
@@ -159,9 +161,6 @@ let handle: Handle<SpriteSheetAnimation> = asset_server.load("player_run.animati
 #[macro_use]
 extern crate rstest;
 
-use bevy_ecs::component::SparseStorage;
-use bevy_ecs::prelude::*;
-
 use std::time::Duration;
 
 pub use animation::{Frame, SpriteSheetAnimation};
@@ -192,14 +191,10 @@ pub struct AnimationPlugin;
 #[derive(Debug, Copy, Clone, Default)]
 pub struct Play;
 
-impl Component for Play {
-    type Storage = SparseStorage;
-}
-
 /// Component that, when applied, can change the playback's rate of the animation.
 ///
 /// Receives a f64 multiplier which will alter the delta, speeding up or slowing down to the desired playback rate.
-#[derive(Debug, Copy, Component, Clone)]
+#[derive(Debug, Copy, Clone)]
 pub struct PlaySpeedMultiplier(f64);
 
 impl PlaySpeedMultiplier {
