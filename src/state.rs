@@ -24,6 +24,7 @@ fn restart_anim_from_start(mut query: Query<&mut SpriteSheetAnimationState>) {
 #[derive(Default)]
 pub struct SpriteSheetAnimationState {
     animation_frame_index: usize,
+    sprite_frame_index: usize,
     elapsed_in_frame: Duration,
     // Control ping_pong backward frame navigation.
     going_backward: bool,
@@ -57,8 +58,8 @@ impl SpriteSheetAnimationState {
     ///
     /// The index is relative to the sprite atlas. **not** to the animation frame sequence.
     #[must_use]
-    pub fn sprite_frame_index(&self, animation: &SpriteSheetAnimation) -> usize {
-        self.frame(animation).index
+    pub fn sprite_frame_index(&self) -> usize {
+        self.sprite_frame_index
     }
 
     /// Returns true if the animation has ended
@@ -77,6 +78,7 @@ impl SpriteSheetAnimationState {
     pub fn update(&mut self, animation: &SpriteSheetAnimation, delta: Duration) {
         debug_assert!(animation.has_frames());
         let mut frame = self.frame(animation);
+        self.sprite_frame_index = frame.index;
         self.elapsed_in_frame += delta;
         while self.elapsed_in_frame >= frame.duration {
             let on_last_frame = self.animation_frame_index >= animation.frames.len() - 1;
@@ -114,6 +116,7 @@ impl SpriteSheetAnimationState {
 
             self.elapsed_in_frame -= frame.duration;
             frame = self.frame(animation);
+            self.sprite_frame_index = frame.index;
         }
     }
 }
@@ -135,8 +138,9 @@ mod tests {
     #[rstest]
     fn sprite_index(frame_duration: Duration) {
         let animation = SpriteSheetAnimation::from_range(3..=5, frame_duration);
-        let state = SpriteSheetAnimationState::default();
-        assert_eq!(state.sprite_frame_index(&animation), 3);
+        let mut state = SpriteSheetAnimationState::default();
+        state.update(&animation, Duration::ZERO);
+        assert_eq!(state.sprite_frame_index(), 3);
     }
 
     mod reset {
@@ -184,7 +188,7 @@ mod tests {
             smaller_duration: Duration,
         ) {
             state.update(&animation, smaller_duration);
-            assert_eq!(state.sprite_frame_index(&animation), 0);
+            assert_eq!(state.sprite_frame_index(), 0);
         }
 
         #[rstest]
@@ -195,7 +199,7 @@ mod tests {
         ) {
             let animation = SpriteSheetAnimation::from_range(1..=3, frame_duration);
             state.update(&animation, smaller_duration);
-            assert_eq!(state.sprite_frame_index(&animation), 1);
+            assert_eq!(state.sprite_frame_index(), 1);
         }
 
         #[rstest]
@@ -206,7 +210,7 @@ mod tests {
         ) {
             let animation = SpriteSheetAnimation::from_range(1..=3, frame_duration);
             state.update(&animation, smaller_duration);
-            assert_eq!(state.sprite_frame_index(&animation), 1);
+            assert_eq!(state.sprite_frame_index(), 1);
         }
 
         #[rstest]
@@ -216,7 +220,7 @@ mod tests {
             frame_duration: Duration,
         ) {
             state.update(&animation, frame_duration);
-            assert_eq!(state.sprite_frame_index(&animation), 1);
+            assert_eq!(state.sprite_frame_index(), 1);
         }
 
         #[rstest]
@@ -227,7 +231,7 @@ mod tests {
         ) {
             state.update(&animation, smaller_duration);
             state.update(&animation, smaller_duration);
-            assert_eq!(state.sprite_frame_index(&animation), 1);
+            assert_eq!(state.sprite_frame_index(), 1);
         }
 
         #[rstest]
@@ -262,7 +266,7 @@ mod tests {
             frame_duration: Duration,
         ) {
             state.update(&animation, frame_duration * 2);
-            assert_eq!(state.sprite_frame_index(&animation), 2);
+            assert_eq!(state.sprite_frame_index(), 2);
         }
     }
 
@@ -302,7 +306,7 @@ mod tests {
                 frame_duration: Duration,
             ) {
                 state.update(&animation, frame_duration);
-                assert_eq!(state.sprite_frame_index(&animation), 2);
+                assert_eq!(state.sprite_frame_index(), 2);
             }
 
             #[rstest]
@@ -346,7 +350,7 @@ mod tests {
                 frame_duration: Duration,
             ) {
                 state.update(&animation, frame_duration);
-                assert_eq!(state.sprite_frame_index(&animation), 2);
+                assert_eq!(state.sprite_frame_index(), 2);
             }
 
             #[rstest]
@@ -388,7 +392,7 @@ mod tests {
                 frame_duration: Duration,
             ) {
                 state.update(&animation, frame_duration);
-                assert_eq!(state.sprite_frame_index(&animation), 0);
+                assert_eq!(state.sprite_frame_index(), 0);
             }
 
             #[rstest]
@@ -427,7 +431,7 @@ mod tests {
                 frame_duration: Duration,
             ) {
                 state.update(&animation, frame_duration);
-                assert_eq!(state.sprite_frame_index(&animation), 0);
+                assert_eq!(state.sprite_frame_index(), 0);
             }
         }
     }
@@ -459,7 +463,7 @@ mod tests {
                 frame_duration: Duration,
             ) {
                 state.update(&animation, frame_duration * 4);
-                assert_eq!(state.sprite_frame_index(&animation), 1);
+                assert_eq!(state.sprite_frame_index(), 1);
             }
         }
 
@@ -482,7 +486,7 @@ mod tests {
                 frame_duration: Duration,
             ) {
                 state.update(&animation, frame_duration);
-                assert_eq!(state.sprite_frame_index(&animation), 1);
+                assert_eq!(state.sprite_frame_index(), 1);
             }
 
             #[rstest]
