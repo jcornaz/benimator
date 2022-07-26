@@ -184,14 +184,6 @@ mod state;
 #[derive(Default)]
 pub struct AnimationPlugin;
 
-/// Labels of systems that run during the post-update stage
-#[non_exhaustive]
-#[derive(Debug, Copy, Clone, Eq, PartialEq, Hash, SystemLabel)]
-pub enum AnimationPostUpdateSystem {
-    /// System that update the sprite atlas textures
-    Animate,
-}
-
 /// Components that indicates the animation is playing
 ///
 /// Insert the components to play the animation, and remove it to pause it.
