@@ -254,6 +254,10 @@ mod tests {
             std::thread::sleep(Duration::from_millis(50));
             app.update();
         }
+        assert_eq!(
+            app.world.resource::<AssetServer>().get_load_state(&handle),
+            bevy_asset_07::LoadState::Loaded
+        );
         assert!(app
             .world
             .resource::<Assets<SpriteSheetAnimation>>()
