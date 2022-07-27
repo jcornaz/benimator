@@ -7,6 +7,7 @@ tasks:
     command: miniserve target/doc
 
   - name: test
+    before: rustup update beta
     init: |
       cp .cargo/fast_compiles_config .cargo/config.toml
       cargo update
