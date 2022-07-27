@@ -80,15 +80,14 @@ cargo add benimator
 
 ## Cargo features
 
-* `yaml` deserialization from yaml asset files (also requires `unstable-load-from-file`)
-* `ron` deserialization from ron asset files (also requires `unstable-load-from-file`)
-* `bevy-07` all integrations with bevy 0.7
+| Feature | Description |
+|---------|-------------|
+| `serde` | Implementation of serde traits for deserializaion 
+| `yaml` | Asset loader for yaml files
+| `ron` | Asset loader for ron files
+| `bevy-07` | Integration with bevy 0.7
 
-### Unstable features
-
-**Any API behind one of theses feature flags is unstable, should not be considered complete nor part of the public API. Breaking changes to that API may happen in minor releases**
-
-* `unstable-load-from-file` Load animation assets from yaml/ron files. It also requires either `ron` or `yaml` (or both) features.
+*Feature flags not mentioned here are **NOT** part of the public API and are subject to breaking changes.*
 
 ## MSRV
 

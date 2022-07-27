@@ -68,8 +68,8 @@ jobs:
     strategy:
       matrix:
         feature:
-          - "unstable-load-from-file, yaml"
-          - "unstable-load-from-file, ron"
+          - "load-from-file, yaml"
+          - "load-from-file, ron"
           - "bevy-07"
 
     steps:

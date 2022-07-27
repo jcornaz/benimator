@@ -1,29 +1,26 @@
-#[cfg(feature = "unstable-load-from-file")]
+#[cfg(feature = "serde")]
 mod dto;
 
-#[cfg(feature = "unstable-load-from-file")]
+#[cfg(feature = "load-from-file")]
 pub(crate) mod load;
 
 use std::{ops::RangeInclusive, time::Duration};
 
-#[cfg(feature = "unstable-load-from-file")]
+#[cfg(feature = "load-from-file")]
 pub use load::SpriteSheetAnimationLoader;
 
-#[cfg(feature = "unstable-load-from-file")]
-pub use dto::AnimationParseError;
+#[cfg(feature = "load-from-file")]
+pub use load::AnimationParseError;
 
-#[cfg(feature = "unstable-load-from-file")]
+#[cfg(feature = "serde")]
 use serde::Deserialize;
 
 /// Asset that define an animation of `TextureAtlasSprite`
 ///
 /// See crate level documentation for usage
 #[derive(Debug, Clone, Default)]
-#[cfg_attr(feature = "unstable-load-from-file", derive(Deserialize))]
-#[cfg_attr(
-    feature = "unstable-load-from-file",
-    serde(try_from = "dto::AnimationDto")
-)]
+#[cfg_attr(feature = "serde", derive(Deserialize))]
+#[cfg_attr(feature = "serde", serde(try_from = "dto::AnimationDto"))]
 pub struct SpriteSheetAnimation {
     /// Frames
     pub(crate) frames: Vec<Frame>,

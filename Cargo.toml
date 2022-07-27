@@ -15,8 +15,10 @@ all-features = true
 
 [features]
 default = []
-unstable-load-from-file = ["serde", "anyhow"]
+yaml = ["dep:yaml", "load-from-file"]
+ron = ["dep:ron", "load-from-file"]
 bevy-07 = ["bevy-ecs-07", "bevy-core-07", "bevy-reflect-07", "bevy-app-07", "bevy-asset-07", "bevy-sprite-07"]
+load-from-file = ["serde", "anyhow"]
 
 [dependencies]
 # Private dependencies (do not leak into the public API)
@@ -66,4 +68,4 @@ required-features = ["bevy-07"]
 
 [[example]]
 name = "using_animation_file"
-required-features = ["unstable-load-from-file", "yaml", "bevy-07"]
+required-features = ["load-from-file", "yaml", "bevy-07"]

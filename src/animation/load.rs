@@ -1,8 +1,9 @@
-use std::{error::Error, fmt::Display};
+use std::{
+    error::Error,
+    fmt::{self, Display},
+};
 
 use crate::SpriteSheetAnimation;
-
-use super::AnimationParseError;
 
 /// Loader of animation file
 ///
@@ -121,6 +122,25 @@ impl SpriteSheetAnimationLoader {
 
             _ => Err(AnimationParseError(UnexpectedExtension.into())),
         }
+    }
+}
+
+/// Error when parsing an animation file content
+#[derive(Debug)]
+#[non_exhaustive]
+pub struct AnimationParseError(anyhow::Error);
+
+impl Display for AnimationParseError {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "Animation format is invalid: {}", self.0)
+    }
+}
+
+impl Error for AnimationParseError {}
+
+impl AnimationParseError {
+    fn new(err: impl Error + Send + Sync + 'static) -> Self {
+        Self(anyhow::Error::from(err))
     }
 }
 

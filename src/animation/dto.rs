@@ -124,22 +124,3 @@ impl Display for InvalidAnimation {
 }
 
 impl Error for InvalidAnimation {}
-
-/// Error when parsing an animation file content
-#[derive(Debug)]
-#[non_exhaustive]
-pub struct AnimationParseError(pub(crate) anyhow::Error);
-
-impl AnimationParseError {
-    pub(super) fn new(err: impl Error + Send + Sync + 'static) -> Self {
-        Self(anyhow::Error::from(err))
-    }
-}
-
-impl Display for AnimationParseError {
-    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
-        write!(f, "Animation format is invalid: {}", self.0)
-    }
-}
-
-impl Error for AnimationParseError {}
