@@ -1,5 +1,5 @@
 #[cfg(feature = "unstable-load-from-file")]
-mod parse;
+mod dto;
 
 #[cfg(feature = "unstable-load-from-file")]
 pub(crate) mod load;
@@ -10,7 +10,7 @@ use std::{ops::RangeInclusive, time::Duration};
 pub use load::SpriteSheetAnimationLoader;
 
 #[cfg(feature = "unstable-load-from-file")]
-pub use parse::AnimationParseError;
+pub use dto::AnimationParseError;
 
 #[cfg(feature = "unstable-load-from-file")]
 use serde::Deserialize;
@@ -22,7 +22,7 @@ use serde::Deserialize;
 #[cfg_attr(feature = "unstable-load-from-file", derive(Deserialize))]
 #[cfg_attr(
     feature = "unstable-load-from-file",
-    serde(try_from = "parse::AnimationDto")
+    serde(try_from = "dto::AnimationDto")
 )]
 pub struct SpriteSheetAnimation {
     /// Frames
