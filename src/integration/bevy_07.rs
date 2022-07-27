@@ -2,7 +2,7 @@ use std::time::Duration;
 
 use bevy_app_07::prelude::*;
 use bevy_asset_07::prelude::*;
-#[cfg(feature = "unstable-load-from-file")]
+#[cfg(feature = "load-from-file")]
 use bevy_asset_07::{AssetLoader, BoxedFuture, LoadContext, LoadedAsset};
 use bevy_core_07::prelude::*;
 use bevy_ecs_07::{
@@ -48,7 +48,7 @@ fn install<T: TimeResource>(app: &mut App) {
         .add_system_set_to_stage(CoreStage::PreUpdate, auto_insert_state())
         .add_system_to_stage(CoreStage::Update, animate::<T>);
 
-    #[cfg(feature = "unstable-load-from-file")]
+    #[cfg(feature = "load-from-file")]
     app.init_asset_loader::<crate::animation::load::SpriteSheetAnimationLoader>();
 }
 
@@ -133,7 +133,7 @@ impl TypeUuid for SpriteSheetAnimation {
     ]);
 }
 
-#[cfg(feature = "unstable-load-from-file")]
+#[cfg(feature = "load-from-file")]
 impl AssetLoader for crate::animation::load::SpriteSheetAnimationLoader {
     fn load<'a>(
         &'a self,
@@ -237,7 +237,7 @@ mod tests {
         );
     }
 
-    #[cfg(all(feature = "unstable-load-from-file", feature = "yaml"))]
+    #[cfg(all(feature = "load-from-file", feature = "yaml"))]
     #[rstest]
     fn load_asset_file(mut app: App) {
         let handle: Handle<SpriteSheetAnimation> = app

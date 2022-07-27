@@ -119,7 +119,7 @@ fn restart_anim_from_start(mut query: Query<&mut SpriteSheetAnimationState>) {
 )]
 //! ## Load animation from file **(Unstable)**
 //!
-//! By enabling the cargo feature: `unstable-load-from-file` you can write the animation in an asset file.
+//! By enabling the cargo feature: `load-from-file` you can write the animation in an asset file.
 //!
 //! First, create an asset file with the extension `.animation.yml`:
 //! ```yaml
@@ -170,7 +170,7 @@ pub use state::SpriteSheetAnimationState;
 #[allow(deprecated)]
 pub use animation::AnimationMode;
 
-#[cfg(feature = "unstable-load-from-file")]
+#[cfg(feature = "load-from-file")]
 pub use animation::{AnimationParseError, SpriteSheetAnimationLoader};
 
 mod animation;
