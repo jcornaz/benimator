@@ -27,6 +27,7 @@ frames:
   - index: 2
     duration: 120
 ```
+
 There is also a short-hand notation if all frames have the same duration:
 ```yaml
 frame_duration: 100
@@ -53,6 +54,14 @@ frames: [0, 1, 2] # sequence of frame indices
     (index: 1, duration: Some(100)),
     (index: 2, duration: Some(120)),
   ]
+)
+```
+
+There is also a short-hand notation if all frames have the same duration:
+```ron
+(
+  frame_duration: 100,
+  frames: [0, 1, 2, 3, 4],
 )
 ```
 "
