@@ -4,7 +4,7 @@ image:
 tasks:
   - name: serve docs
     init: gp sync-await docs
-    command: miniserve --index benimator/index.html target/doc
+    command: miniserve target/doc
 
   - name: test
     init: |
