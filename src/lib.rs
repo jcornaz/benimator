@@ -153,9 +153,10 @@ let handle: Handle<SpriteSheetAnimation> = asset_server.load("player_run.animati
 ```
 "#
 )]
+//!
 //! It is also possible to use `ron` instead of `yaml`.
 //!
-//! For more info on the format see: [`SpriteSheetAnimation::from_yaml_str`] and [`SpriteSheetAnimation::from_ron_str`].
+//! For more info on the format see: [`SpriteSheetAnimationLoader`] and [`SpriteSheetAnimationLoader`].
 
 #[cfg(test)]
 #[macro_use]
