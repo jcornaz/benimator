@@ -4,6 +4,25 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## Unreleased
+
+<csr-id-9f8fe92a5c5f9192367998abc5fa3b5fd1a117d9/>
+<csr-id-dc7cc59b356282127a5077a96ddf2d2910b717ca/>
+<csr-id-0431a31cdc57a3b921306d4855ae213b4054c2f9/>
+<csr-id-c4509d8a7b4fac9280014084474db556b3e67f77/>
+
+### Documentation
+
+ - <csr-id-5f4fa1bae89052743e3a03608c57a27a57406c0a/> **ron** Document shorthand noation for ron
+
+### New Features
+
+ - <csr-id-8e8ec98c590d7af1947fcbf33eecad6a8d47a9b2/> Stabilize load-from-file
+
+### Refactor (BREAKING)
+
+ - <csr-id-c4509d8a7b4fac9280014084474db556b3e67f77/> **unstable-load-from-file** Remove `from_(yaml|ron)_(str|bytes)` functions
+
 ## 4.0.0-alpha.7 (2022-07-26)
 
 <csr-id-d80e27892d13345b35255f6ea4c6f0d722780642/>
