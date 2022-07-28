@@ -103,22 +103,17 @@ fn animate<T: TimeResource>(
     animation_defs: Res<'_, Assets<SpriteSheetAnimation>>,
     mut animations: Query<'_, '_, AnimationSystemQuery<'_>, With<Play>>,
 ) {
-    for (entity, mut sprite, animation, mut state, speed_multiplier) in
-        animations.iter_mut().filter_map(
-            |(entity, sprite, anim_handle, state, optional_speed_multiplier)| {
-                animation_defs
-                    .get(anim_handle)
-                    .filter(|anim| anim.has_frames())
-                    .map(|anim| (entity, sprite, anim, state, optional_speed_multiplier))
-            },
-        )
+    for (entity, mut sprite, animation_handle, mut state, speed_multiplier) in animations.iter_mut()
     {
-        let delta = speed_multiplier
+        let animation = match animation_defs.get(animation_handle) {
+            Some(anim) => anim,
+            None => continue,
+        };
+        let delta_time = speed_multiplier
             .copied()
             .unwrap_or_default()
             .transform(time.delta_time());
-
-        state.update(animation, delta);
+        state.update(animation, delta_time);
         sprite.index = state.sprite_frame_index();
         if state.is_ended() {
             commands.entity(entity).remove::<Play>();
