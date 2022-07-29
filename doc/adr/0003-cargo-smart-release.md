@@ -16,7 +16,7 @@ The release process should be as simple and as fast as possible, by using as muc
 If it is not fully automated, it should be very easy and fast to cut a release at any time.
 
 At least the following should be automated:
- * Changelog scafolding
+ * Changelog scaffolding
  * Version number infered from changes (according to the conventional commits)
  * Tag, github release and publication to crates.io
 
@@ -26,7 +26,7 @@ Bug fixes should be released as soon as the fix is merged in the main branch.
 Features may wait 1 or 2 weeks to be bundled with other features in a minor release, to avoid spamming users with release notes.
 Breaking changes should happen as rarely as possible.
 
-Changelog generation is helpful, but I often would like to reviewe and modify it before release.
+Changelog generation is helpful, but I often would like to review and modify it before release.
 Being able to add a "release-note" prose for bigger releases (major and minor) would be especially appreciable.
 
 ## Decision
@@ -37,9 +37,9 @@ I'll use `cargo-smart-release` to drive the release process.
 
 ## Consequences
 
-Releases will be triggered manually when it makes sense.
-
 It is still cheap to release and can be done at any time on-demand.
+
+Releases will be triggered manually when it makes sense, as often as possible.
 
 The changelog will be reviewed and adapted when releasing.
 
