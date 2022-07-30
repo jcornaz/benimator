@@ -8,7 +8,7 @@ use crate::{animation::Mode, Frame, SpriteSheetAnimation};
 ///
 /// # Example
 #[cfg_attr(
-    feature = "bevy-07",
+    feature = "bevy-08",
     doc = "
 ```
 # use bevy::prelude::*;

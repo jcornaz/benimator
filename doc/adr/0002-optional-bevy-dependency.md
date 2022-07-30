@@ -19,7 +19,7 @@ In order to increase benimator's stability, we need a way to be more stable than
 
 All bevy crates will be an optional dependency and disabled by default. The cargo feature name will contain the major bevy version they refer to (for example `bevy-07`).
 
-This is a breacking change and will be timed with the update to bevy 0.8, which would have also required breaking the API even if this decision was not taken.
+This is a breaking change and will be timed with the update to bevy 0.8, which would have also required breaking the API even if this decision was not taken.
 
 ## Consequences
 
