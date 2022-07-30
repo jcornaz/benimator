@@ -85,13 +85,13 @@ cargo add benimator
 | `serde` | Implementation of serde traits for deserializaion 
 | `yaml` | Asset loader for yaml files
 | `ron` | Asset loader for ron files
-| `bevy-07` | Integration with bevy 0.7
+| `bevy-08` | Integration with bevy 0.8
 
 *Feature flags not mentioned here are **NOT** part of the public API and are subject to breaking changes.*
 
 ## MSRV
 
-The minimum supported rust version is currently: `1.60`
+The minimum supported rust version is currently: `1.62`
 
 **It *may* be increased to a newer stable version in a minor release.** (but only if needed)
 
@@ -102,6 +102,7 @@ It *will* be increased to the latest stable version in a major release. (even if
 
 | bevy | benimator |
 |------|-----------|
+| 0.8  | 3         |
 | 0.7  | 3         |
 | 0.6  | 1, 2      |
 | 0.5  | 0.1 - 0.3 |
