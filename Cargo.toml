@@ -38,7 +38,7 @@ bevy-asset-08 = { package = "bevy_asset", version = "0.8.0", default-features = 
 bevy-sprite-08 = { package = "bevy_sprite", version = "0.8.0", default-features = false, optional = true }
 
 [dev-dependencies]
-bevy = { version = "0.8.0", default-features = false, features = ["render", "x11", "png"] }
+bevy = { version = "0.8.0", default-features = false, features = ["render", "x11", "png", "bevy_asset"] }
 rstest = { version = "0.15.0", default-features = false }
 
 [build-dependencies]
