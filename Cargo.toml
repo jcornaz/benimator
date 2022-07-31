@@ -1,6 +1,6 @@
 [package]
 name = "benimator"
-version = "4.0.0-alpha.8"
+version = "4.0.0-alpha.9"
 edition = "2021"
 rust-version = "1.62"
 authors = ["Jonathan Cornaz"]

@@ -4,6 +4,20 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## 4.0.0-alpha.9 (2022-07-30)
+
+<csr-id-b4bbf39071dac083884b936ed6cd625e6fbd1307/>
+<csr-id-e27669e51a174ab7678de5a7ac2d4348afe2f77a/>
+<csr-id-0b7310a2ba73bfebe284d3802dede2c308cb09c6/>
+<csr-id-eccec7967a9796a5ccd6774101018a9675024ae0/>
+<csr-id-e2100464fae008ea7efab86931c5f2866b80a804/>
+
+### Dependencies (BREAKING)
+
+ - <csr-id-eccec7967a9796a5ccd6774101018a9675024ae0/> Support bevy 0.8
+ - Drop support for bevy 0.7
+ - <csr-id-e2100464fae008ea7efab86931c5f2866b80a804/> Require rust 1.62
+
 ## 4.0.0-alpha.8 (2022-07-27)
 
 <csr-id-9f8fe92a5c5f9192367998abc5fa3b5fd1a117d9/>

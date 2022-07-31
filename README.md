@@ -100,11 +100,12 @@ It *will* be increased to the latest stable version in a major release. (even if
 
 ## Bevy Version Compatibility
 
-| bevy | benimator |
-|------|-----------|
-| 0.7  | 3         |
-| 0.6  | 1, 2      |
-| 0.5  | 0.1 - 0.3 |
+| bevy | benimator     |
+|------|---------------|
+| 0.8  | 4 ***alpha*** |
+| 0.7  | 3             |
+| 0.6  | 1, 2          |
+| 0.5  | 0.1 - 0.3     |
 
 *Note: Only the latest published version of benimator is supported* 
 
