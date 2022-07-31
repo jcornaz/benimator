@@ -13,7 +13,7 @@ struct Animations {
 }
 
 #[derive(Component, Deref, DerefMut)]
-struct Timer(bevy::core::Timer);
+struct Timer(bevy::time::Timer);
 
 fn main() {
     App::new()
@@ -61,7 +61,7 @@ fn spawn_animated_coin(
         .insert(animations.fast.clone())
         .insert(Play)
         // Add timer, counting down the time before the animation is changed
-        .insert(Timer(bevy::core::Timer::from_seconds(5.0, true)));
+        .insert(Timer(bevy::time::Timer::from_seconds(5.0, true)));
 }
 
 fn change_animation(
