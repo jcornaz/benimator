@@ -16,7 +16,7 @@ fn spawn(
     mut textures: ResMut<Assets<TextureAtlas>>,
 ) {
     // Don't forget the camera ;-)
-    commands.spawn_bundle(OrthographicCameraBundle::new_2d());
+    commands.spawn_bundle(Camera2dBundle::default());
 
     // Create an animation
     // Here we use an index-range (from 0 to 4) where each frame has the same duration
