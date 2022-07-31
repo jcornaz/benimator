@@ -91,7 +91,7 @@ cargo add benimator
 
 ## MSRV
 
-The minimum supported rust version is currently: `1.60`
+The minimum supported rust version is currently: `1.62`
 
 **It *may* be increased to a newer stable version in a minor release.** (but only if needed)
 

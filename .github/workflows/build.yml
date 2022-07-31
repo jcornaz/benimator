@@ -12,7 +12,7 @@ on:
   workflow_dispatch:
 
 env:
-  RUST_VERSION: 1.60.0
+  RUST_VERSION: 1.62
   CARGO_INCREMENTAL: 0
   RUSTFLAGS: "-D warnings"
 

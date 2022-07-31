@@ -2,7 +2,7 @@
 name = "benimator"
 version = "4.0.0-alpha.8"
 edition = "2021"
-rust-version = "1.60"
+rust-version = "1.62"
 authors = ["Jonathan Cornaz"]
 license = "Unlicense OR MIT"
 description = "A sprite sheet animation plugin for Bevy"
