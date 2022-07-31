@@ -40,15 +40,9 @@ bevy-sprite-07 = { package = "bevy_sprite", version = "0.7.0", default-features 
 [dev-dependencies]
 bevy = { version = "0.7.0", default-features = false, features = ["render", "x11", "png"] }
 rstest = { version = "0.15.0", default-features = false }
-criterion = { version = "0.3.6", default-features = false }
 
 [build-dependencies]
 rustc_version = "0.4.0"
-
-[[bench]]
-name = "play_component"
-harness = false
-required-features = ["bevy-07"]
 
 [[example]]
 name = "change_animation"
