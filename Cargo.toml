@@ -30,15 +30,15 @@ serde = { version = "1.0", default-features = false, features = ["derive"], opti
 anyhow = { version = "1.0", default-features = false, optional = true }
 
 ## Bevy 0.7
-bevy-ecs-07 = { package = "bevy_ecs", version = "0.7.0", default-features = false, optional = true }
-bevy-core-07 = { package = "bevy_core", version = "0.7.0", default-features = false, optional = true }
-bevy-reflect-07 = { package = "bevy_reflect", version = "0.7.0", default-features = false, optional = true }
-bevy-app-07 = { package = "bevy_app", version = "0.7.0", default-features = false, optional = true }
-bevy-asset-07 = { package = "bevy_asset", version = "0.7.0", default-features = false, optional = true }
-bevy-sprite-07 = { package = "bevy_sprite", version = "0.7.0", default-features = false, optional = true }
+bevy-ecs-07 = { package = "bevy_ecs", version = "0.8.0", default-features = false, optional = true }
+bevy-core-07 = { package = "bevy_core", version = "0.8.0", default-features = false, optional = true }
+bevy-reflect-07 = { package = "bevy_reflect", version = "0.8.0", default-features = false, optional = true }
+bevy-app-07 = { package = "bevy_app", version = "0.8.0", default-features = false, optional = true }
+bevy-asset-07 = { package = "bevy_asset", version = "0.8.0", default-features = false, optional = true }
+bevy-sprite-07 = { package = "bevy_sprite", version = "0.8.0", default-features = false, optional = true }
 
 [dev-dependencies]
-bevy = { version = "0.7.0", default-features = false, features = ["render", "x11", "png"] }
+bevy = { version = "0.8.0", default-features = false, features = ["render", "x11", "png"] }
 rstest = { version = "0.15.0", default-features = false }
 
 [build-dependencies]
