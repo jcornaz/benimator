@@ -17,7 +17,7 @@ all-features = true
 default = []
 yaml = ["dep:yaml", "load-from-file"]
 ron = ["dep:ron", "load-from-file"]
-bevy-07 = ["bevy-ecs-07", "bevy-core-07", "bevy-reflect-07", "bevy-app-07", "bevy-asset-07", "bevy-sprite-07"]
+bevy-07 = ["bevy-ecs-07", "bevy-time-07", "bevy-reflect-07", "bevy-app-07", "bevy-asset-07", "bevy-sprite-07"]
 load-from-file = ["serde", "anyhow"]
 
 [dependencies]
@@ -31,7 +31,7 @@ anyhow = { version = "1.0", default-features = false, optional = true }
 
 ## Bevy 0.7
 bevy-ecs-07 = { package = "bevy_ecs", version = "0.8.0", default-features = false, optional = true }
-bevy-core-07 = { package = "bevy_core", version = "0.8.0", default-features = false, optional = true }
+bevy-time-07 = { package = "bevy_time", version = "0.8.0", default-features = false, optional = true }
 bevy-reflect-07 = { package = "bevy_reflect", version = "0.8.0", default-features = false, optional = true }
 bevy-app-07 = { package = "bevy_app", version = "0.8.0", default-features = false, optional = true }
 bevy-asset-07 = { package = "bevy_asset", version = "0.8.0", default-features = false, optional = true }

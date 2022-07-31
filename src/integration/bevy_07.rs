@@ -4,7 +4,6 @@ use bevy_app_07::prelude::*;
 use bevy_asset_07::prelude::*;
 #[cfg(feature = "load-from-file")]
 use bevy_asset_07::{AssetLoader, BoxedFuture, LoadContext, LoadedAsset};
-use bevy_core_07::prelude::*;
 use bevy_ecs_07::{
     component::{SparseStorage, TableStorage},
     prelude::*,
@@ -12,6 +11,7 @@ use bevy_ecs_07::{
 };
 use bevy_reflect_07::{TypeUuid, Uuid};
 use bevy_sprite_07::prelude::*;
+use bevy_time_07::prelude::*;
 
 use crate::{Play, PlaySpeedMultiplier, SpriteSheetAnimation, SpriteSheetAnimationState};
 
@@ -155,7 +155,6 @@ mod tests {
     use std::time::Duration;
 
     use bevy_asset_07::AssetPlugin;
-    use bevy_core_07::CorePlugin;
 
     use super::*;
 
@@ -265,7 +264,8 @@ mod tests {
     #[fixture]
     fn app() -> App {
         let mut app = App::new();
-        app.add_plugin(CorePlugin).add_plugin(AssetPlugin);
+        app.add_plugin(bevy::core::CorePlugin)
+            .add_plugin(AssetPlugin);
         app.world.insert_resource(Duration::ZERO);
         install::<Duration>(&mut app);
         app
