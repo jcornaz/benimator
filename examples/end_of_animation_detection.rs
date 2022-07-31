@@ -1,11 +1,12 @@
 use std::time::Duration;
 
-use bevy::prelude::*;
+use bevy::{prelude::*, render::texture::ImageSettings};
 
 use benimator::*;
 
 fn main() {
     App::new()
+        .insert_resource(ImageSettings::default_nearest())
         .add_plugins(DefaultPlugins)
         .add_plugin(AnimationPlugin::default())
         .add_startup_system(spawn_animated_coin)

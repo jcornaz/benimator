@@ -1,7 +1,7 @@
 use core::ops::Deref;
 use std::time::Duration;
 
-use bevy::prelude::*;
+use bevy::{prelude::*, render::texture::ImageSettings};
 
 use benimator::*;
 
@@ -18,6 +18,7 @@ struct Timer(bevy::time::Timer);
 fn main() {
     App::new()
         .init_resource::<Animations>()
+        .insert_resource(ImageSettings::default_nearest())
         .add_plugins(DefaultPlugins)
         .add_plugin(AnimationPlugin::default())
         .add_startup_system_to_stage(StartupStage::PreStartup, create_animations)
