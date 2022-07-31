@@ -17,7 +17,7 @@ all-features = true
 default = []
 yaml = ["dep:yaml", "load-from-file"]
 ron = ["dep:ron", "load-from-file"]
-bevy-07 = ["bevy-ecs-07", "bevy-core-07", "bevy-reflect-07", "bevy-app-07", "bevy-asset-07", "bevy-sprite-07"]
+bevy-08 = ["bevy-ecs-08", "bevy-time-08", "bevy-reflect-08", "bevy-app-08", "bevy-asset-08", "bevy-sprite-08"]
 load-from-file = ["serde", "anyhow"]
 
 [dependencies]
@@ -30,15 +30,15 @@ serde = { version = "1.0", default-features = false, features = ["derive"], opti
 anyhow = { version = "1.0", default-features = false, optional = true }
 
 ## Bevy 0.7
-bevy-ecs-07 = { package = "bevy_ecs", version = "0.7.0", default-features = false, optional = true }
-bevy-core-07 = { package = "bevy_core", version = "0.7.0", default-features = false, optional = true }
-bevy-reflect-07 = { package = "bevy_reflect", version = "0.7.0", default-features = false, optional = true }
-bevy-app-07 = { package = "bevy_app", version = "0.7.0", default-features = false, optional = true }
-bevy-asset-07 = { package = "bevy_asset", version = "0.7.0", default-features = false, optional = true }
-bevy-sprite-07 = { package = "bevy_sprite", version = "0.7.0", default-features = false, optional = true }
+bevy-ecs-08 = { package = "bevy_ecs", version = "0.8.0", default-features = false, optional = true }
+bevy-time-08 = { package = "bevy_time", version = "0.8.0", default-features = false, optional = true }
+bevy-reflect-08 = { package = "bevy_reflect", version = "0.8.0", default-features = false, optional = true }
+bevy-app-08 = { package = "bevy_app", version = "0.8.0", default-features = false, optional = true }
+bevy-asset-08 = { package = "bevy_asset", version = "0.8.0", default-features = false, optional = true }
+bevy-sprite-08 = { package = "bevy_sprite", version = "0.8.0", default-features = false, optional = true }
 
 [dev-dependencies]
-bevy = { version = "0.7.0", default-features = false, features = ["render", "x11", "png"] }
+bevy = { version = "0.8.0", default-features = false, features = ["render", "x11", "png", "bevy_asset"] }
 rstest = { version = "0.15.0", default-features = false }
 
 [build-dependencies]
@@ -46,20 +46,20 @@ rustc_version = "0.4.0"
 
 [[example]]
 name = "change_animation"
-required-features = ["bevy-07"]
+required-features = ["bevy-08"]
 
 [[example]]
 name = "end_of_animation_detection"
-required-features = ["bevy-07"]
+required-features = ["bevy-08"]
 
 [[example]]
 name = "ping_pong"
-required-features = ["bevy-07"]
+required-features = ["bevy-08"]
 
 [[example]]
 name = "readme"
-required-features = ["bevy-07"]
+required-features = ["bevy-08"]
 
 [[example]]
 name = "using_animation_file"
-required-features = ["load-from-file", "yaml", "bevy-07"]
+required-features = ["load-from-file", "yaml", "bevy-08"]

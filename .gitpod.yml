@@ -17,7 +17,7 @@ tasks:
       cargo test --all-features
       cargo test
     command: |
-      cargo watch -x 'test --tests' -x 'test --features bevy-07' -x 'test --all-features' -x 'clippy --all-features --all-targets' -x '+nightly doc --all-features --no-deps'
+      cargo watch -x 'test --tests' -x 'test --features bevy-08' -x 'test --all-features' -x 'clippy --all-features --all-targets' -x '+nightly doc --all-features --no-deps'
 
 vscode:
   extensions:

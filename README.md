@@ -38,7 +38,7 @@ fn spawn(
   mut animations: ResMut<Assets<SpriteSheetAnimation>>,
 ) {
   // Don't forget the camera ;-)
-  commands.spawn_bundle(OrthographicCameraBundle::new_2d());
+  commands.spawn_bundle(Camera2dBundle::default());
 
   // Create an animation
   // Here we use an index-range (from 0 to 4) where each frame has the same duration
@@ -85,7 +85,7 @@ cargo add benimator
 | `serde` | Implementation of serde traits for deserializaion 
 | `yaml` | Asset loader for yaml files
 | `ron` | Asset loader for ron files
-| `bevy-07` | Integration with bevy 0.7
+| `bevy-08` | Integration with bevy 0.8
 
 *Feature flags not mentioned here are **NOT** part of the public API and are subject to breaking changes.*
 
