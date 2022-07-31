@@ -124,7 +124,7 @@ fn restart_anim_from_start(mut query: Query<&mut SpriteSheetAnimationState>) {
 //! First, create an asset file with the extension `.animation.yml`:
 //! ```yaml
 //! # The mode can be one of: 'Once', 'Repeat', 'PingPong'
-//! # or 'RepeatFrom: n' (where 'n' is the frame-index to repeat from)
+//! # or '!RepeatFrom n' (where 'n' is the frame-index to repeat from)
 //! # The default is 'Repeat'
 //! mode: PingPong
 //! frame_duration: 100  # duration of the frame in milliseconds

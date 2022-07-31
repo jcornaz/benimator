@@ -18,7 +18,7 @@ use crate::SpriteSheetAnimation;
 ```yaml
 # The mode can be one of: 'once', 'repeat', 'ping-pong'
 # or 'repeat-from: n' (where 'n' is the frame-index to repeat from)
-# The default is 'Repeat'
+# The default is 'Repeat'type
 mode: PingPong
 frames:
   - index: 0 # index in the sprite sheet for that frame
@@ -254,8 +254,7 @@ mod tests {
         fn repeat_from() {
             // given
             let content = b"
-            mode:
-              RepeatFrom: 1
+            mode: !RepeatFrom 1
             frames:
               - index: 0
                 duration: 100
