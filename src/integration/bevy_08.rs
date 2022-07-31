@@ -1,17 +1,17 @@
 use std::time::Duration;
 
-use bevy_app_07::prelude::*;
-use bevy_asset_07::prelude::*;
+use bevy_app_08::prelude::*;
+use bevy_asset_08::prelude::*;
 #[cfg(feature = "load-from-file")]
-use bevy_asset_07::{AssetLoader, BoxedFuture, LoadContext, LoadedAsset};
-use bevy_ecs_07::{
+use bevy_asset_08::{AssetLoader, BoxedFuture, LoadContext, LoadedAsset};
+use bevy_ecs_08::{
     component::{SparseStorage, TableStorage},
     prelude::*,
     system::Resource,
 };
-use bevy_reflect_07::{TypeUuid, Uuid};
-use bevy_sprite_07::prelude::*;
-use bevy_time_07::prelude::*;
+use bevy_reflect_08::{TypeUuid, Uuid};
+use bevy_sprite_08::prelude::*;
+use bevy_time_08::prelude::*;
 
 use crate::{Play, PlaySpeedMultiplier, SpriteSheetAnimation, SpriteSheetAnimationState};
 
@@ -154,7 +154,7 @@ impl AssetLoader for crate::animation::load::SpriteSheetAnimationLoader {
 mod tests {
     use std::time::Duration;
 
-    use bevy_asset_07::AssetPlugin;
+    use bevy_asset_08::AssetPlugin;
 
     use super::*;
 
@@ -243,7 +243,7 @@ mod tests {
         let mut loops = 0;
         while !matches!(
             app.world.resource::<AssetServer>().get_load_state(&handle),
-            bevy_asset_07::LoadState::Loaded
+            bevy_asset_08::LoadState::Loaded
         ) {
             assert!(loops < 100);
             loops += 1;
@@ -252,7 +252,7 @@ mod tests {
         }
         assert_eq!(
             app.world.resource::<AssetServer>().get_load_state(&handle),
-            bevy_asset_07::LoadState::Loaded
+            bevy_asset_08::LoadState::Loaded
         );
         assert!(app
             .world

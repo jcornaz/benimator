@@ -15,7 +15,7 @@
 //! 1. Add the [`AnimationPlugin`] plugin
 //!
 #![cfg_attr(
-    feature = "bevy-07",
+    feature = "bevy-08",
     doc = "
 ```no_run
 # use bevy::prelude::*;
@@ -38,7 +38,7 @@ fn spawn() { /* ... */ }
 //!
 //! 2. Create a [`SpriteSheetAnimation`] and insert the asset handle to the sprite sheet entity you want to animate
 #![cfg_attr(
-    feature = "bevy-07",
+    feature = "bevy-08",
     doc = "
 ```
 # use std::time::Duration;
@@ -104,7 +104,7 @@ fn spawn(mut commands: Commands, mut animations: ResMut<Assets<SpriteSheetAnimat
 //! For each entity with a [`SpriteSheetAnimation`], a [`SpriteSheetAnimationState`] component is automatically inserted.
 //! It can be used to reset the animation state by calling [`SpriteSheetAnimationState::reset`]
 #![cfg_attr(
-    feature = "bevy-07",
+    feature = "bevy-08",
     doc = "
 ```
 # use bevy::prelude::*;
@@ -141,7 +141,7 @@ fn restart_anim_from_start(mut query: Query<&mut SpriteSheetAnimationState>) {
 //! ```
 //!
 #![cfg_attr(
-    feature = "bevy-07",
+    feature = "bevy-08",
     doc = r#"
 And then load it with bevy's `AssetServer`:
 ```

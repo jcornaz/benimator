@@ -85,7 +85,7 @@ cargo add benimator
 | `serde` | Implementation of serde traits for deserializaion 
 | `yaml` | Asset loader for yaml files
 | `ron` | Asset loader for ron files
-| `bevy-07` | Integration with bevy 0.7
+| `bevy-08` | Integration with bevy 0.8
 
 *Feature flags not mentioned here are **NOT** part of the public API and are subject to breaking changes.*
 
