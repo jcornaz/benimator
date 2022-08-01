@@ -23,6 +23,12 @@ serde = { version = "1.0", default-features = false, features = ["derive"], opti
 [dev-dependencies]
 serde_yaml = { version = "0.9.2", default-features = false }
 rstest = { version = "0.15.0", default-features = false }
+bevy = { version = "0.8.0", default-features = false, features = ["bevy_asset", "bevy_winit", "render", "png", "x11"] }
+anyhow = "1.0"
 
 [build-dependencies]
 rustc_version = "0.4.0"
+
+[[example]]
+name = "bevy_with_asset_loader"
+required-features = ["serde"]
