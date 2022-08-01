@@ -7,6 +7,34 @@ use std::{ops::RangeInclusive, time::Duration};
 use serde::Deserialize;
 
 /// Definition of an animation
+#[cfg_attr(
+    feature = "serde",
+    doc = "
+
+# Deserialization format
+ 
+```yaml
+# The mode can be one of: 'Once', 'Repeat', 'PingPong'
+# or '!RepeatFrom: n' (where 'n' is the frame-index to repeat from)
+# The default is 'Repeat'
+mode: PingPong
+frames:
+  - index: 0 # index in the sprite sheet for that frame
+    duration: 100 # duration of the frame in milliseconds
+  - index: 1
+    duration: 100
+  - index: 2
+    duration: 120
+```
+
+There is also a short-hand notation if all frames have the same duration:
+
+```yaml
+frame_duration: 100
+frames: [0, 1, 2] # sequence of frame indices
+```
+"
+)]
 #[derive(Debug, Clone, Default)]
 #[cfg_attr(feature = "serde", derive(Deserialize))]
 #[cfg_attr(feature = "serde", serde(try_from = "dto::AnimationDto"))]
