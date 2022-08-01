@@ -15,7 +15,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 <csr-id-2d9a444c27b43518c2448a73aee07393568389e3/>
 
 **This release removes all integration with bevy.**
-`benimator` is no longer a bevy plugin, but an engine agnostic rust library.
+`benimator` is no longer a bevy plugin, but an engine-agnostic rust library.
 See the [announcement](https://github.com/jcornaz/benimator/discussions/91) for more details.
 
 ### Removed (BREAKING)
