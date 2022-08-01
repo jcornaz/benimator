@@ -1,10 +1,10 @@
 use std::time::Duration;
 
-use crate::{animation::Mode, Frame, SpriteSheetAnimation};
+use crate::{animation::Mode, Animation, Frame};
 
 /// Animation state
 #[derive(Default)]
-pub struct SpriteSheetAnimationState {
+pub struct State {
     animation_frame_index: usize,
     sprite_frame_index: usize,
     elapsed_in_frame: Duration,
@@ -13,7 +13,7 @@ pub struct SpriteSheetAnimationState {
     is_ended: bool,
 }
 
-impl SpriteSheetAnimationState {
+impl State {
     /// Reset animation state
     ///
     /// The animation will restart from the first frame, like if the animation was freshly spawned.
@@ -44,13 +44,13 @@ impl SpriteSheetAnimationState {
     }
 
     #[must_use]
-    fn frame<'a>(&self, animation: &'a SpriteSheetAnimation) -> &'a Frame {
+    fn frame<'a>(&self, animation: &'a Animation) -> &'a Frame {
         &animation.frames[self.animation_frame_index() % animation.frames.len()]
     }
 
     /// Update the animation state
     #[allow(dead_code)]
-    pub fn update(&mut self, animation: &SpriteSheetAnimation, delta: Duration) {
+    pub fn update(&mut self, animation: &Animation, delta: Duration) {
         debug_assert!(animation.has_frames());
         let mut frame = self.frame(animation);
         self.sprite_frame_index = frame.index;
@@ -112,8 +112,8 @@ mod tests {
 
     #[rstest]
     fn sprite_index(frame_duration: Duration) {
-        let animation = SpriteSheetAnimation::from_range(3..=5, frame_duration);
-        let mut state = SpriteSheetAnimationState::default();
+        let animation = Animation::from_range(3..=5, frame_duration);
+        let mut state = State::default();
         state.update(&animation, Duration::ZERO);
         assert_eq!(state.sprite_frame_index(), 3);
     }
@@ -122,8 +122,8 @@ mod tests {
         use super::*;
 
         #[fixture]
-        fn state() -> SpriteSheetAnimationState {
-            SpriteSheetAnimationState {
+        fn state() -> State {
+            State {
                 animation_frame_index: 1,
                 elapsed_in_frame: Duration::from_secs(1),
                 ..Default::default()
@@ -131,13 +131,13 @@ mod tests {
         }
 
         #[rstest]
-        fn resets_current_frame(mut state: SpriteSheetAnimationState) {
+        fn resets_current_frame(mut state: State) {
             state.reset();
             assert_eq!(state.animation_frame_index, 0);
         }
 
         #[rstest]
-        fn resets_elapsed_time(mut state: SpriteSheetAnimationState) {
+        fn resets_elapsed_time(mut state: State) {
             state.reset();
             assert_eq!(state.elapsed_in_frame, Duration::ZERO);
         }
@@ -147,19 +147,19 @@ mod tests {
         use super::*;
 
         #[fixture]
-        fn animation(frame_duration: Duration) -> SpriteSheetAnimation {
-            SpriteSheetAnimation::from_range(0..=2, frame_duration)
+        fn animation(frame_duration: Duration) -> Animation {
+            Animation::from_range(0..=2, frame_duration)
         }
 
         #[fixture]
-        fn state() -> SpriteSheetAnimationState {
-            SpriteSheetAnimationState::default()
+        fn state() -> State {
+            State::default()
         }
 
         #[rstest]
         fn nothing_happens_if_not_enough_time_has_elapsed_and_index_is_already_set(
-            mut state: SpriteSheetAnimationState,
-            animation: SpriteSheetAnimation,
+            mut state: State,
+            animation: Animation,
             smaller_duration: Duration,
         ) {
             state.update(&animation, smaller_duration);
@@ -168,30 +168,30 @@ mod tests {
 
         #[rstest]
         fn updates_index_if_less_than_expected_index(
-            mut state: SpriteSheetAnimationState,
+            mut state: State,
             frame_duration: Duration,
             smaller_duration: Duration,
         ) {
-            let animation = SpriteSheetAnimation::from_range(1..=3, frame_duration);
+            let animation = Animation::from_range(1..=3, frame_duration);
             state.update(&animation, smaller_duration);
             assert_eq!(state.sprite_frame_index(), 1);
         }
 
         #[rstest]
         fn updates_index_if_greater_than_expected_index(
-            mut state: SpriteSheetAnimationState,
+            mut state: State,
             frame_duration: Duration,
             smaller_duration: Duration,
         ) {
-            let animation = SpriteSheetAnimation::from_range(1..=3, frame_duration);
+            let animation = Animation::from_range(1..=3, frame_duration);
             state.update(&animation, smaller_duration);
             assert_eq!(state.sprite_frame_index(), 1);
         }
 
         #[rstest]
         fn updates_index_if_enough_time_has_elapsed(
-            mut state: SpriteSheetAnimationState,
-            animation: SpriteSheetAnimation,
+            mut state: State,
+            animation: Animation,
             frame_duration: Duration,
         ) {
             state.update(&animation, frame_duration);
@@ -200,8 +200,8 @@ mod tests {
 
         #[rstest]
         fn updates_index_if_enough_time_has_elapsed_after_multiple_updates(
-            mut state: SpriteSheetAnimationState,
-            animation: SpriteSheetAnimation,
+            mut state: State,
+            animation: Animation,
             smaller_duration: Duration,
         ) {
             state.update(&animation, smaller_duration);
@@ -211,8 +211,8 @@ mod tests {
 
         #[rstest]
         fn elapsed_duration_is_reset(
-            mut state: SpriteSheetAnimationState,
-            animation: SpriteSheetAnimation,
+            mut state: State,
+            animation: Animation,
             frame_duration: Duration,
             smaller_duration: Duration,
         ) {
@@ -225,19 +225,15 @@ mod tests {
         }
 
         #[rstest]
-        fn is_not_ended(
-            mut state: SpriteSheetAnimationState,
-            animation: SpriteSheetAnimation,
-            frame_duration: Duration,
-        ) {
+        fn is_not_ended(mut state: State, animation: Animation, frame_duration: Duration) {
             state.update(&animation, frame_duration);
             assert!(!state.is_ended());
         }
 
         #[rstest]
         fn skips_frame_if_too_much_time_elapsed(
-            mut state: SpriteSheetAnimationState,
-            animation: SpriteSheetAnimation,
+            mut state: State,
+            animation: Animation,
             frame_duration: Duration,
         ) {
             state.update(&animation, frame_duration * 2);
@@ -254,8 +250,8 @@ mod tests {
             use super::*;
 
             #[fixture]
-            fn animation(frame_duration: Duration) -> SpriteSheetAnimation {
-                SpriteSheetAnimation::from_frames(vec![
+            fn animation(frame_duration: Duration) -> Animation {
+                Animation::from_frames(vec![
                     Frame::new(0, frame_duration),
                     Frame::new(1, frame_duration),
                     Frame::new(2, frame_duration),
@@ -266,8 +262,8 @@ mod tests {
             }
 
             #[fixture]
-            fn state() -> SpriteSheetAnimationState {
-                SpriteSheetAnimationState {
+            fn state() -> State {
+                State {
                     animation_frame_index: 4,
                     elapsed_in_frame: Duration::from_nanos(0),
                     ..Default::default()
@@ -276,8 +272,8 @@ mod tests {
 
             #[rstest]
             fn returns_to_loop_frame(
-                mut state: SpriteSheetAnimationState,
-                animation: SpriteSheetAnimation,
+                mut state: State,
+                animation: Animation,
                 frame_duration: Duration,
             ) {
                 state.update(&animation, frame_duration);
@@ -285,11 +281,7 @@ mod tests {
             }
 
             #[rstest]
-            fn is_not_ended(
-                mut state: SpriteSheetAnimationState,
-                animation: SpriteSheetAnimation,
-                frame_duration: Duration,
-            ) {
+            fn is_not_ended(mut state: State, animation: Animation, frame_duration: Duration) {
                 state.update(&animation, frame_duration);
                 assert!(!state.is_ended());
             }
@@ -299,8 +291,8 @@ mod tests {
             use super::*;
 
             #[fixture]
-            fn animation(frame_duration: Duration) -> SpriteSheetAnimation {
-                SpriteSheetAnimation::from_frames(vec![
+            fn animation(frame_duration: Duration) -> Animation {
+                Animation::from_frames(vec![
                     Frame::new(0, frame_duration),
                     Frame::new(1, frame_duration),
                     Frame::new(2, frame_duration),
@@ -310,8 +302,8 @@ mod tests {
             }
 
             #[fixture]
-            fn state() -> SpriteSheetAnimationState {
-                SpriteSheetAnimationState {
+            fn state() -> State {
+                State {
                     animation_frame_index: 4,
                     elapsed_in_frame: Duration::from_nanos(0),
                     ..Default::default()
@@ -320,8 +312,8 @@ mod tests {
 
             #[rstest]
             fn returns_to_first_frame(
-                mut state: SpriteSheetAnimationState,
-                animation: SpriteSheetAnimation,
+                mut state: State,
+                animation: Animation,
                 frame_duration: Duration,
             ) {
                 state.update(&animation, frame_duration);
@@ -329,11 +321,7 @@ mod tests {
             }
 
             #[rstest]
-            fn is_not_ended(
-                mut state: SpriteSheetAnimationState,
-                animation: SpriteSheetAnimation,
-                frame_duration: Duration,
-            ) {
+            fn is_not_ended(mut state: State, animation: Animation, frame_duration: Duration) {
                 state.update(&animation, frame_duration);
                 assert!(!state.is_ended());
             }
@@ -347,13 +335,13 @@ mod tests {
             use super::*;
 
             #[fixture]
-            fn animation(frame_duration: Duration) -> SpriteSheetAnimation {
-                SpriteSheetAnimation::from_range(0..=1, frame_duration).ping_pong()
+            fn animation(frame_duration: Duration) -> Animation {
+                Animation::from_range(0..=1, frame_duration).ping_pong()
             }
 
             #[fixture]
-            fn state() -> SpriteSheetAnimationState {
-                SpriteSheetAnimationState {
+            fn state() -> State {
+                State {
                     animation_frame_index: 1,
                     elapsed_in_frame: Duration::from_nanos(500),
                     ..Default::default()
@@ -362,8 +350,8 @@ mod tests {
 
             #[rstest]
             fn returns_to_previous_frame(
-                mut state: SpriteSheetAnimationState,
-                animation: SpriteSheetAnimation,
+                mut state: State,
+                animation: Animation,
                 frame_duration: Duration,
             ) {
                 state.update(&animation, frame_duration);
@@ -372,8 +360,8 @@ mod tests {
 
             #[rstest]
             fn changes_state_to_backward(
-                mut state: SpriteSheetAnimationState,
-                animation: SpriteSheetAnimation,
+                mut state: State,
+                animation: Animation,
                 frame_duration: Duration,
             ) {
                 state.update(&animation, frame_duration);
@@ -385,13 +373,13 @@ mod tests {
             use super::*;
 
             #[fixture]
-            fn animation(frame_duration: Duration) -> SpriteSheetAnimation {
-                SpriteSheetAnimation::from_range(0..=2, frame_duration).ping_pong()
+            fn animation(frame_duration: Duration) -> Animation {
+                Animation::from_range(0..=2, frame_duration).ping_pong()
             }
 
             #[fixture]
-            fn state() -> SpriteSheetAnimationState {
-                SpriteSheetAnimationState {
+            fn state() -> State {
+                State {
                     animation_frame_index: 1,
                     elapsed_in_frame: Duration::from_nanos(500),
                     going_backward: true,
@@ -401,8 +389,8 @@ mod tests {
 
             #[rstest]
             fn continues_to_previous_frame(
-                mut state: SpriteSheetAnimationState,
-                animation: SpriteSheetAnimation,
+                mut state: State,
+                animation: Animation,
                 frame_duration: Duration,
             ) {
                 state.update(&animation, frame_duration);
@@ -415,16 +403,16 @@ mod tests {
         use super::*;
 
         #[fixture]
-        fn animation(frame_duration: Duration) -> SpriteSheetAnimation {
-            SpriteSheetAnimation::from_range(0..=1, frame_duration).once()
+        fn animation(frame_duration: Duration) -> Animation {
+            Animation::from_range(0..=1, frame_duration).once()
         }
 
         mod on_first_frame {
             use super::*;
 
             #[fixture]
-            fn state() -> SpriteSheetAnimationState {
-                SpriteSheetAnimationState {
+            fn state() -> State {
+                State {
                     animation_frame_index: 0,
                     elapsed_in_frame: Duration::from_nanos(500),
                     ..Default::default()
@@ -433,8 +421,8 @@ mod tests {
 
             #[rstest]
             fn final_index_set_if_frames_skipped_past_end(
-                mut state: SpriteSheetAnimationState,
-                animation: SpriteSheetAnimation,
+                mut state: State,
+                animation: Animation,
                 frame_duration: Duration,
             ) {
                 state.update(&animation, frame_duration * 4);
@@ -446,8 +434,8 @@ mod tests {
             use super::*;
 
             #[fixture]
-            fn state() -> SpriteSheetAnimationState {
-                SpriteSheetAnimationState {
+            fn state() -> State {
+                State {
                     animation_frame_index: 1,
                     elapsed_in_frame: Duration::from_nanos(500),
                     ..Default::default()
@@ -455,21 +443,13 @@ mod tests {
             }
 
             #[rstest]
-            fn does_nothing(
-                mut state: SpriteSheetAnimationState,
-                animation: SpriteSheetAnimation,
-                frame_duration: Duration,
-            ) {
+            fn does_nothing(mut state: State, animation: Animation, frame_duration: Duration) {
                 state.update(&animation, frame_duration);
                 assert_eq!(state.sprite_frame_index(), 1);
             }
 
             #[rstest]
-            fn is_ended(
-                mut state: SpriteSheetAnimationState,
-                animation: SpriteSheetAnimation,
-                frame_duration: Duration,
-            ) {
+            fn is_ended(mut state: State, animation: Animation, frame_duration: Duration) {
                 state.update(&animation, frame_duration);
                 assert!(state.is_ended());
             }

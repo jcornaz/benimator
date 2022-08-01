@@ -9,7 +9,7 @@ use serde::{
     Deserialize,
 };
 
-use super::{Frame, Mode, SpriteSheetAnimation};
+use super::{Animation, Frame, Mode};
 
 #[derive(Deserialize)]
 pub(super) struct AnimationDto {
@@ -85,7 +85,7 @@ impl<'de> Deserialize<'de> for FrameDto {
     }
 }
 
-impl TryFrom<AnimationDto> for SpriteSheetAnimation {
+impl TryFrom<AnimationDto> for Animation {
     type Error = InvalidAnimation;
 
     fn try_from(animation: AnimationDto) -> Result<Self, Self::Error> {
@@ -146,7 +146,7 @@ mod tests {
                 duration: 120";
 
         // when
-        let animation: SpriteSheetAnimation = serde_yaml::from_str(content).unwrap();
+        let animation: Animation = serde_yaml::from_str(content).unwrap();
 
         // then
         assert_eq!(animation.mode, Mode::PingPong);
@@ -169,7 +169,7 @@ mod tests {
                 duration: 100";
 
         // when
-        let animation: SpriteSheetAnimation = serde_yaml::from_str(content).unwrap();
+        let animation: Animation = serde_yaml::from_str(content).unwrap();
 
         // then
         assert_eq!(animation.mode, Mode::RepeatFrom(0));
@@ -185,7 +185,7 @@ mod tests {
                 duration: 100";
 
         // when
-        let animation: SpriteSheetAnimation = serde_yaml::from_str(content).unwrap();
+        let animation: Animation = serde_yaml::from_str(content).unwrap();
 
         // then
         assert_eq!(animation.mode, Mode::RepeatFrom(0));
@@ -201,7 +201,7 @@ mod tests {
                 duration: 100";
 
         // when
-        let animation: SpriteSheetAnimation = serde_yaml::from_str(content).unwrap();
+        let animation: Animation = serde_yaml::from_str(content).unwrap();
 
         // then
         assert_eq!(animation.mode, Mode::Once);
@@ -219,7 +219,7 @@ mod tests {
                 duration: 100";
 
         // when
-        let animation: SpriteSheetAnimation = serde_yaml::from_str(content).unwrap();
+        let animation: Animation = serde_yaml::from_str(content).unwrap();
 
         // then
         assert_eq!(animation.mode, Mode::RepeatFrom(1));
@@ -234,7 +234,7 @@ mod tests {
                 duration: 0";
 
         // when
-        let animation: Result<SpriteSheetAnimation, _> = serde_yaml::from_str(content);
+        let animation: Result<Animation, _> = serde_yaml::from_str(content);
 
         // then
         assert!(animation.is_err());
@@ -253,7 +253,7 @@ mod tests {
         ";
 
         // when
-        let animation: SpriteSheetAnimation = serde_yaml::from_str(content).unwrap();
+        let animation: Animation = serde_yaml::from_str(content).unwrap();
 
         // then
         assert_eq!(
@@ -275,7 +275,7 @@ mod tests {
         ";
 
         // when
-        let animation: SpriteSheetAnimation = serde_yaml::from_str(content).unwrap();
+        let animation: Animation = serde_yaml::from_str(content).unwrap();
 
         // then
         assert_eq!(
