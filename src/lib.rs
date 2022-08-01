@@ -43,7 +43,7 @@
 extern crate rstest;
 
 pub use animation::{Animation, Frame};
-pub use player::State;
+pub use state::State;
 
 mod animation;
-mod player;
+mod state;
