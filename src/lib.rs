@@ -19,21 +19,6 @@ pub use state::SpriteSheetAnimationState;
 mod animation;
 mod state;
 
-/// Plugin to enable sprite-sheet animation
-///
-/// See crate level documentation for usage
-#[non_exhaustive]
-#[derive(Default)]
-pub struct AnimationPlugin;
-
-/// Components that indicates the animation is playing
-///
-/// Insert the components to play the animation, and remove it to pause it.
-///
-/// If the animation mode is [`AnimationMode::Once`] this component is automatically removed at the end of the animation.
-#[derive(Debug, Copy, Clone, Default)]
-pub struct Play;
-
 /// Component that, when applied, can change the playback's rate of the animation.
 ///
 /// Receives a f64 multiplier which will alter the delta, speeding up or slowing down to the desired playback rate.
@@ -47,8 +32,8 @@ impl PlaySpeedMultiplier {
         Self(multiplier)
     }
 
-    #[allow(dead_code)]
-    fn transform(self, duration: Duration) -> Duration {
+    #[must_use]
+    pub fn transform(self, duration: Duration) -> Duration {
         duration.mul_f64(self.0)
     }
 }
