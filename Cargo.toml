@@ -5,9 +5,9 @@ edition = "2021"
 rust-version = "1.62"
 authors = ["Jonathan Cornaz"]
 license = "Unlicense OR MIT"
-description = "A sprite sheet animation plugin for Bevy"
+description = "A sprite animation library for rust game development"
 repository = "https://github.com/jcornaz/benimator"
-keywords = ["game", "gamedev", "anmiation", "bevy"]
+keywords = ["game", "gamedev", "anmiation"]
 categories = ["game-development"]
 
 [package.metadata.docs.rs]
@@ -15,30 +15,13 @@ all-features = true
 
 [features]
 default = []
-yaml = ["dep:yaml", "load-from-file"]
-ron = ["dep:ron", "load-from-file"]
-bevy-08 = ["bevy-ecs-08", "bevy-time-08", "bevy-reflect-08", "bevy-app-08", "bevy-asset-08", "bevy-sprite-08"]
-load-from-file = ["serde", "anyhow"]
 
 [dependencies]
-# Private dependencies (do not leak into the public API)
-yaml = { package = "serde_yaml", version = "0.9.2", default-features = false, optional = true }
-ron = { version = "0.7.1", default-features = false, optional = true }
-
 # Public dependencies (Present in the public API)
 serde = { version = "1.0", default-features = false, features = ["derive"], optional = true }
-anyhow = { version = "1.0", default-features = false, optional = true }
-
-## Bevy 0.7
-bevy-ecs-08 = { package = "bevy_ecs", version = "0.8.0", default-features = false, optional = true }
-bevy-time-08 = { package = "bevy_time", version = "0.8.0", default-features = false, optional = true }
-bevy-reflect-08 = { package = "bevy_reflect", version = "0.8.0", default-features = false, optional = true }
-bevy-app-08 = { package = "bevy_app", version = "0.8.0", default-features = false, optional = true }
-bevy-asset-08 = { package = "bevy_asset", version = "0.8.0", default-features = false, optional = true }
-bevy-sprite-08 = { package = "bevy_sprite", version = "0.8.0", default-features = false, optional = true }
 
 [dev-dependencies]
-bevy = { version = "0.8.0", default-features = false, features = ["render", "x11", "png", "bevy_asset"] }
+yaml = { package = "serde_yaml", version = "0.9.2", default-features = false }
 rstest = { version = "0.15.0", default-features = false }
 
 [build-dependencies]

@@ -2,31 +2,13 @@ use std::time::Duration;
 
 use crate::{animation::Mode, Frame, SpriteSheetAnimation};
 
-/// Animation state component which is automatically inserted/removed
-///
-/// It can be used to reset the animation state.
-///
-/// # Example
-#[cfg_attr(
-    feature = "bevy-08",
-    doc = "
-```
-# use bevy::prelude::*;
-# use benimator::SpriteSheetAnimationState;
-fn restart_anim_from_start(mut query: Query<&mut SpriteSheetAnimationState>) {
-  for mut state in query.iter_mut() {
-    state.reset();
-  }
-}
-```
-"
-)]
+/// Animation state
 #[derive(Default)]
 pub struct SpriteSheetAnimationState {
     animation_frame_index: usize,
     sprite_frame_index: usize,
     elapsed_in_frame: Duration,
-    // Control ping_pong backward frame navigation.
+    /// Control ping_pong backward frame navigation.
     going_backward: bool,
     is_ended: bool,
 }

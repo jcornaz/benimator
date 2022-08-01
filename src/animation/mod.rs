@@ -1,16 +1,7 @@
 #[cfg(feature = "serde")]
 mod dto;
 
-#[cfg(feature = "load-from-file")]
-pub(crate) mod load;
-
 use std::{ops::RangeInclusive, time::Duration};
-
-#[cfg(feature = "load-from-file")]
-pub use load::SpriteSheetAnimationLoader;
-
-#[cfg(feature = "load-from-file")]
-pub use load::AnimationParseError;
 
 #[cfg(feature = "serde")]
 use serde::Deserialize;
