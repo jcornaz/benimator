@@ -69,8 +69,6 @@ jobs:
       matrix:
         feature:
           - "serde"
-          - "yaml"
-          - "ron"
 
     steps:
       - uses: actions/checkout@v3
