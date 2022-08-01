@@ -71,7 +71,6 @@ jobs:
           - "serde"
           - "yaml"
           - "ron"
-          - "bevy-08"
 
     steps:
       - uses: actions/checkout@v3

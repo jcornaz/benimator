@@ -4,10 +4,6 @@
   ],
   "packageRules": [
     {
-      "matchPackagePatterns": ["^bevy"],
-      "groupName": "bevy"
-    },
-    {
       "matchDepTypes": ["dev-dependencies"],
       "automerge": true
     }
