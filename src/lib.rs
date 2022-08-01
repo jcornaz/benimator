@@ -13,11 +13,11 @@ extern crate rstest;
 
 use std::time::Duration;
 
-pub use animation::{Frame, SpriteSheetAnimation};
-pub use state::SpriteSheetAnimationState;
+pub use animation::{Animation, Frame};
+pub use player::State;
 
 mod animation;
-mod state;
+mod player;
 
 /// Component that, when applied, can change the playback's rate of the animation.
 ///

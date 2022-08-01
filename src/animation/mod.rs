@@ -12,7 +12,7 @@ use serde::Deserialize;
 #[derive(Debug, Clone, Default)]
 #[cfg_attr(feature = "serde", derive(Deserialize))]
 #[cfg_attr(feature = "serde", serde(try_from = "dto::AnimationDto"))]
-pub struct SpriteSheetAnimation {
+pub struct Animation {
     /// Frames
     pub(crate) frames: Vec<Frame>,
     /// Animation mode
@@ -28,7 +28,7 @@ pub struct Frame {
     pub(crate) duration: Duration,
 }
 
-impl SpriteSheetAnimation {
+impl Animation {
     /// Create a new animation from frames
     #[must_use]
     pub fn from_frames(frames: Vec<Frame>) -> Self {
@@ -40,7 +40,7 @@ impl SpriteSheetAnimation {
 
     /// Create a new animation from index-range, using the same frame duration for each frame.
     ///
-    /// For more granular configuration, see [`from_frames`](SpriteSheetAnimation::from_frames)
+    /// For more granular configuration, see [`from_frames`](Animation::from_frames)
     ///
     /// # Panics
     ///
@@ -56,12 +56,12 @@ impl SpriteSheetAnimation {
     ///
     /// You may use this to create a reversed animation:
     /// ```
-    /// # use benimator::SpriteSheetAnimation;
+    /// # use benimator::Animation;
     /// # use std::time::Duration;
-    /// let animation = SpriteSheetAnimation::from_iter((0..5).rev(), Duration::from_millis(100));
+    /// let animation = Animation::from_iter((0..5).rev(), Duration::from_millis(100));
     /// ```
     ///
-    /// For more granular configuration, see [`from_frames`](SpriteSheetAnimation::from_frames)
+    /// For more granular configuration, see [`from_frames`](Animation::from_frames)
     ///
     /// # Panics
     ///
@@ -114,7 +114,7 @@ pub(crate) enum Mode {
     PingPong,
 }
 
-impl FromIterator<Frame> for SpriteSheetAnimation {
+impl FromIterator<Frame> for Animation {
     fn from_iter<T: IntoIterator<Item = Frame>>(iter: T) -> Self {
         Self::from_frames(iter.into_iter().collect())
     }

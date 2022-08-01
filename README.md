@@ -7,14 +7,6 @@
 
 A sprite animation library for rust game development
 
-
-## Features
-
-* A `SpriteSheetAnimation` asset
-* Animation modes: `once`, `repeat` and `ping_pong`
-* The animation can be defined from an index-range, or an arbitrary list of indices
-* Each frame may have a different duration
-
 ## Installation
 
 Add the dependency to your project
