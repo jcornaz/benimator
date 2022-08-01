@@ -124,3 +124,168 @@ impl Display for InvalidAnimation {
 }
 
 impl Error for InvalidAnimation {}
+
+#[cfg(test)]
+#[cfg(feature = "yaml")]
+mod tests {
+    use super::*;
+
+    use crate::{animation::Mode, Frame};
+    use std::time::Duration;
+
+    #[test]
+    fn parse() {
+        // given
+        let content = "
+            mode: PingPong
+            frames:
+              - index: 0 # index in the sprite sheet for that frame
+                duration: 100 # duration of the frame in milliseconds
+              - index: 1
+                duration: 100
+              - index: 2
+                duration: 120";
+
+        // when
+        let animation: SpriteSheetAnimation = yaml::from_str(content).unwrap();
+
+        // then
+        assert_eq!(animation.mode, Mode::PingPong);
+        assert_eq!(
+            animation.frames,
+            vec![
+                Frame::new(0, Duration::from_millis(100)),
+                Frame::new(1, Duration::from_millis(100)),
+                Frame::new(2, Duration::from_millis(120)),
+            ]
+        );
+    }
+
+    #[test]
+    fn default_mode() {
+        // given
+        let content = "
+            frames:
+              - index: 0
+                duration: 100";
+
+        // when
+        let animation: SpriteSheetAnimation = yaml::from_str(content).unwrap();
+
+        // then
+        assert_eq!(animation.mode, Mode::RepeatFrom(0));
+    }
+
+    #[test]
+    fn repeat() {
+        // given
+        let content = "
+            mode: Repeat
+            frames:
+              - index: 0
+                duration: 100";
+
+        // when
+        let animation: SpriteSheetAnimation = yaml::from_str(content).unwrap();
+
+        // then
+        assert_eq!(animation.mode, Mode::RepeatFrom(0));
+    }
+
+    #[test]
+    fn once() {
+        // given
+        let content = "
+            mode: Once
+            frames:
+              - index: 0
+                duration: 100";
+
+        // when
+        let animation: SpriteSheetAnimation = yaml::from_str(content).unwrap();
+
+        // then
+        assert_eq!(animation.mode, Mode::Once);
+    }
+
+    #[test]
+    fn repeat_from() {
+        // given
+        let content = "
+            mode: !RepeatFrom 1
+            frames:
+              - index: 0
+                duration: 100
+              - index: 1
+                duration: 100";
+
+        // when
+        let animation: SpriteSheetAnimation = yaml::from_str(content).unwrap();
+
+        // then
+        assert_eq!(animation.mode, Mode::RepeatFrom(1));
+    }
+
+    #[test]
+    fn zero_duration() {
+        // given
+        let content = "
+            frames:
+              - index: 0
+                duration: 0";
+
+        // when
+        let animation: Result<SpriteSheetAnimation, _> = yaml::from_str(content);
+
+        // then
+        assert!(animation.is_err());
+    }
+
+    #[test]
+    fn same_duration_for_all_frames() {
+        // given
+        let content = "
+            frame_duration: 100
+            frames:
+              - index: 0
+              - index: 1
+              - index: 2
+                duration: 200
+        ";
+
+        // when
+        let animation: SpriteSheetAnimation = yaml::from_str(content).unwrap();
+
+        // then
+        assert_eq!(
+            animation.frames,
+            vec![
+                Frame::new(0, Duration::from_millis(100)),
+                Frame::new(1, Duration::from_millis(100)),
+                Frame::new(2, Duration::from_millis(200)),
+            ]
+        );
+    }
+
+    #[test]
+    fn same_duration_for_all_frames_short_hand() {
+        // given
+        let content = "
+            frame_duration: 100
+            frames: [0, 1, 2]
+        ";
+
+        // when
+        let animation: SpriteSheetAnimation = yaml::from_str(content).unwrap();
+
+        // then
+        assert_eq!(
+            animation.frames,
+            vec![
+                Frame::new(0, Duration::from_millis(100)),
+                Frame::new(1, Duration::from_millis(100)),
+                Frame::new(2, Duration::from_millis(100)),
+            ]
+        );
+    }
+}
