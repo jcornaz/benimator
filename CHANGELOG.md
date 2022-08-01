@@ -4,7 +4,48 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## 4.0.0-alpha.9 (2022-07-30)
+## Unreleased
+
+<csr-id-bc5d40d267d246647cbc468478c585c11f72a44f/>
+<csr-id-b08f94d1f98d327c396493816a92252033875836/>
+<csr-id-95dc46b5d3000b186f82443d9a3fefa34a0dc17a/>
+<csr-id-d5c2ee84a9af8c8e8bfff0c38915e276f37002c7/>
+<csr-id-cd825f423a83e3eaa6d1357e3a760f479b1ceaf4/>
+<csr-id-5640c383787abebc1d2e7413a9f91d652d99d21b/>
+<csr-id-2d9a444c27b43518c2448a73aee07393568389e3/>
+
+**This release removes all integration with bevy.**
+`benimator` is no longer a bevy plugin, but an engine agnostic rust library.
+See the [announcement](https://github.com/jcornaz/benimator/discussions/91) for more details.
+
+### Removed (BREAKING)
+
+ - <csr-id-5640c383787abebc1d2e7413a9f91d652d99d21b/> `PlayBackSpeed` struct
+   Without bevy integration, it is now already possible (and easier)
+   to alter the time duration, without the need for this struct.
+ - <csr-id-2d9a444c27b43518c2448a73aee07393568389e3/> Deprecated members
+
+### Changed (BREAKING)
+
+ - <csr-id-d5c2ee84a9af8c8e8bfff0c38915e276f37002c7/> Rename structs
+   `SpriteSheetAnimation` -> `Animation`
+   `SpriteSheetAnimationState` -> `State`
+ - <csr-id-cd825f423a83e3eaa6d1357e3a760f479b1ceaf4/> Change syntax of repeat-from to: `!RepeatFrom n`
+ - The state is no longer automatically reset after the last frame of a `run_once` animation.
+   So one must explicitly reset the state if they desire to restart the animation later.
+ - **[unstable-load-from-file]** Remove `from_(yaml|ron)_(str|bytes)` functions
+
+### Added
+
+ - Add `sprite_frame_index` method to state
+ - Public `update` function for the state.
+
+### Stabilization
+
+ - Stabilize load-from-file.
+   The feature flag is removed. The feature flag `serde` should be used instead.
+
+## 4.0.0-alpha.9 (2022-07-31)
 
 <csr-id-b4bbf39071dac083884b936ed6cd625e6fbd1307/>
 <csr-id-e27669e51a174ab7678de5a7ac2d4348afe2f77a/>
@@ -27,7 +68,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Documentation
 
- - <csr-id-5f4fa1bae89052743e3a03608c57a27a57406c0a/> **ron** Document shorthand noation for ron
+ - <csr-id-5f4fa1bae89052743e3a03608c57a27a57406c0a/> **ron** Document shorthand notation for ron
 
 ### New Features
 
