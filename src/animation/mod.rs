@@ -6,9 +6,7 @@ use std::{ops::RangeInclusive, time::Duration};
 #[cfg(feature = "serde")]
 use serde::Deserialize;
 
-/// Asset that define an animation of `TextureAtlasSprite`
-///
-/// See crate level documentation for usage
+/// Definition of an animation
 #[derive(Debug, Clone, Default)]
 #[cfg_attr(feature = "serde", derive(Deserialize))]
 #[cfg_attr(feature = "serde", serde(try_from = "dto::AnimationDto"))]

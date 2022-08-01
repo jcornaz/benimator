@@ -5,7 +5,11 @@
 [![Docs](https://docs.rs/benimator/badge.svg)](https://docs.rs/benimator)
 [![Build](https://img.shields.io/github/workflow/status/jcornaz/benimator/build)](https://github.com/jcornaz/benimator/actions/workflows/build.yml)
 
-A sprite animation library for rust game development
+A sprite animation library for rust game development.
+
+Initially designed for [bevy](https://bevyengine.org), it is now engine agnostic.
+
+See [example with bevy](examples/bevy.rs).
 
 ## Installation
 
