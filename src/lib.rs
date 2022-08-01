@@ -16,9 +16,6 @@ use std::time::Duration;
 pub use animation::{Frame, SpriteSheetAnimation};
 pub use state::SpriteSheetAnimationState;
 
-#[allow(deprecated)]
-pub use animation::AnimationMode;
-
 mod animation;
 mod state;
 

@@ -19,28 +19,6 @@ pub struct SpriteSheetAnimation {
     pub(crate) mode: Mode,
 }
 
-/// Animation mode (run once, repeat or ping-pong)
-///
-/// Deprecated
-/// ---
-/// This is not exposed in any of the public APIs of the crate so there is no reason to depend on
-/// it. Use 'builder-style' methods like [`SpriteSheetAnimation::repeat`] instead.
-#[deprecated]
-#[doc(hidden)]
-#[non_exhaustive]
-#[derive(Debug, Copy, Clone, Eq, PartialEq)]
-pub enum AnimationMode {
-    /// Runs the animation once and then stop playing
-    Once,
-
-    /// Repeat the animation forever
-    Repeat,
-
-    /// Repeat the animation forever, going back and forth between
-    /// the first and last frame.
-    PingPong,
-}
-
 /// A single animation frame
 #[derive(Debug, Copy, Clone, Default, PartialEq, Eq)]
 pub struct Frame {
@@ -146,14 +124,6 @@ impl Default for Mode {
     #[inline]
     fn default() -> Self {
         Self::RepeatFrom(0)
-    }
-}
-
-#[allow(deprecated)]
-impl Default for AnimationMode {
-    #[inline]
-    fn default() -> Self {
-        Self::Repeat
     }
 }
 
