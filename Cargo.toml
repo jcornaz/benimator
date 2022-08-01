@@ -43,23 +43,3 @@ rstest = { version = "0.15.0", default-features = false }
 
 [build-dependencies]
 rustc_version = "0.4.0"
-
-[[example]]
-name = "change_animation"
-required-features = ["bevy-08"]
-
-[[example]]
-name = "end_of_animation_detection"
-required-features = ["bevy-08"]
-
-[[example]]
-name = "ping_pong"
-required-features = ["bevy-08"]
-
-[[example]]
-name = "readme"
-required-features = ["bevy-08"]
-
-[[example]]
-name = "using_animation_file"
-required-features = ["load-from-file", "yaml", "bevy-08"]
