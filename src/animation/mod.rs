@@ -4,7 +4,7 @@ mod dto;
 use std::{ops::RangeInclusive, time::Duration};
 
 #[cfg(feature = "serde")]
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 
 /// Definition of an animation
 #[cfg_attr(
@@ -36,8 +36,11 @@ frames: [0, 1, 2] # sequence of frame indices
 "
 )]
 #[derive(Debug, Clone, Eq, PartialEq)]
-#[cfg_attr(feature = "serde", derive(Deserialize))]
-#[cfg_attr(feature = "serde", serde(try_from = "dto::AnimationDto"))]
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+#[cfg_attr(
+    feature = "serde",
+    serde(try_from = "dto::AnimationDto", into = "dto::AnimationDto")
+)]
 pub struct Animation {
     /// Frames
     pub(crate) frames: Vec<Frame>,

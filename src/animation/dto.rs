@@ -6,21 +6,21 @@ use std::{
 
 use serde::{
     de::{self, value::MapAccessDeserializer, MapAccess, Unexpected},
-    Deserialize,
+    Deserialize, Serialize,
 };
 
 use super::{Animation, Frame, Mode};
 
-#[derive(Deserialize)]
+#[derive(Serialize, Deserialize)]
 pub(super) struct AnimationDto {
     #[serde(default)]
     mode: ModeDto,
-    #[serde(default)]
+    #[serde(default, skip_serializing)]
     frame_duration: Option<u64>,
     frames: Vec<FrameDto>,
 }
 
-#[derive(Deserialize)]
+#[derive(Serialize, Deserialize)]
 enum ModeDto {
     Repeat,
     RepeatFrom(usize),
@@ -34,6 +34,7 @@ impl Default for ModeDto {
     }
 }
 
+#[derive(Serialize)]
 struct FrameDto {
     index: usize,
     duration: Option<u64>,
@@ -56,7 +57,7 @@ impl<'de> Deserialize<'de> for FrameDto {
         impl<'de> de::Visitor<'de> for Visitor {
             type Value = FrameDto;
 
-            fn expecting(&self, formatter: &mut fmt::Formatter<'_>) -> fmt::Result {
+            fn expecting(&self, formatter: &mut Formatter<'_>) -> fmt::Result {
                 write!(formatter, "either a frame index, or a frame-index with a")
             }
 
@@ -82,6 +83,30 @@ impl<'de> Deserialize<'de> for FrameDto {
             }
         }
         deserializer.deserialize_any(Visitor)
+    }
+}
+
+impl From<Frame> for FrameDto {
+    fn from(frame: Frame) -> Self {
+        Self {
+            duration: Some(frame.duration.as_millis().try_into().unwrap()),
+            index: frame.index,
+        }
+    }
+}
+
+impl From<Animation> for AnimationDto {
+    fn from(animation: Animation) -> Self {
+        Self {
+            frame_duration: None,
+            mode: match animation.mode {
+                Mode::Once => ModeDto::Once,
+                Mode::RepeatFrom(0) => ModeDto::Repeat,
+                Mode::RepeatFrom(i) => ModeDto::RepeatFrom(i),
+                Mode::PingPong => ModeDto::PingPong,
+            },
+            frames: animation.frames.into_iter().map(FrameDto::from).collect(),
+        }
     }
 }
 
@@ -131,6 +156,22 @@ mod tests {
 
     use crate::{animation::Mode, Frame};
     use std::time::Duration;
+
+    #[rstest]
+    fn deserialize_serialize(
+        #[values(
+            Animation::from_range(0..=2, Duration::from_secs(1)),
+            Animation::from_range(0..=2, Duration::from_secs(1)).once(),
+            Animation::from_range(0..=2, Duration::from_secs(1)).repeat(),
+            Animation::from_range(0..=2, Duration::from_secs(1)).repeat_from(1),
+            Animation::from_range(0..=2, Duration::from_secs(1)).ping_pong(),
+        )]
+        animation: Animation,
+    ) {
+        let serialized: String = serde_yaml::to_string(&animation).unwrap();
+        let deserialized: Animation = serde_yaml::from_str(&serialized).unwrap();
+        assert_eq!(animation, deserialized);
+    }
 
     #[test]
     fn parse() {
