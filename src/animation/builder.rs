@@ -2,18 +2,17 @@ use std::{ops::RangeInclusive, time::Duration};
 
 use crate::Animation;
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Default)]
+#[must_use]
 pub struct Builder {
     frame_duration: Duration,
     range: Option<RangeInclusive<usize>>,
 }
 
 impl Builder {
+    /// Create a new builder
     pub fn new() -> Self {
-        Self {
-            frame_duration: Duration::ZERO,
-            range: None,
-        }
+        Self::default()
     }
 
     pub fn set_default_frame_duration(mut self, duration: Duration) -> Self {
@@ -38,6 +37,7 @@ impl Builder {
 }
 
 impl Animation {
+    /// Returns a new animation builder
     pub fn builder() -> Builder {
         Builder::new()
     }
@@ -63,7 +63,7 @@ mod tests {
 
     #[rstest]
     fn empty_animation_is_err() {
-        assert!(Animation::builder().build().is_err())
+        assert!(Animation::builder().build().is_err());
     }
 
     #[rstest]
@@ -71,7 +71,7 @@ mod tests {
         assert!(Animation::builder()
             .set_default_frame_duration(duration)
             .build()
-            .is_err())
+            .is_err());
     }
 
     #[rstest]
