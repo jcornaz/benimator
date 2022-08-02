@@ -146,6 +146,12 @@ impl FromIterator<Frame> for Animation {
     }
 }
 
+impl Extend<Frame> for Animation {
+    fn extend<T: IntoIterator<Item = Frame>>(&mut self, iter: T) {
+        self.frames.extend(iter);
+    }
+}
+
 impl Default for Mode {
     #[inline]
     fn default() -> Self {
@@ -180,5 +186,18 @@ mod tests {
     #[should_panic]
     fn panics_for_zero_duration() {
         let _ = Frame::new(0, Duration::ZERO);
+    }
+
+    #[test]
+    fn extends() {
+        let mut anim = Animation::from_range(0..=0, Duration::from_secs(1));
+        anim.extend([Frame::new(2, Duration::from_secs(2))]);
+        assert_eq!(
+            anim,
+            Animation::from_frames(vec![
+                Frame::new(0, Duration::from_secs(1)),
+                Frame::new(2, Duration::from_secs(2))
+            ])
+        );
     }
 }
