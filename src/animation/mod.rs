@@ -1,3 +1,4 @@
+mod builder;
 #[cfg(feature = "serde")]
 mod dto;
 

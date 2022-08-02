@@ -118,7 +118,7 @@ pub(super) enum InvalidAnimation {
 impl Display for InvalidAnimation {
     fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
         match self {
-            InvalidAnimation::ZeroDuration => write!(f, "invalid duration, must be > 0"), /*  */
+            InvalidAnimation::ZeroDuration => write!(f, "invalid duration, must be > 0"),
         }
     }
 }
