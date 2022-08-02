@@ -1,33 +1,39 @@
 use std::{ops::RangeInclusive, time::Duration};
 
-use crate::{Animation, Frame};
+use crate::Animation;
 
 #[derive(Debug, Clone)]
 pub struct Builder {
     frame_duration: Duration,
-    range: RangeInclusive<usize>,
+    range: Option<RangeInclusive<usize>>,
 }
 
 impl Builder {
     pub fn new() -> Self {
         Self {
             frame_duration: Duration::ZERO,
-            range: 0..=0,
+            range: None,
         }
     }
 
-    pub fn set_frame_duration(mut self, duration: Duration) -> Self {
+    pub fn set_default_frame_duration(mut self, duration: Duration) -> Self {
         self.frame_duration = duration;
         self
     }
 
     pub fn add_frame_index_range(mut self, range: RangeInclusive<usize>) -> Self {
-        self.range = range;
+        self.range = Some(range);
         self
     }
 
     pub fn build(self) -> Result<Animation, InvalidAnimation> {
-        Ok(Animation::from_range(self.range, self.frame_duration))
+        if self.frame_duration.is_zero() {
+            Err(InvalidAnimation)
+        } else if let Some(range) = self.range {
+            Ok(Animation::from_range(range, self.frame_duration))
+        } else {
+            Err(InvalidAnimation)
+        }
     }
 }
 
@@ -51,15 +57,27 @@ pub struct InvalidAnimation;
 
 #[cfg(test)]
 mod tests {
+    use crate::Frame;
+
     use super::*;
 
     #[rstest]
-    fn empty_animation() {}
+    fn empty_animation_is_err() {
+        assert!(Animation::builder().build().is_err())
+    }
+
+    #[rstest]
+    fn zero_frame_is_err(duration: Duration) {
+        assert!(Animation::builder()
+            .set_default_frame_duration(duration)
+            .build()
+            .is_err())
+    }
 
     #[rstest]
     fn global_frame_duration(duration: Duration, range: RangeInclusive<usize>) {
         let anim: Animation = Animation::builder()
-            .set_frame_duration(duration)
+            .set_default_frame_duration(duration)
             .add_frame_index_range(range.clone())
             .try_into()
             .expect("Failed to build animation");
