@@ -35,7 +35,7 @@ frames: [0, 1, 2] # sequence of frame indices
 ```
 "
 )]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Eq, PartialEq)]
 #[cfg_attr(feature = "serde", derive(Deserialize))]
 #[cfg_attr(feature = "serde", serde(try_from = "dto::AnimationDto"))]
 pub struct Animation {
