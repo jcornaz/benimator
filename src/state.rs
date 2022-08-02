@@ -14,6 +14,12 @@ pub struct State {
 }
 
 impl State {
+    /// Create a new state
+    #[must_use]
+    pub fn new() -> Self {
+        Self::default()
+    }
+
     /// Reset animation state
     ///
     /// The animation will restart from the first frame, like if the animation was freshly spawned.
