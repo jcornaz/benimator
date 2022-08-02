@@ -35,7 +35,7 @@ frames: [0, 1, 2] # sequence of frame indices
 ```
 "
 )]
-#[derive(Debug, Clone, Default)]
+#[derive(Debug, Clone)]
 #[cfg_attr(feature = "serde", derive(Deserialize))]
 #[cfg_attr(feature = "serde", serde(try_from = "dto::AnimationDto"))]
 pub struct Animation {
@@ -46,7 +46,7 @@ pub struct Animation {
 }
 
 /// A single animation frame
-#[derive(Debug, Copy, Clone, Default, PartialEq, Eq)]
+#[derive(Debug, Copy, Clone, PartialEq, Eq)]
 pub struct Frame {
     /// Index in the sprite atlas
     pub(crate) index: usize,
