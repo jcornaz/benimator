@@ -2,14 +2,14 @@ use std::time::Duration;
 
 use bevy::{prelude::*, render::texture::ImageSettings};
 
-// Create tha animation component
+// Create the animation component
 // Note: you may make the animation an asset instead of a component
 #[derive(Component, Deref)]
 struct Animation(benimator::Animation);
 
-// Create tha player component
+// Create the player component
 #[derive(Default, Component, Deref, DerefMut)]
-struct Player(benimator::State);
+struct AnimationState(benimator::State);
 
 fn main() {
     App::new()
@@ -47,13 +47,19 @@ fn spawn(
         })
         // Insert the animation
         .insert(animation)
-        // Insert the player
-        .insert(Player::default());
+        // Insert the state
+        .insert(AnimationState::default());
 }
 
-fn animate(time: Res<Time>, mut query: Query<(&mut Player, &mut TextureAtlasSprite, &Animation)>) {
+fn animate(
+    time: Res<Time>,
+    mut query: Query<(&mut AnimationState, &mut TextureAtlasSprite, &Animation)>,
+) {
     for (mut player, mut texture, animation) in query.iter_mut() {
+        // Update the state
         player.update(animation, time.delta());
+
+        // Update the texture atlas
         texture.index = player.sprite_frame_index();
     }
 }
