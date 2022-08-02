@@ -4,6 +4,21 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## Unreleased
+
+<csr-id-700ecedec8332c2e03714e881c6da8523b241719/>
+
+### New Features
+
+ - <csr-id-d4bdb348d46f3f0eb45a7b4faadd771fe9917220/> implement `Serialize` for `Animaition`
+ - <csr-id-fa84668bd5ac304c0d089d9742f3afa4cacff626/> implement `Extend<Frame>` for `Animation`
+ - <csr-id-d37c678675d6de651ef583dc925334db4f879df7/> implement `Eq` for `Animation`
+ - <csr-id-826a83b09299e154810c496279a7f8c8ce2ba7fd/> `State::new` constructor
+
+### Removed (BREAKING)
+
+ - <csr-id-700ecedec8332c2e03714e881c6da8523b241719/> implementation of `Default` for `Animation` an `Frame`
+
 ## 4.0.0-beta.1 (2022-08-01)
 
 <csr-id-bc5d40d267d246647cbc468478c585c11f72a44f/>
