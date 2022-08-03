@@ -1,6 +1,6 @@
-use std::time::Duration;
-
 use bevy::{prelude::*, render::texture::ImageSettings};
+
+use benimator::FrameRate;
 
 // Create the animation component
 // Note: you may make the animation an asset instead of a component
@@ -29,9 +29,10 @@ fn spawn(
     commands.spawn_bundle(Camera2dBundle::default());
 
     // Create an animation
-    const FPS: f64 = 12.0;
-    let frame_duration: Duration = Duration::from_secs(1).div_f64(FPS);
-    let animation = Animation(benimator::Animation::from_range(0..=4, frame_duration));
+    let animation = Animation(benimator::Animation::from_range(
+        0..=4,
+        FrameRate::from_fps(12.0),
+    ));
 
     commands
         // Spawn a bevy sprite-sheet

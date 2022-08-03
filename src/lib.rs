@@ -21,11 +21,10 @@
 //!
 //! ```
 //! use std::time::Duration;
-//! use benimator::{Animation, State};
+//! use benimator::{Animation, FrameRate, State};
 //!
 //! // Create an animation
-//! let frame_duration = Duration::from_millis(100);
-//! let animation = Animation::from_range(0..=3, frame_duration);
+//! let animation = Animation::from_range(0..=3, FrameRate::from_fps(10.0));
 //!
 //! // Get a new animation state
 //! let mut state = State::default();
@@ -42,7 +41,7 @@
 #[macro_use]
 extern crate rstest;
 
-pub use animation::{Animation, Frame};
+pub use animation::{Animation, Frame, FrameRate};
 pub use state::State;
 
 mod animation;
