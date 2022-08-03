@@ -124,7 +124,7 @@ mod tests {
 
     #[rstest]
     fn sprite_index(frame_rate: FrameRate) {
-        let animation = Animation::from_range(3..=5, frame_rate);
+        let animation = Animation::from_indices(3..=5, frame_rate);
         let mut state = State::default();
         state.update(&animation, Duration::ZERO);
         assert_eq!(state.sprite_frame_index(), 3);
@@ -160,7 +160,7 @@ mod tests {
 
         #[fixture]
         fn animation(frame_rate: FrameRate) -> Animation {
-            Animation::from_range(0..=2, frame_rate)
+            Animation::from_indices(0..=2, frame_rate)
         }
 
         #[fixture]
@@ -184,7 +184,7 @@ mod tests {
             frame_rate: FrameRate,
             smaller_duration: Duration,
         ) {
-            let animation = Animation::from_range(1..=3, frame_rate);
+            let animation = Animation::from_indices(1..=3, frame_rate);
             state.update(&animation, smaller_duration);
             assert_eq!(state.sprite_frame_index(), 1);
         }
@@ -195,7 +195,7 @@ mod tests {
             frame_rate: FrameRate,
             smaller_duration: Duration,
         ) {
-            let animation = Animation::from_range(1..=3, frame_rate);
+            let animation = Animation::from_indices(1..=3, frame_rate);
             state.update(&animation, smaller_duration);
             assert_eq!(state.sprite_frame_index(), 1);
         }
@@ -348,7 +348,7 @@ mod tests {
 
             #[fixture]
             fn animation(frame_rate: FrameRate) -> Animation {
-                Animation::from_range(0..=1, frame_rate).ping_pong()
+                Animation::from_indices(0..=1, frame_rate).ping_pong()
             }
 
             #[fixture]
@@ -386,7 +386,7 @@ mod tests {
 
             #[fixture]
             fn animation(frame_rate: FrameRate) -> Animation {
-                Animation::from_range(0..=2, frame_rate).ping_pong()
+                Animation::from_indices(0..=2, frame_rate).ping_pong()
             }
 
             #[fixture]
@@ -416,7 +416,7 @@ mod tests {
 
         #[fixture]
         fn animation(frame_rate: FrameRate) -> Animation {
-            Animation::from_range(0..=1, frame_rate).once()
+            Animation::from_indices(0..=1, frame_rate).once()
         }
 
         mod on_first_frame {

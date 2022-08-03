@@ -1,10 +1,10 @@
-#[cfg(feature = "serde")]
-mod dto;
-
-use std::{ops::RangeInclusive, time::Duration};
+use core::time::Duration;
 
 #[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};
+
+#[cfg(feature = "serde")]
+mod dto;
 
 /// Definition of an animation
 #[cfg_attr(
@@ -67,35 +67,44 @@ impl Animation {
         }
     }
 
-    /// Create a new animation from index-range, using the same frame duration for each frame.
-    ///
-    /// For more granular configuration, see [`from_frames`](Animation::from_frames)
-    ///
-    /// # Panics
-    ///
-    /// Panics if the duration is zero
-    #[must_use]
-    pub fn from_range(index_range: RangeInclusive<usize>, frame_rate: FrameRate) -> Self {
-        Self::from_iter(index_range, frame_rate)
-    }
-
     /// Create a new animation from an index iterator, using the same frame duration for each frame.
     ///
-    /// # Example
+    /// # Examples
     ///
-    /// You may use this to create a reversed animation:
+    /// From an index range
     /// ```
     /// # use benimator::{Animation, FrameRate};
     /// # use std::time::Duration;
-    /// let animation = Animation::from_iter((0..5).rev(), FrameRate::from_fps(12.));
+    /// let animation = Animation::from_indices(0..=5, FrameRate::from_fps(12.0));
     /// ```
     ///
-    /// For more granular configuration, see [`from_frames`](Animation::from_frames)
+    /// From an index array
+    /// ```
+    /// # use benimator::{Animation, FrameRate};
+    /// # use std::time::Duration;
+    /// let animation = Animation::from_indices([1, 2, 3, 4], FrameRate::from_fps(12.0));
+    /// ```
+    ///
+    /// Reversed animation:
+    /// ```
+    /// # use benimator::{Animation, FrameRate};
+    /// # use std::time::Duration;
+    /// let animation = Animation::from_indices((0..5).rev(), FrameRate::from_fps(12.0));
+    /// ```
+    ///
+    /// Chained ranges
+    /// ```
+    /// # use benimator::{Animation, FrameRate};
+    /// # use std::time::Duration;
+    /// let animation = Animation::from_indices((0..3).chain(10..15), FrameRate::from_fps(12.0));
+    /// ```
+    ///
+    /// To use different non-uniform frame-duration, see [`from_frames`](Animation::from_frames)
     ///
     /// # Panics
     ///
     /// Panics if the duration is zero
-    pub fn from_iter(indices: impl IntoIterator<Item = usize>, frame_rate: FrameRate) -> Self {
+    pub fn from_indices(indices: impl IntoIterator<Item = usize>, frame_rate: FrameRate) -> Self {
         indices
             .into_iter()
             .map(|index| Frame::new(index, frame_rate.frame_duration))
@@ -227,7 +236,7 @@ mod tests {
 
     #[test]
     fn extends() {
-        let mut anim = Animation::from_range(
+        let mut anim = Animation::from_indices(
             0..=0,
             FrameRate::from_frame_duration(Duration::from_secs(1)),
         );
@@ -244,8 +253,8 @@ mod tests {
     #[test]
     fn fps_frame_duration_equivalence() {
         assert_eq!(
-            Animation::from_range(1..=3, FrameRate::from_fps(10.0)),
-            Animation::from_range(
+            Animation::from_indices(1..=3, FrameRate::from_fps(10.0)),
+            Animation::from_indices(
                 1..=3,
                 FrameRate::from_frame_duration(Duration::from_millis(100))
             ),

@@ -160,11 +160,11 @@ mod tests {
     #[rstest]
     fn deserialize_serialize(
         #[values(
-            Animation::from_range(0..=2, FrameRate::from_fps(2.0)),
-            Animation::from_range(0..=2, FrameRate::from_fps(2.0)).once(),
-            Animation::from_range(0..=2, FrameRate::from_fps(2.0)).repeat(),
-            Animation::from_range(0..=2, FrameRate::from_fps(2.0)).repeat_from(1),
-            Animation::from_range(0..=2, FrameRate::from_fps(2.0)).ping_pong(),
+            Animation::from_indices(0..=2, FrameRate::from_fps(2.0)),
+            Animation::from_indices(0..=2, FrameRate::from_fps(2.0)).once(),
+            Animation::from_indices(0..=2, FrameRate::from_fps(2.0)).repeat(),
+            Animation::from_indices(0..=2, FrameRate::from_fps(2.0)).repeat_from(1),
+            Animation::from_indices(0..=2, FrameRate::from_fps(2.0)).ping_pong(),
         )]
         animation: Animation,
     ) {

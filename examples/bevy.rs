@@ -29,7 +29,7 @@ fn spawn(
     commands.spawn_bundle(Camera2dBundle::default());
 
     // Create an animation
-    let animation = Animation(benimator::Animation::from_range(
+    let animation = Animation(benimator::Animation::from_indices(
         0..=4,
         FrameRate::from_fps(12.0),
     ));
