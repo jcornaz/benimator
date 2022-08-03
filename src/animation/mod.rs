@@ -71,31 +71,20 @@ impl Animation {
     ///
     /// # Examples
     ///
-    /// From an index range
+    ///
     /// ```
     /// # use benimator::{Animation, FrameRate};
     /// # use std::time::Duration;
+    /// // From an index range
     /// let animation = Animation::from_indices(0..=5, FrameRate::from_fps(12.0));
-    /// ```
     ///
-    /// From an index array
-    /// ```
-    /// # use benimator::{Animation, FrameRate};
-    /// # use std::time::Duration;
+    /// // From an index array
     /// let animation = Animation::from_indices([1, 2, 3, 4], FrameRate::from_fps(12.0));
-    /// ```
     ///
-    /// Reversed animation:
-    /// ```
-    /// # use benimator::{Animation, FrameRate};
-    /// # use std::time::Duration;
+    /// // Reversed animation
     /// let animation = Animation::from_indices((0..5).rev(), FrameRate::from_fps(12.0));
-    /// ```
     ///
-    /// Chained ranges
-    /// ```
-    /// # use benimator::{Animation, FrameRate};
-    /// # use std::time::Duration;
+    /// // Chained ranges
     /// let animation = Animation::from_indices((0..3).chain(10..15), FrameRate::from_fps(12.0));
     /// ```
     ///
