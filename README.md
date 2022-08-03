@@ -21,9 +21,9 @@ cargo add benimator
 
 ## Cargo features
 
-| Feature | Description                                        |
-|---------|----------------------------------------------------|
-| `serde` | Implementation of serde traits for deserialization |
+| Feature | Description                                      |
+|---------|--------------------------------------------------|
+| `serde` | Implementations of `Serialize` and `Deserialize` |
 
 *Feature flags not mentioned here are **NOT** part of the public API and are subject to breaking changes.*
 
