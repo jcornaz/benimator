@@ -154,17 +154,17 @@ impl Error for InvalidAnimation {}
 mod tests {
     use super::*;
 
-    use crate::{animation::Mode, Frame};
+    use crate::{animation::Mode, Frame, FrameRate};
     use std::time::Duration;
 
     #[rstest]
     fn deserialize_serialize(
         #[values(
-            Animation::from_range(0..=2, Duration::from_secs(1)),
-            Animation::from_range(0..=2, Duration::from_secs(1)).once(),
-            Animation::from_range(0..=2, Duration::from_secs(1)).repeat(),
-            Animation::from_range(0..=2, Duration::from_secs(1)).repeat_from(1),
-            Animation::from_range(0..=2, Duration::from_secs(1)).ping_pong(),
+            Animation::from_range(0..=2, FrameRate::from_fps(2.0)),
+            Animation::from_range(0..=2, FrameRate::from_fps(2.0)).once(),
+            Animation::from_range(0..=2, FrameRate::from_fps(2.0)).repeat(),
+            Animation::from_range(0..=2, FrameRate::from_fps(2.0)).repeat_from(1),
+            Animation::from_range(0..=2, FrameRate::from_fps(2.0)).ping_pong(),
         )]
         animation: Animation,
     ) {

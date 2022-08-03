@@ -75,8 +75,8 @@ impl Animation {
     ///
     /// Panics if the duration is zero
     #[must_use]
-    pub fn from_range(index_range: RangeInclusive<usize>, frame_duration: Duration) -> Self {
-        Self::from_iter(index_range, frame_duration)
+    pub fn from_range(index_range: RangeInclusive<usize>, frame_rate: FrameRate) -> Self {
+        Self::from_iter(index_range, frame_rate)
     }
 
     /// Create a new animation from an index iterator, using the same frame duration for each frame.
@@ -85,9 +85,9 @@ impl Animation {
     ///
     /// You may use this to create a reversed animation:
     /// ```
-    /// # use benimator::Animation;
+    /// # use benimator::{Animation, FrameRate};
     /// # use std::time::Duration;
-    /// let animation = Animation::from_iter((0..5).rev(), Duration::from_millis(100));
+    /// let animation = Animation::from_iter((0..5).rev(), FrameRate::from_fps(12.));
     /// ```
     ///
     /// For more granular configuration, see [`from_frames`](Animation::from_frames)
@@ -95,10 +95,10 @@ impl Animation {
     /// # Panics
     ///
     /// Panics if the duration is zero
-    pub fn from_iter(indices: impl IntoIterator<Item = usize>, frame_duration: Duration) -> Self {
+    pub fn from_iter(indices: impl IntoIterator<Item = usize>, frame_rate: FrameRate) -> Self {
         indices
             .into_iter()
-            .map(|index| Frame::new(index, frame_duration))
+            .map(|index| Frame::new(index, frame_rate.frame_duration))
             .collect()
     }
 
@@ -181,9 +181,43 @@ impl Frame {
     }
 }
 
+/// Frame-Rate definition
+#[derive(Debug, Clone)]
+#[must_use]
+pub struct FrameRate {
+    frame_duration: Duration,
+}
+
+impl FrameRate {
+    /// Frame rate defined by the FPS (Frame-Per-Second)
+    ///
+    /// # Panics
+    ///
+    /// This function will panic if `fps` is negative, zero or not finite.
+    pub fn from_fps(fps: f64) -> Self {
+        assert!(fps.is_finite() && fps > 0.0, "Invalid FPS: ${fps}");
+        Self {
+            frame_duration: Duration::from_secs(1).div_f64(fps),
+        }
+    }
+
+    /// Frame rate defined by the duration of each frame
+    pub fn from_frame_duration(duration: Duration) -> Self {
+        Self {
+            frame_duration: duration,
+        }
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[rstest]
+    #[should_panic]
+    fn invalid_frame_rate_panics(#[values(0.0, -1.0, f64::NAN, f64::INFINITY)] fps: f64) {
+        let _ = FrameRate::from_fps(fps);
+    }
 
     #[test]
     #[should_panic]
@@ -193,7 +227,10 @@ mod tests {
 
     #[test]
     fn extends() {
-        let mut anim = Animation::from_range(0..=0, Duration::from_secs(1));
+        let mut anim = Animation::from_range(
+            0..=0,
+            FrameRate::from_frame_duration(Duration::from_secs(1)),
+        );
         anim.extend([Frame::new(2, Duration::from_secs(2))]);
         assert_eq!(
             anim,
@@ -201,6 +238,17 @@ mod tests {
                 Frame::new(0, Duration::from_secs(1)),
                 Frame::new(2, Duration::from_secs(2))
             ])
+        );
+    }
+
+    #[test]
+    fn fps_frame_duration_equivalence() {
+        assert_eq!(
+            Animation::from_range(1..=3, FrameRate::from_fps(10.0)),
+            Animation::from_range(
+                1..=3,
+                FrameRate::from_frame_duration(Duration::from_millis(100))
+            ),
         );
     }
 }

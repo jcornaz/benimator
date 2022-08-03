@@ -105,10 +105,16 @@ impl State {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::FrameRate;
 
     #[fixture]
     fn frame_duration() -> Duration {
         Duration::from_secs(1)
+    }
+
+    #[fixture]
+    fn frame_rate(frame_duration: Duration) -> FrameRate {
+        FrameRate::from_frame_duration(frame_duration)
     }
 
     #[fixture]
@@ -117,8 +123,8 @@ mod tests {
     }
 
     #[rstest]
-    fn sprite_index(frame_duration: Duration) {
-        let animation = Animation::from_range(3..=5, frame_duration);
+    fn sprite_index(frame_rate: FrameRate) {
+        let animation = Animation::from_range(3..=5, frame_rate);
         let mut state = State::default();
         state.update(&animation, Duration::ZERO);
         assert_eq!(state.sprite_frame_index(), 3);
@@ -153,8 +159,8 @@ mod tests {
         use super::*;
 
         #[fixture]
-        fn animation(frame_duration: Duration) -> Animation {
-            Animation::from_range(0..=2, frame_duration)
+        fn animation(frame_rate: FrameRate) -> Animation {
+            Animation::from_range(0..=2, frame_rate)
         }
 
         #[fixture]
@@ -175,10 +181,10 @@ mod tests {
         #[rstest]
         fn updates_index_if_less_than_expected_index(
             mut state: State,
-            frame_duration: Duration,
+            frame_rate: FrameRate,
             smaller_duration: Duration,
         ) {
-            let animation = Animation::from_range(1..=3, frame_duration);
+            let animation = Animation::from_range(1..=3, frame_rate);
             state.update(&animation, smaller_duration);
             assert_eq!(state.sprite_frame_index(), 1);
         }
@@ -186,10 +192,10 @@ mod tests {
         #[rstest]
         fn updates_index_if_greater_than_expected_index(
             mut state: State,
-            frame_duration: Duration,
+            frame_rate: FrameRate,
             smaller_duration: Duration,
         ) {
-            let animation = Animation::from_range(1..=3, frame_duration);
+            let animation = Animation::from_range(1..=3, frame_rate);
             state.update(&animation, smaller_duration);
             assert_eq!(state.sprite_frame_index(), 1);
         }
@@ -341,8 +347,8 @@ mod tests {
             use super::*;
 
             #[fixture]
-            fn animation(frame_duration: Duration) -> Animation {
-                Animation::from_range(0..=1, frame_duration).ping_pong()
+            fn animation(frame_rate: FrameRate) -> Animation {
+                Animation::from_range(0..=1, frame_rate).ping_pong()
             }
 
             #[fixture]
@@ -379,8 +385,8 @@ mod tests {
             use super::*;
 
             #[fixture]
-            fn animation(frame_duration: Duration) -> Animation {
-                Animation::from_range(0..=2, frame_duration).ping_pong()
+            fn animation(frame_rate: FrameRate) -> Animation {
+                Animation::from_range(0..=2, frame_rate).ping_pong()
             }
 
             #[fixture]
@@ -409,8 +415,8 @@ mod tests {
         use super::*;
 
         #[fixture]
-        fn animation(frame_duration: Duration) -> Animation {
-            Animation::from_range(0..=1, frame_duration).once()
+        fn animation(frame_rate: FrameRate) -> Animation {
+            Animation::from_range(0..=1, frame_rate).once()
         }
 
         mod on_first_frame {
