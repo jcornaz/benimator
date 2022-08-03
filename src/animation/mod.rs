@@ -191,7 +191,7 @@ impl Frame {
 }
 
 /// Frame-Rate definition
-#[derive(Debug, Clone)]
+#[derive(Debug, Copy, Clone, Eq, PartialEq)]
 #[must_use]
 pub struct FrameRate {
     frame_duration: Duration,
