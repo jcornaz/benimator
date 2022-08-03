@@ -203,7 +203,7 @@ impl FrameRate {
     ///
     /// This function will panic if `fps` is negative, zero or not finite.
     pub fn from_fps(fps: f64) -> Self {
-        assert!(fps.is_finite() && fps > 0.0, "Invalid FPS: ${fps}");
+        assert!(fps.is_finite() && fps > 0.0, "Invalid FPS: {fps}");
         Self {
             frame_duration: Duration::from_secs(1).div_f64(fps),
             is_total_duration: false,

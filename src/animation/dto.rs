@@ -109,7 +109,8 @@ impl TryFrom<FrameRateDto> for FrameRate {
 
     fn try_from(value: FrameRateDto) -> Result<Self, Self::Error> {
         match value {
-            FrameRateDto::Fps(fps) => Ok(Self::from_fps(fps)),
+            FrameRateDto::Fps(fps) if fps.is_finite() && fps > 0.0 => Ok(Self::from_fps(fps)),
+            FrameRateDto::Fps(_) => Err(InvalidAnimation::InvalidFps),
             FrameRateDto::FrameDuration(millis) => {
                 Ok(Self::from_frame_duration(Duration::from_millis(millis)))
             }
@@ -185,12 +186,14 @@ impl AnimationDto {
 #[derive(Debug)]
 pub(super) enum InvalidAnimation {
     ZeroDuration,
+    InvalidFps,
 }
 
 impl Display for InvalidAnimation {
     fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
         match self {
-            InvalidAnimation::ZeroDuration => write!(f, "invalid duration, must be > 0"), /*  */
+            InvalidAnimation::ZeroDuration => write!(f, "invalid duration, must be > 0"),
+            InvalidAnimation::InvalidFps => write!(f, "invalid FPS, must be finite and > 0"),
         }
     }
 }
@@ -395,6 +398,17 @@ mod tests {
                 Frame::new(2, Duration::from_millis(100)),
             ])
         );
+    }
+
+    #[rstest]
+    fn invalid_fps(#[values("0", "-1", "nan", "inf")] fps: f64) {
+        let content = format!(
+            "
+            rate: !Fps {fps}
+            frames: [0, 1, 2]
+        "
+        );
+        assert!(serde_yaml::from_str::<Animation>(&content).is_err());
     }
 
     #[test]
