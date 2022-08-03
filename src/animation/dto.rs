@@ -4,6 +4,7 @@ use std::{
     time::Duration,
 };
 
+use crate::FrameRate;
 use serde::{
     de::{self, value::MapAccessDeserializer, MapAccess, Unexpected},
     Deserialize, Serialize,
@@ -16,7 +17,7 @@ pub(super) struct AnimationDto {
     #[serde(default)]
     mode: ModeDto,
     #[serde(default, skip_serializing)]
-    frame_duration: Option<u64>,
+    rate: Option<FrameRateDto>,
     frames: Vec<FrameDto>,
 }
 
@@ -95,10 +96,33 @@ impl From<Frame> for FrameDto {
     }
 }
 
+#[derive(Copy, Clone, Deserialize)]
+enum FrameRateDto {
+    Fps(f64),
+    FrameDuration(u64),
+    TotalDuration(u64),
+}
+
+impl TryFrom<FrameRateDto> for FrameRate {
+    type Error = InvalidAnimation;
+
+    fn try_from(value: FrameRateDto) -> Result<Self, Self::Error> {
+        match value {
+            FrameRateDto::Fps(fps) => Ok(Self::from_fps(fps)),
+            FrameRateDto::FrameDuration(millis) => {
+                Ok(Self::from_frame_duration(Duration::from_millis(millis)))
+            }
+            FrameRateDto::TotalDuration(millis) => {
+                Ok(Self::from_total_duration(Duration::from_millis(millis)))
+            }
+        }
+    }
+}
+
 impl From<Animation> for AnimationDto {
     fn from(animation: Animation) -> Self {
         Self {
-            frame_duration: None,
+            rate: None,
             mode: match animation.mode {
                 Mode::Once => ModeDto::Once,
                 Mode::RepeatFrom(0) => ModeDto::Repeat,
@@ -114,17 +138,33 @@ impl TryFrom<AnimationDto> for Animation {
     type Error = InvalidAnimation;
 
     fn try_from(animation: AnimationDto) -> Result<Self, Self::Error> {
+        let frame_rate: Option<FrameRate> = match animation.rate.map(FrameRate::try_from) {
+            Some(result) => Some(result?),
+            None => None,
+        };
+        let mut frames = animation
+            .frames
+            .into_iter()
+            .map(|FrameDto { index, duration }| {
+                duration
+                    .map(Duration::from_millis)
+                    .or_else(|| frame_rate.map(|r| r.frame_duration))
+                    .filter(|d| !d.is_zero())
+                    .map(|duration| Frame::new(index, duration))
+                    .ok_or(InvalidAnimation::ZeroDuration)
+            })
+            .collect::<Result<Vec<_>, _>>()?;
+
+        if let Some(duration) =
+            frame_rate.and_then(|r| r.frame_duration_from_frame_count(frames.len()))
+        {
+            for frame in &mut frames {
+                frame.duration = duration;
+            }
+        }
+
         Ok(Self {
-            frames: animation
-                .frames
-                .into_iter()
-                .map(|FrameDto { index, duration }| {
-                    match duration.or(animation.frame_duration).filter(|d| *d > 0) {
-                        Some(duration) => Ok(Frame::new(index, Duration::from_millis(duration))),
-                        None => Err(InvalidAnimation::ZeroDuration),
-                    }
-                })
-                .collect::<Result<_, _>>()?,
+            frames,
             mode: match animation.mode {
                 ModeDto::Repeat => Mode::RepeatFrom(0),
                 ModeDto::RepeatFrom(f) => Mode::RepeatFrom(f),
@@ -161,6 +201,7 @@ mod tests {
     fn deserialize_serialize(
         #[values(
             Animation::from_indices(0..=2, FrameRate::from_fps(2.0)),
+            Animation::from_indices(0..=2, FrameRate::from_frame_duration(Duration::from_secs(1))),
             Animation::from_indices(0..=2, FrameRate::from_fps(2.0)).once(),
             Animation::from_indices(0..=2, FrameRate::from_fps(2.0)).repeat(),
             Animation::from_indices(0..=2, FrameRate::from_fps(2.0)).repeat_from(1),
@@ -285,12 +326,11 @@ mod tests {
     fn same_duration_for_all_frames() {
         // given
         let content = "
-            frame_duration: 100
+            rate: !FrameDuration 100
             frames:
               - index: 0
               - index: 1
               - index: 2
-                duration: 200
         ";
 
         // when
@@ -298,12 +338,11 @@ mod tests {
 
         // then
         assert_eq!(
-            animation.frames,
-            vec![
-                Frame::new(0, Duration::from_millis(100)),
-                Frame::new(1, Duration::from_millis(100)),
-                Frame::new(2, Duration::from_millis(200)),
-            ]
+            animation,
+            Animation::from_indices(
+                0..=2,
+                FrameRate::from_frame_duration(Duration::from_millis(100))
+            )
         );
     }
 
@@ -311,7 +350,7 @@ mod tests {
     fn same_duration_for_all_frames_short_hand() {
         // given
         let content = "
-            frame_duration: 100
+            rate: !FrameDuration 100
             frames: [0, 1, 2]
         ";
 
@@ -320,12 +359,55 @@ mod tests {
 
         // then
         assert_eq!(
-            animation.frames,
-            vec![
+            animation,
+            Animation::from_indices(
+                0..=2,
+                FrameRate::from_frame_duration(Duration::from_millis(100))
+            )
+        );
+    }
+
+    #[test]
+    fn defined_via_fps() {
+        // given
+        let content = "
+            rate: !Fps 10.0
+            frames: [0, 1, 2]
+        ";
+
+        // when
+        let animation: Animation = serde_yaml::from_str(content).unwrap();
+
+        // then
+        assert_eq!(
+            animation,
+            Animation::from_frames([
                 Frame::new(0, Duration::from_millis(100)),
                 Frame::new(1, Duration::from_millis(100)),
                 Frame::new(2, Duration::from_millis(100)),
-            ]
+            ])
+        );
+    }
+
+    #[test]
+    fn defined_via_total_duration() {
+        // given
+        let content = "
+            rate: !TotalDuration 600
+            frames: [0, 1, 2]
+        ";
+
+        // when
+        let animation: Animation = serde_yaml::from_str(content).unwrap();
+
+        // then
+        assert_eq!(
+            animation,
+            Animation::from_frames([
+                Frame::new(0, Duration::from_millis(200)),
+                Frame::new(1, Duration::from_millis(200)),
+                Frame::new(2, Duration::from_millis(200)),
+            ])
         );
     }
 }

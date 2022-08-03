@@ -100,11 +100,9 @@ impl Animation {
             .map(|index| Frame::new(index, frame_rate.frame_duration))
             .collect();
 
-        if frame_rate.is_total_duration {
-            #[allow(clippy::cast_precision_loss)]
-            let actual_duration = frame_rate.frame_duration.div_f64(anim.frames.len() as f64);
+        if let Some(duration) = frame_rate.frame_duration_from_frame_count(anim.frames.len()) {
             for frame in &mut anim.frames {
-                frame.duration = actual_duration;
+                frame.duration = duration;
             }
         }
 
@@ -227,6 +225,17 @@ impl FrameRate {
         Self {
             frame_duration: duration,
             is_total_duration: true,
+        }
+    }
+
+    /// returns `None` if the frame rate is not dependant on the frame count
+    /// Otherwise, returns the duration of a single frame
+    #[allow(clippy::cast_precision_loss)]
+    fn frame_duration_from_frame_count(self, frame_count: usize) -> Option<Duration> {
+        if self.is_total_duration {
+            Some(self.frame_duration.div_f64(frame_count as f64))
+        } else {
+            None
         }
     }
 }
