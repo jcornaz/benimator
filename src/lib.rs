@@ -24,7 +24,7 @@
 //! use benimator::{Animation, FrameRate, State};
 //!
 //! // Create an animation
-//! let animation = Animation::from_range(0..=3, FrameRate::from_fps(10.0));
+//! let animation = Animation::from_indices(0..=3, FrameRate::from_fps(10.0));
 //!
 //! // Get a new animation state
 //! let mut state = State::default();
