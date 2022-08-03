@@ -60,9 +60,9 @@ pub struct Frame {
 impl Animation {
     /// Create a new animation from frames
     #[must_use]
-    pub fn from_frames(frames: Vec<Frame>) -> Self {
+    pub fn from_frames(frames: impl IntoIterator<Item = Frame>) -> Self {
         Self {
-            frames,
+            frames: frames.into_iter().collect(),
             mode: Mode::default(),
         }
     }
@@ -70,7 +70,6 @@ impl Animation {
     /// Create a new animation from an index iterator, using the same frame duration for each frame.
     ///
     /// # Examples
-    ///
     ///
     /// ```
     /// # use benimator::{Animation, FrameRate};
@@ -88,16 +87,28 @@ impl Animation {
     /// let animation = Animation::from_indices((0..3).chain(10..15), FrameRate::from_fps(12.0));
     /// ```
     ///
+    /// Note, the [`FrameRate`] may be created from fps, frame-duration and animation-duration
+    ///
     /// To use different non-uniform frame-duration, see [`from_frames`](Animation::from_frames)
     ///
     /// # Panics
     ///
     /// Panics if the duration is zero
     pub fn from_indices(indices: impl IntoIterator<Item = usize>, frame_rate: FrameRate) -> Self {
-        indices
+        let mut anim: Self = indices
             .into_iter()
             .map(|index| Frame::new(index, frame_rate.frame_duration))
-            .collect()
+            .collect();
+
+        if frame_rate.is_total_duration {
+            #[allow(clippy::cast_precision_loss)]
+            let actual_duration = frame_rate.frame_duration.div_f64(anim.frames.len() as f64);
+            for frame in &mut anim.frames {
+                frame.duration = actual_duration;
+            }
+        }
+
+        anim
     }
 
     /// Runs the animation once and then stop playing
@@ -143,7 +154,7 @@ pub(crate) enum Mode {
 
 impl FromIterator<Frame> for Animation {
     fn from_iter<T: IntoIterator<Item = Frame>>(iter: T) -> Self {
-        Self::from_frames(iter.into_iter().collect())
+        Self::from_frames(iter)
     }
 }
 
@@ -184,6 +195,7 @@ impl Frame {
 #[must_use]
 pub struct FrameRate {
     frame_duration: Duration,
+    is_total_duration: bool,
 }
 
 impl FrameRate {
@@ -196,6 +208,7 @@ impl FrameRate {
         assert!(fps.is_finite() && fps > 0.0, "Invalid FPS: ${fps}");
         Self {
             frame_duration: Duration::from_secs(1).div_f64(fps),
+            is_total_duration: false,
         }
     }
 
@@ -203,6 +216,17 @@ impl FrameRate {
     pub fn from_frame_duration(duration: Duration) -> Self {
         Self {
             frame_duration: duration,
+            is_total_duration: false,
+        }
+    }
+
+    /// Frame rate defined by the total duration of the animation
+    ///
+    /// The actual FPS will then depend on the number of frame
+    pub fn from_total_duration(duration: Duration) -> Self {
+        Self {
+            frame_duration: duration,
+            is_total_duration: true,
         }
     }
 }
@@ -245,6 +269,20 @@ mod tests {
             Animation::from_indices(1..=3, FrameRate::from_fps(10.0)),
             Animation::from_indices(
                 1..=3,
+                FrameRate::from_frame_duration(Duration::from_millis(100))
+            ),
+        );
+    }
+
+    #[test]
+    fn total_duration() {
+        assert_eq!(
+            Animation::from_indices(
+                0..10,
+                FrameRate::from_total_duration(Duration::from_secs(1))
+            ),
+            Animation::from_indices(
+                0..10,
                 FrameRate::from_frame_duration(Duration::from_millis(100))
             ),
         );
