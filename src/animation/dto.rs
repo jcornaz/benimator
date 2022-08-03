@@ -4,11 +4,12 @@ use std::{
     time::Duration,
 };
 
-use crate::FrameRate;
 use serde::{
     de::{self, value::MapAccessDeserializer, MapAccess, Unexpected},
     Deserialize, Serialize,
 };
+
+use crate::FrameRate;
 
 use super::{Animation, Frame, Mode};
 
@@ -142,19 +143,7 @@ impl TryFrom<AnimationDto> for Animation {
             Some(result) => Some(result?),
             None => None,
         };
-        let mut frames = animation
-            .frames
-            .into_iter()
-            .map(|FrameDto { index, duration }| {
-                duration
-                    .map(Duration::from_millis)
-                    .or_else(|| frame_rate.map(|r| r.frame_duration))
-                    .filter(|d| !d.is_zero())
-                    .map(|duration| Frame::new(index, duration))
-                    .ok_or(InvalidAnimation::ZeroDuration)
-            })
-            .collect::<Result<Vec<_>, _>>()?;
-
+        let mut frames = AnimationDto::build_frames(animation.frames, frame_rate)?;
         if let Some(duration) =
             frame_rate.and_then(|r| r.frame_duration_from_frame_count(frames.len()))
         {
@@ -162,7 +151,6 @@ impl TryFrom<AnimationDto> for Animation {
                 frame.duration = duration;
             }
         }
-
         Ok(Self {
             frames,
             mode: match animation.mode {
@@ -172,6 +160,25 @@ impl TryFrom<AnimationDto> for Animation {
                 ModeDto::PingPong => Mode::PingPong,
             },
         })
+    }
+}
+
+impl AnimationDto {
+    fn build_frames(
+        frames: impl IntoIterator<Item = FrameDto>,
+        frame_rate: Option<FrameRate>,
+    ) -> Result<Vec<Frame>, InvalidAnimation> {
+        frames
+            .into_iter()
+            .map(|FrameDto { index, duration }| {
+                duration
+                    .map(Duration::from_millis)
+                    .or_else(|| frame_rate.map(|r| r.frame_duration))
+                    .filter(|d| !d.is_zero())
+                    .map(|duration| Frame::new(index, duration))
+                    .ok_or(InvalidAnimation::ZeroDuration)
+            })
+            .collect()
     }
 }
 
@@ -192,10 +199,11 @@ impl Error for InvalidAnimation {}
 
 #[cfg(test)]
 mod tests {
-    use super::*;
+    use std::time::Duration;
 
     use crate::{animation::Mode, Frame, FrameRate};
-    use std::time::Duration;
+
+    use super::*;
 
     #[rstest]
     fn deserialize_serialize(
