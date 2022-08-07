@@ -30,7 +30,7 @@ frames:
 There is also a short-hand notation if all frames have the same duration:
 
 ```yaml
-frame_duration: 100
+fps: 12 # may be substitued by 'frame_duration'
 frames: [0, 1, 2] # sequence of frame indices
 ```
 "

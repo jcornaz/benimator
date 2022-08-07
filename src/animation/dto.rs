@@ -17,6 +17,8 @@ pub(super) struct AnimationDto {
     mode: ModeDto,
     #[serde(default, skip_serializing)]
     frame_duration: Option<u64>,
+    #[serde(default, skip_serializing)]
+    fps: Option<u64>,
     frames: Vec<FrameDto>,
 }
 
@@ -99,6 +101,7 @@ impl From<Animation> for AnimationDto {
     fn from(animation: Animation) -> Self {
         Self {
             frame_duration: None,
+            fps: None,
             mode: match animation.mode {
                 Mode::Once => ModeDto::Once,
                 Mode::RepeatFrom(0) => ModeDto::Repeat,
@@ -113,14 +116,28 @@ impl From<Animation> for AnimationDto {
 impl TryFrom<AnimationDto> for Animation {
     type Error = InvalidAnimation;
 
+    #[allow(clippy::cast_precision_loss)]
     fn try_from(animation: AnimationDto) -> Result<Self, Self::Error> {
+        if animation.fps.is_some() && animation.frame_duration.is_some() {
+            return Err(InvalidAnimation::IncompatibleFrameRate);
+        }
         Ok(Self {
             frames: animation
                 .frames
                 .into_iter()
                 .map(|FrameDto { index, duration }| {
-                    match duration.or(animation.frame_duration).filter(|d| *d > 0) {
-                        Some(duration) => Ok(Frame::new(index, Duration::from_millis(duration))),
+                    let duration = duration
+                        .or(animation.frame_duration)
+                        .map(Duration::from_millis)
+                        .or_else(|| {
+                            animation
+                                .fps
+                                .map(|fps| Duration::from_secs(1).div_f64(fps as f64))
+                        })
+                        .filter(|d| !d.is_zero());
+
+                    match duration {
+                        Some(duration) => Ok(Frame::new(index, duration)),
                         None => Err(InvalidAnimation::ZeroDuration),
                     }
                 })
@@ -138,12 +155,16 @@ impl TryFrom<AnimationDto> for Animation {
 #[derive(Debug)]
 pub(super) enum InvalidAnimation {
     ZeroDuration,
+    IncompatibleFrameRate,
 }
 
 impl Display for InvalidAnimation {
     fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
         match self {
-            InvalidAnimation::ZeroDuration => write!(f, "invalid duration, must be > 0"), /*  */
+            InvalidAnimation::ZeroDuration => write!(f, "invalid duration, must be > 0"),
+            InvalidAnimation::IncompatibleFrameRate => {
+                write!(f, "fps is incompatible with frame_duration")
+            }
         }
     }
 }
@@ -304,6 +325,65 @@ mod tests {
                 Frame::new(1, Duration::from_millis(100)),
                 Frame::new(2, Duration::from_millis(200)),
             ]
+        );
+    }
+
+    #[test]
+    fn fps() {
+        // given
+        let content = "
+            fps: 5
+            frames:
+              - index: 0
+              - index: 1
+              - index: 2
+        ";
+
+        // when
+        let animation: Animation = serde_yaml::from_str(content).unwrap();
+
+        // then
+        assert_eq!(
+            animation.frames,
+            vec![
+                Frame::new(0, Duration::from_millis(200)),
+                Frame::new(1, Duration::from_millis(200)),
+                Frame::new(2, Duration::from_millis(200)),
+            ]
+        );
+    }
+
+    #[test]
+    fn fps_and_global_duration_is_error() {
+        let content = "
+            fps: 5
+            frame_duration: 100
+            frames:
+              - index: 0
+              - index: 1
+              - index: 2
+        ";
+        assert!(serde_yaml::from_str::<Animation>(content).is_err());
+    }
+
+    #[test]
+    fn fps_with_single_frame_duration() {
+        let content = "
+            fps: 5
+            frames:
+              - index: 0
+              - index: 1
+              - index: 2
+                duration: 100
+        ";
+        let animation: Animation = serde_yaml::from_str::<Animation>(content).unwrap();
+        assert_eq!(
+            animation,
+            Animation::from_frames([
+                Frame::new(0, Duration::from_millis(200)),
+                Frame::new(1, Duration::from_millis(200)),
+                Frame::new(2, Duration::from_millis(100)),
+            ])
         );
     }
 
