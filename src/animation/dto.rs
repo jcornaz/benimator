@@ -311,6 +311,7 @@ mod tests {
               - index: 0
               - index: 1
               - index: 2
+                duration: 200
         ";
 
         // when
@@ -322,7 +323,7 @@ mod tests {
             vec![
                 Frame::new(0, Duration::from_millis(100)),
                 Frame::new(1, Duration::from_millis(100)),
-                Frame::new(2, Duration::from_millis(100)),
+                Frame::new(2, Duration::from_millis(200)),
             ]
         );
     }
