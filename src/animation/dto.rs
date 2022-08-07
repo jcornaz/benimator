@@ -118,6 +118,9 @@ impl TryFrom<AnimationDto> for Animation {
 
     #[allow(clippy::cast_precision_loss)]
     fn try_from(animation: AnimationDto) -> Result<Self, Self::Error> {
+        if animation.fps.is_some() && animation.frame_duration.is_some() {
+            return Err(InvalidAnimation::IncompatibleFrameRate);
+        }
         Ok(Self {
             frames: animation
                 .frames
@@ -152,12 +155,16 @@ impl TryFrom<AnimationDto> for Animation {
 #[derive(Debug)]
 pub(super) enum InvalidAnimation {
     ZeroDuration,
+    IncompatibleFrameRate,
 }
 
 impl Display for InvalidAnimation {
     fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
         match self {
-            InvalidAnimation::ZeroDuration => write!(f, "invalid duration, must be > 0"), /*  */
+            InvalidAnimation::ZeroDuration => write!(f, "invalid duration, must be > 0"),
+            InvalidAnimation::IncompatibleFrameRate => {
+                write!(f, "fps is incompatible with frame_duration")
+            }
         }
     }
 }
@@ -343,6 +350,19 @@ mod tests {
                 Frame::new(2, Duration::from_millis(200)),
             ]
         );
+    }
+
+    #[test]
+    fn fps_and_frame_duration_fails() {
+        let content = "
+            fps: 5
+            frame_duration: 100
+            frames:
+              - index: 0
+              - index: 1
+              - index: 2
+        ";
+        assert!(serde_yaml::from_str::<Animation>(content).is_err());
     }
 
     #[test]
