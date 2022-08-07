@@ -353,7 +353,7 @@ mod tests {
     }
 
     #[test]
-    fn fps_and_frame_duration_fails() {
+    fn fps_and_global_duration_is_error() {
         let content = "
             fps: 5
             frame_duration: 100
@@ -363,6 +363,27 @@ mod tests {
               - index: 2
         ";
         assert!(serde_yaml::from_str::<Animation>(content).is_err());
+    }
+
+    #[test]
+    fn fps_with_single_frame_duration() {
+        let content = "
+            fps: 5
+            frames:
+              - index: 0
+              - index: 1
+              - index: 2
+                duration: 100
+        ";
+        let animation: Animation = serde_yaml::from_str::<Animation>(content).unwrap();
+        assert_eq!(
+            animation,
+            Animation::from_frames([
+                Frame::new(0, Duration::from_millis(200)),
+                Frame::new(1, Duration::from_millis(200)),
+                Frame::new(2, Duration::from_millis(100)),
+            ])
+        );
     }
 
     #[test]
