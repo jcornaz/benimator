@@ -4,6 +4,22 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## Unreleased
+
+<csr-id-726db9eeb16384999c164fa04215f22a7a474651/>
+<csr-id-bdba0a0494fa417f9f9d48b133b69e459b34e510/>
+
+### New Features (BREAKING)
+
+ - <csr-id-2b9dd43edf3224be09447bf0709d62a2c9255b3c/> Rename `from_range` and `from_iter` to `from_indices`
+ - <csr-id-7eb14dd14f1fe7ff063d3c47db2100e4fea208cf/> Allow to define animation FPS of total duration (on top of the existing frame-duration)
+   Now `Animation::from_iter` and `Animation::from_range` take a `FrameRate` instead of a duration.
+   The `FrameRate` can be created from a *frame duration*, *total duration* or a from a *fps* (frame-per-second).
+
+### New Features
+
+ - <csr-id-46126d0cce5c934d8c9c01928d22cf18af5f3207/> Deserialize `fps` property
+
 ## 4.0.0-beta.2 (2022-08-02)
 
 <csr-id-700ecedec8332c2e03714e881c6da8523b241719/>
