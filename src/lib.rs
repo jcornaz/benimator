@@ -5,7 +5,7 @@
     missing_docs,
     clippy::pedantic
 )]
-#![allow(clippy::needless_pass_by_value, clippy::module_name_repetitions)]
+#![cfg_attr(test, allow(clippy::needless_pass_by_value))]
 #![cfg_attr(nightly, feature(doc_auto_cfg))]
 
 //! A sprite animation library for rust game development
