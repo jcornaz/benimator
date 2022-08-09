@@ -28,8 +28,6 @@ At its core benimator is an `Animation` data structure`
 and a `State` to track the current as time pass.
 
 ```rust
-use benimator::*;
-
 // Create an animation
 let animation = Animation::from_indices(0..=3, FrameRate::from_fps(10.0));
 
