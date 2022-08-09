@@ -118,14 +118,20 @@ impl From<Animation> for AnimationDto {
 
 impl AnimationDto {
     #[allow(clippy::cast_precision_loss)]
-    fn default_duration(&self) -> Option<Duration> {
-        self.fps
-            .map(|fps| Duration::from_secs(1).div_f64(fps as f64))
-            .or_else(|| {
-                self.total_duration
-                    .map(Duration::from_millis)
-                    .map(|d| d.div_f64(self.frames.len() as f64))
-            })
+    fn default_duration(&self) -> Result<Option<Duration>, InvalidAnimation> {
+        match (
+            self.frame_duration.map(Duration::from_millis),
+            self.total_duration
+                .map(Duration::from_millis)
+                .map(|d| d.div_f64(self.frames.len() as f64)),
+            self.fps
+                .map(|fps| Duration::from_secs(1).div_f64(fps as f64)),
+        ) {
+            (duration, None, None) | (None, duration, None) | (None, None, duration) => {
+                Ok(duration)
+            }
+            _ => Err(InvalidAnimation::IncompatibleFrameRate),
+        }
     }
 }
 
@@ -133,10 +139,7 @@ impl TryFrom<AnimationDto> for Animation {
     type Error = InvalidAnimation;
 
     fn try_from(animation: AnimationDto) -> Result<Self, Self::Error> {
-        if animation.fps.is_some() && animation.frame_duration.is_some() {
-            return Err(InvalidAnimation::IncompatibleFrameRate);
-        }
-        let default_duration = animation.default_duration();
+        let default_duration = animation.default_duration()?;
         let frames: Vec<Frame> = animation
             .frames
             .into_iter()
