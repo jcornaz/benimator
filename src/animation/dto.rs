@@ -116,26 +116,35 @@ impl From<Animation> for AnimationDto {
     }
 }
 
+impl AnimationDto {
+    #[allow(clippy::cast_precision_loss)]
+    fn default_duration(&self) -> Option<Duration> {
+        self.fps
+            .map(|fps| Duration::from_secs(1).div_f64(fps as f64))
+            .or_else(|| {
+                self.total_duration
+                    .map(Duration::from_millis)
+                    .map(|d| d.div_f64(self.frames.len() as f64))
+            })
+    }
+}
+
 impl TryFrom<AnimationDto> for Animation {
     type Error = InvalidAnimation;
 
-    #[allow(clippy::cast_precision_loss)]
     fn try_from(animation: AnimationDto) -> Result<Self, Self::Error> {
         if animation.fps.is_some() && animation.frame_duration.is_some() {
             return Err(InvalidAnimation::IncompatibleFrameRate);
         }
-        let mut frames: Vec<Frame> = animation
+        let default_duration = animation.default_duration();
+        let frames: Vec<Frame> = animation
             .frames
             .into_iter()
             .map(|FrameDto { index, duration }| {
                 let duration = duration
                     .or(animation.frame_duration)
                     .map(Duration::from_millis)
-                    .or_else(|| {
-                        animation
-                            .fps
-                            .map(|fps| Duration::from_secs(1).div_f64(fps as f64))
-                    })
+                    .or(default_duration)
                     .or_else(|| animation.total_duration.map(Duration::from_millis))
                     .filter(|d| !d.is_zero());
 
@@ -145,13 +154,6 @@ impl TryFrom<AnimationDto> for Animation {
                 }
             })
             .collect::<Result<_, _>>()?;
-
-        if let Some(duration) = animation.total_duration {
-            let frame_duration = Duration::from_millis(duration).div_f64(frames.len() as f64);
-            for frame in &mut frames {
-                frame.duration = frame_duration;
-            }
-        }
 
         Ok(Self {
             frames,
