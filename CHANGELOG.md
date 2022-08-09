@@ -6,12 +6,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
 
+<csr-id-d890616a66d6502fc6516bea0a1da3231ab8c9f0/>
+<csr-id-1af5fbdfc832b6b5f371a77e919ec166263dd2ed/>
+
 **This release removes all integration with bevy.**
 `benimator` is no longer a bevy plugin, but an engine-agnostic rust library.
 See the [announcement](https://github.com/jcornaz/benimator/discussions/91) for more details.
 
 ### Removed (BREAKING)
 
+ - `State::animation_frame_index`
  - <csr-id-5640c383787abebc1d2e7413a9f91d652d99d21b/> `PlayBackSpeed` struct
    Without bevy integration, it is now possible (and easier)
    to alter the time duration, without the need for this struct.
@@ -30,19 +34,19 @@ See the [announcement](https://github.com/jcornaz/benimator/discussions/91) for 
 
 ### New Features (BREAKING)
 
- - <csr-id-7eb14dd14f1fe7ff063d3c47db2100e4fea208cf/> Allow to define animation FPS of total duration (on top of the existing frame-duration)
+ - <csr-id-7eb14dd14f1fe7ff063d3c47db2100e4fea208cf/> Allow to define animation FPS or total duration (on top of the existing frame-duration)
    Now `Animation::from_iter` and `Animation::from_range` take a `FrameRate` instead of a duration.
    The `FrameRate` can be created from a *frame duration*, *total duration* or a from a *fps* (frame-per-second).
 
 ### New Features
 
- - <csr-id-46126d0cce5c934d8c9c01928d22cf18af5f3207/> Deserialize `fps` property
+ - <csr-id-46126d0cce5c934d8c9c01928d22cf18af5f3207/> Deserialize `fps` and 'total_duration' property
  - <csr-id-d4bdb348d46f3f0eb45a7b4faadd771fe9917220/> Implement `Serialize` for `Animaition`
  - <csr-id-fa84668bd5ac304c0d089d9742f3afa4cacff626/> Implement `Extend<Frame>` for `Animation`
  - <csr-id-d37c678675d6de651ef583dc925334db4f879df7/> Implement `Eq` for `Animation`
  - <csr-id-826a83b09299e154810c496279a7f8c8ce2ba7fd/> `State::new` constructor
  - <csr-id-700ecedec8332c2e03714e881c6da8523b241719/> Implementation of `Default` for `Animation` an `Frame`
- - `sprite_frame_index` method for state
+ - `State::frame_index` method
  - Public `update` function for the state.
 
 ### Stabilization
