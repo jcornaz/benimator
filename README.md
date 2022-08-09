@@ -9,7 +9,7 @@ A sprite animation library for rust game development.
 
 Initially designed for [bevy](https://bevyengine.org), it is now engine agnostic.
 
-See [example with bevy](examples/bevy.rs).
+*See [example of usage with bevy](examples/bevy.rs)*
 
 ## Installation
 
