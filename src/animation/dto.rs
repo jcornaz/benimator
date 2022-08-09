@@ -19,6 +19,8 @@ pub(super) struct AnimationDto {
     frame_duration: Option<u64>,
     #[serde(default, skip_serializing)]
     fps: Option<u64>,
+    #[serde(default, skip_serializing)]
+    total_duration: Option<u64>,
     frames: Vec<FrameDto>,
 }
 
@@ -102,6 +104,7 @@ impl From<Animation> for AnimationDto {
         Self {
             frame_duration: None,
             fps: None,
+            total_duration: None,
             mode: match animation.mode {
                 Mode::Once => ModeDto::Once,
                 Mode::RepeatFrom(0) => ModeDto::Repeat,
@@ -113,35 +116,47 @@ impl From<Animation> for AnimationDto {
     }
 }
 
+impl AnimationDto {
+    #[allow(clippy::cast_precision_loss)]
+    fn default_duration(&self) -> Result<Option<Duration>, InvalidAnimation> {
+        match (
+            self.frame_duration.map(Duration::from_millis),
+            self.total_duration
+                .map(Duration::from_millis)
+                .map(|d| d.div_f64(self.frames.len() as f64)),
+            self.fps
+                .map(|fps| Duration::from_secs(1).div_f64(fps as f64)),
+        ) {
+            (duration, None, None) | (None, duration, None) | (None, None, duration) => {
+                Ok(duration)
+            }
+            _ => Err(InvalidAnimation::IncompatibleFrameRate),
+        }
+    }
+}
+
 impl TryFrom<AnimationDto> for Animation {
     type Error = InvalidAnimation;
 
-    #[allow(clippy::cast_precision_loss)]
     fn try_from(animation: AnimationDto) -> Result<Self, Self::Error> {
-        if animation.fps.is_some() && animation.frame_duration.is_some() {
-            return Err(InvalidAnimation::IncompatibleFrameRate);
-        }
-        Ok(Self {
-            frames: animation
-                .frames
-                .into_iter()
-                .map(|FrameDto { index, duration }| {
-                    let duration = duration
-                        .or(animation.frame_duration)
-                        .map(Duration::from_millis)
-                        .or_else(|| {
-                            animation
-                                .fps
-                                .map(|fps| Duration::from_secs(1).div_f64(fps as f64))
-                        })
-                        .filter(|d| !d.is_zero());
+        let default_duration = animation.default_duration()?;
+        let frames: Vec<Frame> = animation
+            .frames
+            .into_iter()
+            .map(|FrameDto { index, duration }| {
+                let duration = duration
+                    .map(Duration::from_millis)
+                    .or(default_duration)
+                    .filter(|d| !d.is_zero());
+                match duration {
+                    Some(duration) => Ok(Frame::new(index, duration)),
+                    None => Err(InvalidAnimation::ZeroDuration),
+                }
+            })
+            .collect::<Result<_, _>>()?;
 
-                    match duration {
-                        Some(duration) => Ok(Frame::new(index, duration)),
-                        None => Err(InvalidAnimation::ZeroDuration),
-                    }
-                })
-                .collect::<Result<_, _>>()?,
+        Ok(Self {
+            frames,
             mode: match animation.mode {
                 ModeDto::Repeat => Mode::RepeatFrom(0),
                 ModeDto::RepeatFrom(f) => Mode::RepeatFrom(f),
@@ -383,6 +398,26 @@ mod tests {
                 Frame::new(0, Duration::from_millis(200)),
                 Frame::new(1, Duration::from_millis(200)),
                 Frame::new(2, Duration::from_millis(100)),
+            ])
+        );
+    }
+
+    #[test]
+    fn total_duration() {
+        let content = "
+            total_duration: 30
+            frames:
+              - index: 0
+              - index: 1
+              - index: 2
+        ";
+        let animation: Animation = serde_yaml::from_str::<Animation>(content).unwrap();
+        assert_eq!(
+            animation,
+            Animation::from_frames([
+                Frame::new(0, Duration::from_millis(10)),
+                Frame::new(1, Duration::from_millis(10)),
+                Frame::new(2, Duration::from_millis(10)),
             ])
         );
     }
