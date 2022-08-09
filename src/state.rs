@@ -27,19 +27,9 @@ impl State {
         *self = Self::default();
     }
 
-    /// Returns the index of the current *animation* frame
-    ///
-    /// The index is relative to the animation sequence. **not** to the sprite-sheet.
+    /// Returns the current frame index
     #[must_use]
-    pub fn animation_frame_index(&self) -> usize {
-        self.animation_frame_index
-    }
-
-    /// Returns the index of the current *sprite* frame
-    ///
-    /// The index is relative to the sprite atlas. **not** to the animation frame sequence.
-    #[must_use]
-    pub fn sprite_frame_index(&self) -> usize {
+    pub fn frame_index(&self) -> usize {
         self.sprite_frame_index
     }
 
@@ -51,7 +41,7 @@ impl State {
 
     #[must_use]
     fn frame<'a>(&self, animation: &'a Animation) -> &'a Frame {
-        &animation.frames[self.animation_frame_index() % animation.frames.len()]
+        &animation.frames[self.animation_frame_index % animation.frames.len()]
     }
 
     /// Update the animation state
@@ -127,7 +117,7 @@ mod tests {
         let animation = Animation::from_indices(3..=5, frame_rate);
         let mut state = State::default();
         state.update(&animation, Duration::ZERO);
-        assert_eq!(state.sprite_frame_index(), 3);
+        assert_eq!(state.frame_index(), 3);
     }
 
     mod reset {
@@ -175,7 +165,7 @@ mod tests {
             smaller_duration: Duration,
         ) {
             state.update(&animation, smaller_duration);
-            assert_eq!(state.sprite_frame_index(), 0);
+            assert_eq!(state.frame_index(), 0);
         }
 
         #[rstest]
@@ -186,7 +176,7 @@ mod tests {
         ) {
             let animation = Animation::from_indices(1..=3, frame_rate);
             state.update(&animation, smaller_duration);
-            assert_eq!(state.sprite_frame_index(), 1);
+            assert_eq!(state.frame_index(), 1);
         }
 
         #[rstest]
@@ -197,7 +187,7 @@ mod tests {
         ) {
             let animation = Animation::from_indices(1..=3, frame_rate);
             state.update(&animation, smaller_duration);
-            assert_eq!(state.sprite_frame_index(), 1);
+            assert_eq!(state.frame_index(), 1);
         }
 
         #[rstest]
@@ -207,7 +197,7 @@ mod tests {
             frame_duration: Duration,
         ) {
             state.update(&animation, frame_duration);
-            assert_eq!(state.sprite_frame_index(), 1);
+            assert_eq!(state.frame_index(), 1);
         }
 
         #[rstest]
@@ -218,7 +208,7 @@ mod tests {
         ) {
             state.update(&animation, smaller_duration);
             state.update(&animation, smaller_duration);
-            assert_eq!(state.sprite_frame_index(), 1);
+            assert_eq!(state.frame_index(), 1);
         }
 
         #[rstest]
@@ -249,7 +239,7 @@ mod tests {
             frame_duration: Duration,
         ) {
             state.update(&animation, frame_duration * 2);
-            assert_eq!(state.sprite_frame_index(), 2);
+            assert_eq!(state.frame_index(), 2);
         }
     }
 
@@ -289,7 +279,7 @@ mod tests {
                 frame_duration: Duration,
             ) {
                 state.update(&animation, frame_duration);
-                assert_eq!(state.sprite_frame_index(), 2);
+                assert_eq!(state.frame_index(), 2);
             }
 
             #[rstest]
@@ -329,7 +319,7 @@ mod tests {
                 frame_duration: Duration,
             ) {
                 state.update(&animation, frame_duration);
-                assert_eq!(state.sprite_frame_index(), 2);
+                assert_eq!(state.frame_index(), 2);
             }
 
             #[rstest]
@@ -367,7 +357,7 @@ mod tests {
                 frame_duration: Duration,
             ) {
                 state.update(&animation, frame_duration);
-                assert_eq!(state.sprite_frame_index(), 0);
+                assert_eq!(state.frame_index(), 0);
             }
 
             #[rstest]
@@ -406,7 +396,7 @@ mod tests {
                 frame_duration: Duration,
             ) {
                 state.update(&animation, frame_duration);
-                assert_eq!(state.sprite_frame_index(), 0);
+                assert_eq!(state.frame_index(), 0);
             }
         }
     }
@@ -438,7 +428,7 @@ mod tests {
                 frame_duration: Duration,
             ) {
                 state.update(&animation, frame_duration * 4);
-                assert_eq!(state.sprite_frame_index(), 1);
+                assert_eq!(state.frame_index(), 1);
             }
         }
 
@@ -457,7 +447,7 @@ mod tests {
             #[rstest]
             fn does_nothing(mut state: State, animation: Animation, frame_duration: Duration) {
                 state.update(&animation, frame_duration);
-                assert_eq!(state.sprite_frame_index(), 1);
+                assert_eq!(state.frame_index(), 1);
             }
 
             #[rstest]

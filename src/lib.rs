@@ -34,7 +34,7 @@
 //! state.update(&animation, delta_time);
 //!
 //! // Then we can get the current frame index in order to render the right sprite
-//! assert_eq!(state.sprite_frame_index(), 2);
+//! assert_eq!(state.frame_index(), 2);
 //! ```
 
 #[cfg(test)]

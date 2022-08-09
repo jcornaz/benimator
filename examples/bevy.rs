@@ -61,6 +61,6 @@ fn animate(
         player.update(animation, time.delta());
 
         // Update the texture atlas
-        texture.index = player.sprite_frame_index();
+        texture.index = player.frame_index();
     }
 }
