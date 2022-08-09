@@ -145,12 +145,9 @@ impl TryFrom<AnimationDto> for Animation {
             .into_iter()
             .map(|FrameDto { index, duration }| {
                 let duration = duration
-                    .or(animation.frame_duration)
                     .map(Duration::from_millis)
                     .or(default_duration)
-                    .or_else(|| animation.total_duration.map(Duration::from_millis))
                     .filter(|d| !d.is_zero());
-
                 match duration {
                     Some(duration) => Ok(Frame::new(index, duration)),
                     None => Err(InvalidAnimation::ZeroDuration),
