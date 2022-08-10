@@ -24,8 +24,8 @@ One is expected to use benimator with a game engine such as [bevy].
 
 ## How it looks like
 
-At its core benimator is an `Animation` data structure`
-and a `State` to track the current as time pass.
+At its core benimator is an `Animation` data structure
+and a `State` to track the frame-index as time pass.
 
 ```rust
 // Create an animation
