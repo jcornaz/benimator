@@ -17,7 +17,7 @@ env:
   RUSTFLAGS: "-D warnings"
 
 jobs:
-  test-no-feature:
+  test:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
@@ -25,62 +25,12 @@ jobs:
       - name: Install rust toolchain
         uses: actions-rs/toolchain@v1
         with:
-          toolchain: ${{ env.RUST_VERSION }}
+          toolchain: stable
           override: true
           profile: minimal
       - uses: Swatinem/rust-cache@v1
-      - run: cargo check --all-targets --no-default-features
-      - run: cargo test --no-default-features
-
-  test-default-features:
-    runs-on: ubuntu-latest
-    timeout-minutes: 15
-    steps:
-      - uses: actions/checkout@v3
-      - name: Install rust toolchain
-        uses: actions-rs/toolchain@v1
-        with:
-          toolchain: ${{ env.RUST_VERSION }}
-          override: true
-          profile: minimal
-      - uses: Swatinem/rust-cache@v1
-      - run: cargo check --all-targets
-      - run: cargo test
-
-  test-all-features:
-    runs-on: ubuntu-latest
-    timeout-minutes: 15
-    steps:
-      - uses: actions/checkout@v3
-      - name: Install rust toolchain
-        uses: actions-rs/toolchain@v1
-        with:
-          toolchain: ${{ env.RUST_VERSION }}
-          override: true
-          profile: minimal
-      - uses: Swatinem/rust-cache@v1
-      - run: cargo check --all-targets --all-features
-      - run: cargo test --all-features
-
-  test-feature:
-    runs-on: ubuntu-latest
-    timeout-minutes: 15
-    strategy:
-      matrix:
-        feature:
-          - "serde"
-
-    steps:
-      - uses: actions/checkout@v3
-      - name: Install rust toolchain
-        uses: actions-rs/toolchain@v1
-        with:
-          toolchain: ${{ env.RUST_VERSION }}
-          override: true
-          profile: minimal
-      - uses: Swatinem/rust-cache@v1
-      - run: cargo check --all-targets --no-default-features --features "${{ matrix.feature }}"
-      - run: cargo test --no-default-features --features "${{ matrix.feature }}"
+      - run: cargo install cargo-all-features
+      - run: cargo test-all-features
 
   code-style:
     runs-on: ubuntu-latest
