@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## 4.0.0 (2022-09-01)
 
 <csr-id-e7e56198ccb53da4d476b271ee4317c272b869e7/>
 <csr-id-a812cf6ef27e36312b62f5fdeff52fb9c9d82081/>
