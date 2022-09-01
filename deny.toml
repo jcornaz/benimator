@@ -4,7 +4,6 @@ unmaintained = "deny"
 yanked = "deny"
 notice = "deny"
 ignore = [
-  "RUSTSEC-2021-0127", # unmaintained crate `serde_cbor` used by `criterion`: https://github.com/bheisler/criterion.rs/issues/534
   "RUSTSEC-2021-0139", # unmaintained crate `ansi_term` used by bevy
 ]
 
