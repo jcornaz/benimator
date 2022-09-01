@@ -4,6 +4,73 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## Unreleased
+
+<csr-id-e7e56198ccb53da4d476b271ee4317c272b869e7/>
+<csr-id-a812cf6ef27e36312b62f5fdeff52fb9c9d82081/>
+<csr-id-9df6d94f04e150a00674798170454bdc356befb4/>
+<csr-id-e6b7a5954dbdc338fe5aa86d4b32261d5caf6df9/>
+<csr-id-1f9fb2aad3c9ad39068c155a75278f264d4e9c32/>
+<csr-id-871a17236fc1c8ca63c7f29463e8fb57d2d5dc3b/>
+<csr-id-bbf741e5d8f41fff1cbbc15a7cc4fa5c0c61132b/>
+<csr-id-d890616a66d6502fc6516bea0a1da3231ab8c9f0/>
+<csr-id-1af5fbdfc832b6b5f371a77e919ec166263dd2ed/>
+<csr-id-4dd3f8de433326f77ebcd944931faa76195b6f9e/>
+
+**This release removes all integration with bevy.**
+`benimator` is no longer a bevy plugin. It is now an engine-agnostic rust library.
+See the [announcement](https://github.com/jcornaz/benimator/discussions/91) for more details.
+
+### Removed (BREAKING)
+
+ - `State::animation_frame_index`
+ - <csr-id-5640c383787abebc1d2e7413a9f91d652d99d21b/> `PlayBackSpeed` struct
+   Without bevy integration, it is now possible (and easier)
+   to alter the time duration, without the need for this struct.
+ - <csr-id-2d9a444c27b43518c2448a73aee07393568389e3/> Deprecated members
+
+### Changed (BREAKING)
+
+ - <csr-id-2b9dd43edf3224be09447bf0709d62a2c9255b3c/> Rename `from_range` and `from_iter` to `from_indices`
+ - <csr-id-d5c2ee84a9af8c8e8bfff0c38915e276f37002c7/> Rename structs
+   `SpriteSheetAnimation` -> `Animation`
+   `SpriteSheetAnimationState` -> `State`
+ - <csr-id-cd825f423a83e3eaa6d1357e3a760f479b1ceaf4/> Change syntax of repeat-from to: `!RepeatFrom n`
+ - The state is no longer automatically reset after the last frame of a `run_once` animation.
+   So one must explicitly reset the state if they desire to restart the animation later.
+ - **[unstable-load-from-file]** Remove `from_(yaml|ron)_(str|bytes)` functions
+
+### New Features (BREAKING)
+
+ - <csr-id-7eb14dd14f1fe7ff063d3c47db2100e4fea208cf/> Allow to define animation FPS or total duration (on top of the existing frame-duration)
+   Now `Animation::from_iter` and `Animation::from_range` take a `FrameRate` instead of a duration.
+   The `FrameRate` can be created from a *frame duration*, *total duration* or a from a *fps* (frame-per-second).
+
+### Minimum supported rust version (BREAKING)
+
+ - <csr-id-4dd3f8de433326f77ebcd944931faa76195b6f9e/> Require the latest stable version of rust at all time
+
+### New Features
+
+ - <csr-id-46126d0cce5c934d8c9c01928d22cf18af5f3207/> Deserialize `fps` and 'total_duration' property
+ - <csr-id-d4bdb348d46f3f0eb45a7b4faadd771fe9917220/> Implement `Serialize` for `Animaition`
+ - <csr-id-fa84668bd5ac304c0d089d9742f3afa4cacff626/> Implement `Extend<Frame>` for `Animation`
+ - <csr-id-d37c678675d6de651ef583dc925334db4f879df7/> Implement `Eq` for `Animation`
+ - <csr-id-826a83b09299e154810c496279a7f8c8ce2ba7fd/> `State::new` constructor
+ - <csr-id-700ecedec8332c2e03714e881c6da8523b241719/> Implementation of `Default` for `Animation` an `Frame`
+ - `State::frame_index` method
+ - Public `update` function for the state.
+
+### Stabilization
+
+ - Stabilize load-from-file.
+   The feature flag is removed. The feature flag `serde` should be used instead.
+
+### Documentation
+
+ - <csr-id-e3b75d90916d66248fc09926c69496bd26faa118/> Improve crate-level example
+ - <csr-id-82e55fac5e880d529346feb067509d5fe27f75d1/> Describe better the project with goals and examples
+
 ## 4.0.0-rc.1 (2022-08-09)
 
 <csr-id-d890616a66d6502fc6516bea0a1da3231ab8c9f0/>
