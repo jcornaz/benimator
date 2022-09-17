@@ -21,7 +21,7 @@ default = []
 serde = { version = "1.0", features = ["derive"], optional = true }
 
 [dev-dependencies]
-serde_yaml = { version = "0.9.11", default-features = false }
+serde_yaml = { version = "0.9.13", default-features = false }
 rstest = { version = "0.15.0", default-features = false }
 bevy = { version = "0.8.1", default-features = false, features = ["bevy_asset", "bevy_winit", "render", "png", "x11", "dynamic"] }
 anyhow = "1.0"
