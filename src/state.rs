@@ -3,7 +3,7 @@ use std::time::Duration;
 use crate::{animation::Mode, Animation, Frame};
 
 /// Animation state
-#[derive(Default)]
+#[derive(Default, Clone)]
 pub struct State {
     animation_frame_index: usize,
     sprite_frame_index: usize,
