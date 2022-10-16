@@ -28,7 +28,7 @@ jobs:
           toolchain: stable
           override: true
           profile: minimal
-      - uses: Swatinem/rust-cache@v1
+      - uses: Swatinem/rust-cache@v2
       - run: cargo install cargo-all-features
       - run: cargo test-all-features
 
@@ -42,7 +42,7 @@ jobs:
           toolchain: stable
           override: true
           components: clippy, rustfmt
-      - uses: Swatinem/rust-cache@v1
+      - uses: Swatinem/rust-cache@v2
       - run: cargo fmt --all -- --check
       - run: cargo clippy --all-features --all-targets
 
@@ -56,7 +56,7 @@ jobs:
           toolchain: stable
           override: true
           profile: minimal
-      - uses: Swatinem/rust-cache@v1
+      - uses: Swatinem/rust-cache@v2
       - run: cargo doc --all-features --no-deps
 
   unwanted-dependencies:
@@ -68,7 +68,7 @@ jobs:
           toolchain: stable
           override: true
           profile: minimal
-      - uses: Swatinem/rust-cache@v1
+      - uses: Swatinem/rust-cache@v2
       - run: cargo install cargo-deny --locked
       - run: cargo deny check
 
