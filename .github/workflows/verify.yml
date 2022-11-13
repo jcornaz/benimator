@@ -1,4 +1,4 @@
-name: build
+name: verify
 
 on:
   push:
@@ -23,12 +23,11 @@ jobs:
     timeout-minutes: 15
     steps:
       - uses: actions/checkout@v3
-      - name: Install rust toolchain
-        uses: actions-rs/toolchain@v1
+      - uses: actions-rs/toolchain@v1
         with:
           toolchain: stable
           override: true
-          profile: rustfmt, clippy
+          components: clippy, rustfmt
       - uses: Swatinem/rust-cache@v2
       - uses: taiki-e/install-action@cargo-hack
       - uses: extractions/setup-just@v1
