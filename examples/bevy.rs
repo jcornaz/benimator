@@ -1,4 +1,4 @@
-use bevy::{prelude::*, render::texture::ImageSettings};
+use bevy::prelude::*;
 
 use benimator::FrameRate;
 
@@ -13,8 +13,7 @@ struct AnimationState(benimator::State);
 
 fn main() {
     App::new()
-        .insert_resource(ImageSettings::default_nearest())
-        .add_plugins(DefaultPlugins)
+        .add_plugins(DefaultPlugins.set(ImagePlugin::default_nearest()))
         .add_startup_system(spawn)
         .add_system(animate)
         .run();
@@ -26,7 +25,7 @@ fn spawn(
     mut textures: ResMut<Assets<TextureAtlas>>,
 ) {
     // Don't forget the camera ;-)
-    commands.spawn_bundle(Camera2dBundle::default());
+    commands.spawn(Camera2dBundle::default());
 
     // Create an animation
     let animation = Animation(benimator::Animation::from_indices(
@@ -36,12 +35,14 @@ fn spawn(
 
     commands
         // Spawn a bevy sprite-sheet
-        .spawn_bundle(SpriteSheetBundle {
+        .spawn(SpriteSheetBundle {
             texture_atlas: textures.add(TextureAtlas::from_grid(
                 asset_server.load("coin.png"),
                 Vec2::new(16.0, 16.0),
                 5,
                 1,
+                None,
+                None,
             )),
             transform: Transform::from_scale(Vec3::splat(10.0)),
             ..Default::default()

@@ -24,6 +24,14 @@ lint:
 doc:
 	cargo doc --all-features --no-deps
 
+# Run the bevy example
+run-bevy-example:
+	cargo run --example bevy
+
+# Run the bevy with asset loader example
+run-bevy-with-asset-loader-example:
+	cargo run --example bevy_with_asset_loader --features serde
+
 # Clean up compilation output
 clean:
 	rm -rf target

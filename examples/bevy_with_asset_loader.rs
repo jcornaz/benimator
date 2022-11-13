@@ -2,7 +2,6 @@ use bevy::{
     asset::{AssetLoader, BoxedFuture, Error, LoadContext, LoadedAsset},
     prelude::*,
     reflect::TypeUuid,
-    render::texture::ImageSettings,
 };
 
 // Create the animation asset
@@ -40,8 +39,7 @@ impl AssetLoader for AnimationLoader {
 
 fn main() {
     App::new()
-        .insert_resource(ImageSettings::default_nearest())
-        .add_plugins(DefaultPlugins)
+        .add_plugins(DefaultPlugins.set(ImagePlugin::default_nearest()))
         .add_asset::<Animation>() // Register the asset
         .init_asset_loader::<AnimationLoader>() // Register the asset loader
         .add_startup_system(spawn)
@@ -55,19 +53,21 @@ fn spawn(
     mut textures: ResMut<Assets<TextureAtlas>>,
 ) {
     // Don't forget the camera ;-)
-    commands.spawn_bundle(Camera2dBundle::default());
+    commands.spawn(Camera2dBundle::default());
 
     // Load the animation
     let animation_handle: Handle<Animation> = asset_server.load("coin.animation.yml");
 
     commands
         // Spawn a bevy sprite-sheet
-        .spawn_bundle(SpriteSheetBundle {
+        .spawn(SpriteSheetBundle {
             texture_atlas: textures.add(TextureAtlas::from_grid(
                 asset_server.load("coin.png"),
                 Vec2::new(16.0, 16.0),
                 5,
                 1,
+                None,
+                None,
             )),
             transform: Transform::from_scale(Vec3::splat(10.0)),
             ..Default::default()
