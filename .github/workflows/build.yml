@@ -3,6 +3,7 @@ name: build
 on:
   push:
     branches:
+      - "[0-9]+.x"
       - main
       - rc
       - beta
@@ -17,7 +18,7 @@ env:
   RUSTFLAGS: "-D warnings"
 
 jobs:
-  test:
+  verify:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
@@ -27,72 +28,7 @@ jobs:
         with:
           toolchain: stable
           override: true
-          profile: minimal
+          profile: rustfmt, clippy
       - uses: Swatinem/rust-cache@v2
-      - run: cargo install cargo-all-features
-      - run: cargo test-all-features
-
-  code-style:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - name: Install rust toolchain
-        uses: actions-rs/toolchain@v1
-        with:
-          toolchain: stable
-          override: true
-          components: clippy, rustfmt
-      - uses: Swatinem/rust-cache@v2
-      - run: cargo fmt --all -- --check
-      - run: cargo clippy --all-features --all-targets
-
-  documentation:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - name: Install rust toolchain
-        uses: actions-rs/toolchain@v1
-        with:
-          toolchain: stable
-          override: true
-          profile: minimal
-      - uses: Swatinem/rust-cache@v2
-      - run: cargo doc --all-features --no-deps
-
-  unwanted-dependencies:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - uses: actions-rs/toolchain@v1
-        with:
-          toolchain: stable
-          override: true
-          profile: minimal
-      - uses: Swatinem/rust-cache@v2
-      - run: cargo install cargo-deny --locked
-      - run: cargo deny check
-
-  release:
-    if: ${{ github.event_name != 'pull_request' }}
-    needs: [test, documentation]
-    runs-on: ubuntu-latest
-    environment: release
-    steps:
-      - uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
-      - uses: actions-rs/toolchain@v1
-        with:
-          toolchain: stable
-          override: true
-          profile: minimal
-      - name: install cargo-edit
-        uses: baptiste0928/cargo-install@v1
-        with:
-          crate: cargo-edit
-          version: 0.10
-      - run: npm install --no-save conventional-changelog-conventionalcommits @semantic-release/exec
-      - run: npx semantic-release
-        env:
-          GITHUB_TOKEN: ${{ github.token }}
-          CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}
+      - uses: taiki-e/install-action@cargo-hack
+      - uses: extractions/setup-just@v1
