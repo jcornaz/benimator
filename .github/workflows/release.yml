@@ -24,6 +24,8 @@ jobs:
       - uses: taiki-e/install-action@cargo-binstall
       - uses: taiki-e/install-action@cargo-hack
       - uses: extractions/setup-just@v1
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
       - run: cargo binstall --no-confirm cargo-edit
       - run: just release
         env:
