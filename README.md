@@ -3,7 +3,6 @@
 [![License](https://img.shields.io/badge/license-Unlicense%20OR%20MIT-green)](#License)
 [![Crates.io](https://img.shields.io/crates/v/benimator)](https://crates.io/crates/benimator)
 [![Docs](https://docs.rs/benimator/badge.svg)](https://docs.rs/benimator)
-[![Build](https://img.shields.io/github/actions/workflow/status/jcornaz/benimator/verify.yml)](https://github.com/jcornaz/benimator/actions/workflows/verify.yml)
 
 A sprite animation library for rust game development.
 
