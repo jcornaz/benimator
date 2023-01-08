@@ -2,7 +2,7 @@
 name = "benimator"
 version = "4.1.1"
 edition = "2021"
-rust-version = "1.62"
+rust-version = "1.60"
 authors = ["Jonathan Cornaz"]
 license = "Unlicense OR MIT"
 description = "A sprite animation library for rust game development"
