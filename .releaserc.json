@@ -1,5 +1,6 @@
 {
   "branches": [
+    "+([0-9])?(.{+([0-9]),x}).x",
     "main",
     {
       "name": "rc",
@@ -22,6 +23,10 @@
         "releaseRules": [
           {
             "type": "docs",
+            "release": "patch"
+          },
+          {
+            "scope": "unstable",
             "release": "patch"
           }
         ]
@@ -56,11 +61,16 @@
     [
       "@semantic-release/exec",
       {
-        "verifyReleaseCmd": "just RUSTFLAGS='' RUSTDOCFLAGS='' verify && cargo publish --dry-run",
+        "verifyReleaseCmd": "just verify && cargo publish --dry-run",
         "prepareCmd": "cargo set-version ${nextRelease.version}",
         "publishCmd": "cargo publish --allow-dirty --no-verify"
       }
     ],
+    "@semantic-release/changelog",
+    ["@semantic-release/git", {
+      "assets": ["Cargo.toml", "CHANGELOG.md"],
+      "message": "chore(release): ${nextRelease.version}\n\n${nextRelease.notes}"
+    }],
     [
       "@semantic-release/github",
       {

@@ -1,36 +1,35 @@
-export RUSTFLAGS := "-D warnings"
-export RUSTDOCFLAGS := "-D warnings"
+set dotenv-load
 
 @_choose:
 	just --choose --unsorted
 
 # Perform all verifications (compile, test, lint, etc.)
-verify: doc lint test
+verify: test lint doc check-msrv
+	cargo deny check licenses
 
-# Watch changes, and run `just verify` when source changes
+# Watch the source files and run `just verify` when source changes
 watch:
-	cargo watch -s 'just verify'
+	cargo watch --delay 0.1 --clear --why -- just verify
 
-# Run all tests
+# Run the tests
 test:
 	cargo hack test --feature-powerset
 
-# Static code analysis
+# Run the static code analysis
 lint:
 	cargo fmt -- --check
-	cargo clippy --all-features --all-targets
+	cargo hack clippy --feature-powerset --all-targets 
 
 # Build the documentation
-doc:
-	cargo doc --all-features --no-deps
+doc *args:
+	cargo doc --all-features --no-deps {{args}}
 
-# Run the bevy example
-run-bevy-example:
-	cargo run --example bevy
+# Open the documentation page
+doc-open: (doc "--open")
 
-# Run the bevy with asset loader example
-run-bevy-with-asset-loader-example:
-	cargo run --example bevy_with_asset_loader --features serde
+# Make sure the MSRV is satisfiable
+check-msrv:
+	cargo msrv verify
 
 # Clean up compilation output
 clean:
@@ -38,16 +37,16 @@ clean:
 	rm -f Cargo.lock
 	rm -rf node_modules
 
-# Install cargo dev-tools used by other recipes (requires rustup to be already installed)
+# Install cargo dev-tools used by the `verify` recipe (requires rustup to be already installed)
 install-dev-tools:
 	rustup install stable
 	rustup override set stable
-	cargo install cargo-hack cargo-watch
+	cargo install cargo-hack cargo-watch cargo-msrv
 
 # Install a git hook to run tests before every commits
 install-git-hooks:
-	echo "#!/usr/bin/env sh" > .git/hooks/pre-commit
-	echo "just verify" >> .git/hooks/pre-commit
+	echo '#!/usr/bin/env sh' > .git/hooks/pre-commit
+	echo 'just verify' >> .git/hooks/pre-commit
 	chmod +x .git/hooks/pre-commit
 
 # run the release process in dry run mode (requires npm and a `GITHUB_TOKEN`)
@@ -55,5 +54,5 @@ release-dry-run: (release "--dry-run")
 
 # Run the release process (requires `npm`, a `GITHUB_TOKEN` and a `CARGO_REGISTRY_TOKEN`)
 release *args:
-	npm install --no-save conventional-changelog-conventionalcommits @semantic-release/exec
-	npx semantic-release {{args}}
+	npm install --no-save conventional-changelog-conventionalcommits@5 @semantic-release/exec@6 @semantic-release/changelog@6 @semantic-release/git@10
+	npx semantic-release@20 {{args}}
