@@ -13,12 +13,12 @@ watch:
 
 # Run the tests
 test:
-	cargo hack test --feature-powerset
+	cargo hack test --feature-powerset --optional-deps
 
 # Run the static code analysis
 lint:
 	cargo fmt -- --check
-	cargo hack clippy --feature-powerset --all-targets 
+	cargo hack clippy --feature-powerset --all-targets --optional-deps
 
 # Build the documentation
 doc *args:
