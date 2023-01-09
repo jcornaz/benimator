@@ -1,3 +1,10 @@
+## [4.1.2](https://github.com/jcornaz/benimator/compare/v4.1.1...v4.1.2) (2023-01-09)
+
+
+### Documentation
+
+* **readme:** lower minimum support rust version to 1.60 ([909eaea](https://github.com/jcornaz/benimator/commit/909eaea4b8974872126961c2be0650aa5e3e5b85))
+
 ## [4.1.1](https://github.com/jcornaz/benimator/compare/v4.1.0...v4.1.1) (2023-01-08)
 
 
