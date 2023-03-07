@@ -4,7 +4,7 @@ unmaintained = "deny"
 yanked = "deny"
 notice = "deny"
 ignore = [
-  "RUSTSEC-2021-0139", # unmaintained crate `ansi_term` used by bevy
+  "RUSTSEC-2022-0048", # unmaintained crate `xml-rs` used by bevy
 ]
 
 [licenses]
