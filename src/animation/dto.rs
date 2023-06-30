@@ -77,6 +77,18 @@ impl<'de> Deserialize<'de> for FrameDto {
                     .map_err(|_| de::Error::invalid_value(Unexpected::Unsigned(v), &self))
             }
 
+            fn visit_i64<E>(self, v: i64) -> Result<Self::Value, E>
+            where
+                E: de::Error,
+            {
+                v.try_into()
+                    .map(|index| FrameDto {
+                        index,
+                        duration: None,
+                    })
+                    .map_err(|_| de::Error::invalid_value(Unexpected::Signed(v), &self))
+            }
+
             fn visit_map<A>(self, map: A) -> Result<Self::Value, A::Error>
             where
                 A: MapAccess<'de>,
