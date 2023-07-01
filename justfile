@@ -49,10 +49,5 @@ install-git-hooks:
 	echo 'just verify' >> .git/hooks/pre-commit
 	chmod +x .git/hooks/pre-commit
 
-# run the release process in dry run mode (requires npm and a `GITHUB_TOKEN`)
-release-dry-run: (release "--dry-run")
-
-# Run the release process (requires `npm`, a `GITHUB_TOKEN` and a `CARGO_REGISTRY_TOKEN`)
-release *args:
-	npm install --no-save conventional-changelog-conventionalcommits@5 @semantic-release/exec@6 @semantic-release/changelog@6 @semantic-release/git@10
-	npx semantic-release@20 {{args}}
+release *args: verify
+	cargo release {{args}}
