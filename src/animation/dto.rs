@@ -216,9 +216,12 @@ mod tests {
         )]
         animation: Animation,
     ) {
-        let serialized: String = serde_yaml::to_string(&animation).unwrap();
-        let deserialized: Animation = serde_yaml::from_str(&serialized).unwrap();
-        assert_eq!(animation, deserialized);
+        let yaml: String = serde_yaml::to_string(&animation).unwrap();
+        let from_yaml: Animation = serde_yaml::from_str(&yaml).unwrap();
+        assert_eq!(animation, from_yaml);
+        let toml: String = toml::to_string(&animation).unwrap();
+        let from_toml: Animation = toml::from_str(&toml).unwrap();
+        assert_eq!(animation, from_toml);
     }
 
     #[test]
@@ -435,7 +438,7 @@ mod tests {
     }
 
     #[test]
-    fn same_duration_for_all_frames_short_hand() {
+    fn same_duration_for_all_frames_short_hand_yaml() {
         // given
         let content = "
             frame_duration: 100
@@ -444,6 +447,28 @@ mod tests {
 
         // when
         let animation: Animation = serde_yaml::from_str(content).unwrap();
+
+        // then
+        assert_eq!(
+            animation.frames,
+            vec![
+                Frame::new(0, Duration::from_millis(100)),
+                Frame::new(1, Duration::from_millis(100)),
+                Frame::new(2, Duration::from_millis(100)),
+            ]
+        );
+    }
+
+    #[test]
+    fn same_duration_for_all_frames_short_hand_toml() {
+        // given
+        let content = "
+            frame_duration = 100
+            frames = [0, 1, 2]
+        ";
+
+        // when
+        let animation: Animation = toml::from_str(content).unwrap();
 
         // then
         assert_eq!(
