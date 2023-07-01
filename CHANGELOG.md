@@ -7,6 +7,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased]
 
+
+## [4.1.3] - 2023-07-01
+
 ### Bug fixes
 
 * Fixed deserialization error of a "short form" frame list when using the toml crate.
@@ -33,5 +36,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * **readme:** remove build status badge ([dd9adc9](https://github.com/jcornaz/benimator/commit/dd9adc9aa0b4d47c7eabcfcbf954f9bc9e2e4ca7))
 
 
-[Unreleased]: https://github.com/jcornaz/benimator/compare/v4.1.2...HEAD
+[Unreleased]: https://github.com/jcornaz/beancount-parser/compare/v4.1.3...HEAD
+[4.1.3]: https://github.com/jcornaz/benimator/compare/v4.1.2...v4.1.3
 
