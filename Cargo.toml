@@ -18,13 +18,13 @@ default = []
 
 [dependencies]
 # Public dependencies (Present in the public API)
-serde = { version = "1.0", features = ["derive"], optional = true }
+serde = { version = "1.0.164", features = ["derive"], optional = true }
 
 [dev-dependencies]
 serde_yaml = { version = "0.9.22", default-features = false }
 rstest = { version = "0.17.0", default-features = false }
 bevy = { version = "0.10.1", default-features = false, features = ["bevy_asset", "bevy_winit", "bevy_render", "bevy_sprite", "bevy_core_pipeline", "png", "x11", "dynamic_linking"] }
-anyhow = "1.0"
+anyhow = "1.0.71"
 toml = "0.7.5"
 
 [build-dependencies]
