@@ -27,6 +27,10 @@ doc *args:
 # Open the documentation page
 doc-open: (doc "--open")
 
+# Run the given example
+run example:
+    cargo run --all-features --example {{example}}
+
 # Make sure the MSRV is satisfiable
 check-msrv:
 	cargo msrv verify

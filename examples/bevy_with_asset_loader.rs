@@ -1,11 +1,11 @@
 use bevy::{
     asset::{AssetLoader, BoxedFuture, Error, LoadContext, LoadedAsset},
     prelude::*,
-    reflect::TypeUuid,
+    reflect::{TypePath, TypeUuid},
 };
 
 // Create the animation asset
-#[derive(TypeUuid, Deref)]
+#[derive(TypeUuid, TypePath, Deref)]
 #[uuid = "ae6a74db-f6fa-43c4-ac16-01d13b50e4c6"]
 struct Animation(benimator::Animation);
 
@@ -42,8 +42,8 @@ fn main() {
         .add_plugins(DefaultPlugins.set(ImagePlugin::default_nearest()))
         .add_asset::<Animation>() // Register the asset
         .init_asset_loader::<AnimationLoader>() // Register the asset loader
-        .add_startup_system(spawn)
-        .add_system(animate)
+        .add_systems(Startup, spawn)
+        .add_systems(Update, animate)
         .run();
 }
 

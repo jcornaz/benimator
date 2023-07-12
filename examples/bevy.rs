@@ -14,8 +14,8 @@ struct AnimationState(benimator::State);
 fn main() {
     App::new()
         .add_plugins(DefaultPlugins.set(ImagePlugin::default_nearest()))
-        .add_startup_system(spawn)
-        .add_system(animate)
+        .add_systems(Startup, spawn)
+        .add_systems(Update, animate)
         .run();
 }
 
