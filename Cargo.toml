@@ -25,7 +25,7 @@ serde_yaml = { version = "0.9.25", default-features = false }
 rstest = { version = "0.18.2", default-features = false }
 bevy = { version = "0.11.2", default-features = false, features = ["bevy_asset", "bevy_winit", "bevy_render", "bevy_sprite", "bevy_core_pipeline", "png", "x11", "dynamic_linking"] }
 anyhow = "1.0.75"
-toml = "0.7.8"
+toml = "0.8.0"
 
 [build-dependencies]
 rustc_version = "0.4.0"
