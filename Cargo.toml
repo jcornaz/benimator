@@ -30,6 +30,3 @@ toml = "0.8.6"
 [build-dependencies]
 rustc_version = "0.4.0"
 
-[[example]]
-name = "bevy_with_asset_loader"
-required-features = ["serde"]
