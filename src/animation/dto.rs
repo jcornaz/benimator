@@ -24,18 +24,13 @@ pub(super) struct AnimationDto {
     frames: Vec<FrameDto>,
 }
 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Default)]
 enum ModeDto {
+    #[default]
     Repeat,
     RepeatFrom(usize),
     Once,
     PingPong,
-}
-
-impl Default for ModeDto {
-    fn default() -> Self {
-        ModeDto::Repeat
-    }
 }
 
 #[derive(Serialize)]
