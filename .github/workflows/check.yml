@@ -18,7 +18,7 @@ jobs:
       - uses: Swatinem/rust-cache@v2
       - uses: taiki-e/install-action@v2
         with:
-          tool: cargo-hack@0.5,just@1,cargo-msrv@0.15,cargo-deny@0.13
+          tool: cargo-hack@0.5,just@1,cargo-msrv@0.15,cargo-deny@0.14
       - run: just verify
   lint:
     runs-on: ubuntu-latest
