@@ -7,6 +7,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased]
 
+### Dependencies
+
+* Minimum supported rust version raised to `1.70`
+
 
 ## [4.1.3] - 2023-07-01
 

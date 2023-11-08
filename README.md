@@ -2,7 +2,7 @@
 
 [![License](https://img.shields.io/crates/l/benimator)](#License)
 [![Crates.io](https://img.shields.io/crates/v/benimator)](https://crates.io/crates/benimator)
-![rustc](https://img.shields.io/badge/rustc-1.60+-blue?logo=rust)
+![rustc](https://img.shields.io/badge/rustc-1.70+-blue?logo=rust)
 [![Docs](https://docs.rs/benimator/badge.svg)](https://docs.rs/benimator)
 
 A sprite animation library for rust game development.
@@ -65,7 +65,7 @@ cargo add benimator
 
 ## MSRV
 
-The minimum supported rust version is currently `1.60`.
+The minimum supported rust version is currently `1.70`.
 
 It can be updated to a newer stable version when required, and that will not be considered a breaking change (it can happen in for a minor or patch release).
 
