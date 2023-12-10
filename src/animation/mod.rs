@@ -232,6 +232,7 @@ impl FrameRate {
 }
 
 #[cfg(test)]
+#[allow(clippy::should_panic_without_expect)]
 mod tests {
     use super::*;
 
