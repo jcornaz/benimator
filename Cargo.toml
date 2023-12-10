@@ -10,6 +10,9 @@ repository = "https://github.com/jcornaz/benimator"
 keywords = ["game", "gamedev", "anmiation"]
 categories = ["game-development"]
 
+[badges.maintenance]
+status = "passively-maintained"
+
 [package.metadata.docs.rs]
 all-features = true
 
