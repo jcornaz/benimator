@@ -21,7 +21,7 @@ default = []
 
 [dependencies]
 # Public dependencies (Present in the public API)
-serde = { version = "1.0", features = ["derive"], optional = true }
+serde = { version = "1.0.200", features = ["derive"], optional = true }
 
 [dev-dependencies]
 serde_yaml = { version = "0.9.34", default-features = false }
