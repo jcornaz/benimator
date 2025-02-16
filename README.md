@@ -4,11 +4,15 @@
 [![Crates.io](https://img.shields.io/crates/v/benimator)](https://crates.io/crates/benimator)
 ![rustc](https://img.shields.io/badge/rustc-1.70+-blue?logo=rust)
 [![Docs](https://docs.rs/benimator/badge.svg)](https://docs.rs/benimator)
-![Maintenance](https://img.shields.io/maintenance/passively/2025)
+![Maintenance](https://img.shields.io/maintenance/no/2025)
 
 A sprite animation library for rust game development.
 
 Initially designed for [bevy], it is now engine agnostic.
+
+## Status
+
+This project is discontinued.
 
 ## Goals
 
